@@ -35,10 +35,12 @@ public class NewUncheckBson2JsonTask extends AbstractJobMigrationTask {
             if(node == null) {
                 return;
             }
-            final ElementParameterType convert_bson_to_string =
+            ElementParameterType convert_bson_to_string =
                     ComponentUtilities.getNodeProperty(node, "CONVERT_BSON_TO_STRING");
             String db_version;
-            if("true".equals(ComponentUtilities.getNodeProperty(node, "USE_EXISTING_CONNECTION").getValue())){
+            final ElementParameterType use_existing_connection =
+                    ComponentUtilities.getNodeProperty(node, "USE_EXISTING_CONNECTION");
+            if(use_existing_connection!= null && "true".equals(use_existing_connection.getValue())){
                 final String connection = ComponentUtilities.getNodeProperty(node, "CONNECTION").getValue();
                 db_version = versionMap.get(connection);
             }else{
@@ -47,6 +49,8 @@ public class NewUncheckBson2JsonTask extends AbstractJobMigrationTask {
             if ("MONGODB_3_5_X".equals(db_version) && (
                     convert_bson_to_string == null)) {//$NON-NLS-1$
                 ComponentUtilities.addNodeProperty(node, "CONVERT_BSON_TO_STRING", "CHECK");//$NON-NLS-1$ //$NON-NLS-2$
+                convert_bson_to_string =
+                        ComponentUtilities.getNodeProperty(node, "CONVERT_BSON_TO_STRING");
                 convert_bson_to_string.setValue("false");//$NON-NLS-1$ //$NON-NLS-2$
             }
 
