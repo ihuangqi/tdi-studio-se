@@ -198,17 +198,18 @@ public class SubjobContainerFigure extends Figure {
             subjobContainer.getElementParameter(EParameterName.SHOW_SUBJOB_TITLE.getName()).setShow(true);
         }
         String propertyValue = (String) subjobContainer.getPropertyValue(EParameterName.SUBJOB_TITLE_COLOR.getName());
-        if (propertyValue == null || "".equals(propertyValue)) { //$NON-NLS-1$
+        if (propertyValue == null || "".equals(propertyValue) || DesignerColorUtils.isForbiddenSubjobColor(EParameterName.SUBJOB_TITLE_COLOR.getName(), propertyValue)) { //$NON-NLS-1$
             RGB colorValue = DesignerColorUtils.getPreferenceSubjobRGB(DesignerColorUtils.SUBJOB_TITLE_COLOR_NAME,
                     DesignerColorUtils.SUBJOB_TITLE_COLOR);
             subjobContainer.setPropertyValue(EParameterName.SUBJOB_TITLE_COLOR.getName(), ColorUtils.getRGBValue(colorValue));
         }
         //
         propertyValue = (String) subjobContainer.getPropertyValue(EParameterName.SUBJOB_COLOR.getName());
-        if (propertyValue == null || "".equals(propertyValue)) { //$NON-NLS-1$
+        if (propertyValue == null || "".equals(propertyValue) || DesignerColorUtils.isForbiddenSubjobColor(EParameterName.SUBJOB_COLOR.getName(), propertyValue)) { //$NON-NLS-1$
             RGB colorValue = DesignerColorUtils.getPreferenceSubjobRGB(DesignerColorUtils.SUBJOB_COLOR_NAME,
                     DesignerColorUtils.SUBJOB_COLOR);
-            subjobContainer.setPropertyValue(EParameterName.SUBJOB_COLOR.getName(), ColorUtils.getRGBValue(colorValue));
+            propertyValue = ColorUtils.getRGBValue(colorValue);
+            subjobContainer.setPropertyValue(EParameterName.SUBJOB_COLOR.getName(), propertyValue);
         }
 
         mainColor = ColorUtils.parseStringToRGB(propertyValue, DesignerColorUtils.SUBJOB_COLOR);
