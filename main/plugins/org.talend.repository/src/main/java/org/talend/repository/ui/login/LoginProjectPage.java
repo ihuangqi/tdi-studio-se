@@ -2215,9 +2215,13 @@ public class LoginProjectPage extends AbstractLoginActionPage {
             }
         }
         if (needUpdate) {
-            // new workspace
-            LoginHelper.getInstance().getGitProviderService().setStandardMode(true);
-            log.info("updated git storage mode to standard");
+            if (!LoginHelper.getInstance().getGitProviderService().isGitModeInPreference()) {
+                // new workspace
+                LoginHelper.getInstance().getGitProviderService().setStandardMode(true);
+                log.info("updated git storage mode to standard");
+            } else {
+                log.info("git storage mode was already set, standard: " + LoginHelper.getInstance().getGitProviderService().isStandardMode());
+            }
         } else {
             log.info("old workspace, git storage mode not changed");
         }
