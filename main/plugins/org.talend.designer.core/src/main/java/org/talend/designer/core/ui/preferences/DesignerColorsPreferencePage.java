@@ -67,10 +67,6 @@ public class DesignerColorsPreferencePage extends FieldEditorPreferencePage impl
         if (loadJoblet) {
             createJobletGroupFieldEditors(parent);
         }
-        boolean loadMR = PluginChecker.isPluginLoaded("org.talend.designer.mapreduce");//$NON-NLS-1$
-        if (loadMR) {
-            createMRGroupFieldEditors(parent);
-        }
         createConnectionFieldEditors(parent);
     }
 
@@ -100,19 +96,6 @@ public class DesignerColorsPreferencePage extends FieldEditorPreferencePage impl
         GridLayout layout = new GridLayout(2, false);
         layout.marginLeft = 10;
         jobletGroup.setLayout(layout);
-    }
-
-    private void createMRGroupFieldEditors(Composite parent) {
-        Group mrGroup = new Group(parent, SWT.NULL);
-        mrGroup.setText(Messages.getString("DesignerPreferencePage.MRColorGroup")); //$NON-NLS-1$
-        mrGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-        addField(new ColorFieldEditor(DesignerColorUtils.MRGROUP_COLOR_NAME,
-                Messages.getString("DesignerPreferencePage.MRGroupColorLabel"), mrGroup)); //$NON-NLS-1$
-
-        GridLayout layout = new GridLayout(2, false);
-        layout.marginLeft = 10;
-        mrGroup.setLayout(layout);
     }
 
     private void createEditorFieldEditors(Composite parent) {
