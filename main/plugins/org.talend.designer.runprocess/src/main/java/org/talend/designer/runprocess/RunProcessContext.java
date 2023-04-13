@@ -581,6 +581,7 @@ public class RunProcessContext {
             org.talend.designer.core.ui.editor.process.Process prs =
                     (org.talend.designer.core.ui.editor.process.Process) process;
             prs.checkDifferenceWithRepository();
+            synContext(getSelectedContext(), process.getContextManager().getDefaultContext());
         }
         checkTraces();
 
@@ -788,6 +789,24 @@ public class RunProcessContext {
             // Kill button have to be pressed manually.
             this.running = true;
             setRunning(false);
+        }
+    }
+
+    private void synContext(IContext selectedContextToUpdate, IContext updatedContext) {
+        List<IContextParameter> contextParameterList = updatedContext.getContextParameterList();
+        for(IContextParameter contextParam: contextParameterList) {
+            IContextParameter contextParameter = selectedContextToUpdate.getContextParameter(contextParam.getSource(), contextParam.getName());
+            if(contextParameter == null) {
+                contextParameter = selectedContextToUpdate.getContextParameter(contextParam.getName());
+            }
+            if(contextParameter != null) {
+                if(!StringUtils.equals(contextParameter.getValue(), contextParam.getValue())) {
+                    contextParameter.setValue(contextParam.getValue());
+                }
+            } else {
+                IContextParameter clone = contextParam.clone();
+                selectedContextToUpdate.getContextParameterList().add(clone);
+            }
         }
     }
 
