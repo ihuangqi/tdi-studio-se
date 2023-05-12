@@ -21,6 +21,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
 
 public class RemoveDuplicateContextReferencesMigrationTask extends AbstractItemMigrationTask {
 
+    private boolean modified = false;
     @Override
     public Date getOrder() {
         GregorianCalendar gc = new GregorianCalendar(2023, 3, 20, 12, 0, 0);
@@ -30,6 +31,7 @@ public class RemoveDuplicateContextReferencesMigrationTask extends AbstractItemM
     @SuppressWarnings("unchecked")
     @Override
     public ExecutionResult execute(Item item) {
+        modified = false;
         EList<ContextType> contexts = null;
         if (item instanceof ProcessItem) {
             ProcessItem processItem = (ProcessItem) item;
@@ -41,8 +43,10 @@ public class RemoveDuplicateContextReferencesMigrationTask extends AbstractItemM
         try {
             if (!contexts.isEmpty()) {
                 distinct(contexts);
-                ProxyRepositoryFactory.getInstance().save(item, true);
-                return ExecutionResult.SUCCESS_NO_ALERT;
+                if(modified) {
+                    ProxyRepositoryFactory.getInstance().save(item, true);
+                    return ExecutionResult.SUCCESS_NO_ALERT;
+                }
             }
         } catch (Exception e) {
             ExceptionHandler.process(e);
@@ -65,6 +69,9 @@ public class RemoveDuplicateContextReferencesMigrationTask extends AbstractItemM
                 }
             });
             params.removeAll(toRemove);
+            if(!toRemove.isEmpty()) {
+                modified = true;
+            }
         });
     }
 
