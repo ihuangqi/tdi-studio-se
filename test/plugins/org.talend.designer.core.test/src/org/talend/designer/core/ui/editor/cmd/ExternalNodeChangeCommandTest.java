@@ -82,6 +82,7 @@ public class ExternalNodeChangeCommandTest {
 
         ExternalNodeChangeCommand mockCmd = Mockito.mock(ExternalNodeChangeCommand.class);
         Mockito.when(mockCmd.needChangeSchemaType(connection, mockRepoMetadata)).thenCallRealMethod();
+        Mockito.when(mockCmd.needChangeSchemaType(connection, mockRepoMetadata, IMetadataColumn.OPTIONS_NONE)).thenCallRealMethod();
 
         boolean needChange = mockCmd.needChangeSchemaType(connection, mockRepoMetadata);
         Mockito.verify(mockRepoMetadata, Mockito.times(1)).sameMetadataAs(Mockito.anyList(),
@@ -90,6 +91,7 @@ public class ExternalNodeChangeCommandTest {
         // lineStyle:EConnectionType.REJECT
         connection = new Connection(salesforceOutputNode, logRowNode, EConnectionType.REJECT, "REJECT", "reject", "row1", true);
         Mockito.when(mockCmd.needChangeSchemaType(connection, mockRepoMetadata)).thenCallRealMethod();
+        Mockito.when(mockCmd.needChangeSchemaType(connection, mockRepoMetadata, IMetadataColumn.OPTIONS_NONE)).thenCallRealMethod();
         mockCmd.needChangeSchemaType(connection, mockRepoMetadata);
         Mockito.verify(mockRepoMetadata, Mockito.times(2)).sameMetadataAs(Mockito.anyList(),
                 Mockito.eq(IMetadataColumn.OPTIONS_IGNORE_USED), Mockito.eq(false));
@@ -97,6 +99,7 @@ public class ExternalNodeChangeCommandTest {
         // lineStyle != EConnectionType.REJECT AND connectorName != REJECT
         connection = new Connection(salesforceOutputNode, logRowNode, EConnectionType.FLOW_MAIN, "MAIN", "main", "row1", true);
         Mockito.when(mockCmd.needChangeSchemaType(connection, mockRepoMetadata)).thenCallRealMethod();
+        Mockito.when(mockCmd.needChangeSchemaType(connection, mockRepoMetadata,IMetadataColumn.OPTIONS_NONE)).thenCallRealMethod();
         mockCmd.needChangeSchemaType(connection, mockRepoMetadata);
         Mockito.verify(mockRepoMetadata, Mockito.times(1)).sameMetadataAs(Mockito.eq(connection.getMetadataTable()),
                 Mockito.eq(IMetadataColumn.OPTIONS_IGNORE_USED));

@@ -159,7 +159,12 @@ public class ExternalNodeChangeCommand extends Command {
                         repositoryMetadata = repositoryMetadata.clone();
                         repositoryMetadata.setTableName(connection.getSource().getUniqueName());
                         ((org.talend.core.model.metadata.MetadataTable) repositoryMetadata).setRepository(true);
-                        if (needChangeSchemaType(connection, repositoryMetadata)) {
+                        //TUP-38972: for eltMap and schema without db, skip column dbtype check
+                        int options = IMetadataColumn.OPTIONS_NONE;
+                        if (node.isELTMapComponent() && !hasRepositoryDbSchema(repositoryMetadata)) {
+                            options = IMetadataColumn.OPTIONS_IGNORE_DBTYPE;
+                        }
+                        if (needChangeSchemaType(connection, repositoryMetadata, options)) {
                             connection.getSource().setPropertyValue(EParameterName.SCHEMA_TYPE.getName(), EmfComponent.BUILTIN);
                         }
                     }
@@ -169,8 +174,12 @@ public class ExternalNodeChangeCommand extends Command {
 
         setLabel(Messages.getString("ExternalNodeChangeCommand.modifaicationFrom") + node.getUniqueName()); //$NON-NLS-1$
     }
-
+    
     protected boolean needChangeSchemaType(IConnection connection, IMetadataTable repositoryMetadata) {
+        return needChangeSchemaType(connection, repositoryMetadata,IMetadataColumn.OPTIONS_NONE);
+    }
+
+    protected boolean needChangeSchemaType(IConnection connection, IMetadataTable repositoryMetadata, int options) {
         EConnectionType lineStyle = connection.getLineStyle();
         String connectorName = connection.getConnectorName();
         IMetadataTable metadataTable = connection.getMetadataTable();
@@ -199,13 +208,24 @@ public class ExternalNodeChangeCommand extends Command {
                         IMetadataColumn myColumn = metadataTable.getColumn(inputColumn.getLabel());
                         inputColumnListWithUnselected.remove(myColumn);
                     }
-                    return !repositoryMetadata.sameMetadataAs(inputColumnListWithUnselected, IMetadataColumn.OPTIONS_IGNORE_USED, false);
+                    return !repositoryMetadata.sameMetadataAs(inputColumnListWithUnselected, IMetadataColumn.OPTIONS_IGNORE_USED | options, false);
                 }
             }
         }
         return !repositoryMetadata
-                .sameMetadataAs(metadataTable, IMetadataColumn.OPTIONS_IGNORE_USED);
+                .sameMetadataAs(metadataTable, IMetadataColumn.OPTIONS_IGNORE_USED | options);
     }
+    
+    private boolean hasRepositoryDbSchema(IMetadataTable metadataTable) {
+        if (metadataTable == null) return false;
+        for (IMetadataColumn column : metadataTable.getListColumns()) {
+            if (column ==null || column.getType() == null || "".equals(column.getType().trim())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     private void refreshCodeView() {
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
