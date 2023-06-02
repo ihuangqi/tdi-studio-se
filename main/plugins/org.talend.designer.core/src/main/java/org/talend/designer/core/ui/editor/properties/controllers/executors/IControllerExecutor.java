@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2022 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2023 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -10,21 +10,18 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.designer.core.ui.editor.properties.controllers;
+package org.talend.designer.core.ui.editor.properties.controllers.executors;
 
-import org.eclipse.gef.commands.Command;
+import org.talend.designer.core.ui.editor.properties.controllers.IControllerContext;
+import org.talend.designer.core.ui.editor.properties.controllers.ui.IControllerUI;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public interface IStigmaElementPropertyController {
+public interface IControllerExecutor {
 
-    boolean handleWidgetEvent(IControllerContext context);
+    void init(IControllerContext ctx, IControllerUI ui);
 
-    Command createCommand(IControllerContext context);
-
-    void executeCommand(Command c);
-
-    String getControllerName();
+    boolean execute();
 
 }

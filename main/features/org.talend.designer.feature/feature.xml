@@ -33,4 +33,5 @@
   <plugin id="org.talend.libraries.mozilla" download-size="0" install-size="0" version="0.0.0"/>
   <plugin id="org.talend.libraries.sqlbuilder" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
   <plugin id="org.talend.sqlbuilder" download-size="0" install-size="0" version="0.0.0" unpack="false"/>
+  <plugin id="org.talend.designer.core.swt" download-size="0" install-size="0" version="0.0.0" fragment="true" unpack="false"/>
 </feature>

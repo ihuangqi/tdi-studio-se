@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2022 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2023 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -10,24 +10,43 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.designer.core.ui.editor.properties.controllers;
+package org.talend.designer.core.ui.editor.properties.controllers.ui;
 
 import java.lang.reflect.Method;
 
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 import org.talend.commons.exception.ExceptionHandler;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public class StudioControllerContext extends AbsControllerContext {
+public class StudioWidgetContext extends AbsWidgetContext {
 
     private Control control;
 
-    public StudioControllerContext(Control control) {
-        super();
+    public StudioWidgetContext(Control control) {
         this.control = control;
+    }
+
+    @Override
+    public String getText() {
+        if (this.control instanceof Button) {
+            return ((Button) this.control).getText();
+        } else if (this.control instanceof Combo) {
+            return ((Combo) this.control).getText();
+        } else {
+            Method getText;
+            try {
+                getText = this.control.getClass().getDeclaredMethod("getText");
+                getText.setAccessible(true);
+                return (String) getText.invoke(this.control);
+            } catch (Exception e) {
+                ExceptionHandler.process(e);
+            }
+        }
+        return null;
     }
 
     @Override
@@ -38,23 +57,6 @@ public class StudioControllerContext extends AbsControllerContext {
     @Override
     public void setData(String param, Object value) {
         this.control.setData(param, value);
-    }
-
-    @Override
-    public String getText() {
-        Method getText;
-        try {
-            getText = this.control.getClass().getDeclaredMethod("getText");
-            getText.setAccessible(true);
-            return (String) getText.invoke(this.control);
-        } catch (Exception e) {
-            ExceptionHandler.process(e);
-        }
-        return null;
-    }
-
-    public Shell getShell() {
-        return this.control.getShell();
     }
 
 }

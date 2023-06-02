@@ -12,13 +12,9 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.properties.controllers;
 
-
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
 public abstract class AbsControllerContext implements IControllerContext {
-
-    public AbsControllerContext() {
-    }
 
 }

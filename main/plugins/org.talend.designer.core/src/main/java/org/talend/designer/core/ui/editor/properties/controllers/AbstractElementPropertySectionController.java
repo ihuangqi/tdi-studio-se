@@ -171,8 +171,7 @@ import org.talend.repository.model.IProxyRepositoryFactory;
  *
  */
 
-public abstract class AbstractElementPropertySectionController
-        implements PropertyChangeListener, IStigmaElementPropertyController {
+public abstract class AbstractElementPropertySectionController implements PropertyChangeListener, ISWTBusinessControllerUI {
 
     protected static final String SQLEDITOR = "SQLEDITOR"; //$NON-NLS-1$
 
@@ -201,7 +200,7 @@ public abstract class AbstractElementPropertySectionController
 
     public static final String NAME = "NAME"; //$NON-NLS-1$
 
-    protected static final String COLUMN = "COLUMN"; //$NON-NLS-1$
+    public static final String COLUMN = "COLUMN"; //$NON-NLS-1$
 
     // PTODO qzhang use PARAMETER_NAME it for bug 853.
     public static final String PARAMETER_NAME = TypedTextCommandExecutor.PARAMETER_NAME;
@@ -259,14 +258,20 @@ public abstract class AbstractElementPropertySectionController
      * @param lastControl. The latest control created beside current being created. @return. The control created by this
      * method will be the paramenter of next be called createControl method for position calculate.
      */
+    @Override
     public abstract Control createControl(final Composite subComposite, final IElementParameter param, final int numInRow,
             final int nbInRow, final int top, final Control lastControl);
 
+    @Override
     public abstract int estimateRowSize(final Composite subComposite, final IElementParameter param);
 
     protected int getColorStyledTextRowSize(int nbLines) {
 
         return 0;
+    }
+
+    public BidiMap getHashCurControls() {
+        return hashCurControls;
     }
 
     protected boolean isInWizard() {
@@ -284,6 +289,7 @@ public abstract class AbstractElementPropertySectionController
      *
      * @return
      */
+    @Override
     public boolean hasDynamicRowSize() {
         return false;
     }
@@ -293,6 +299,7 @@ public abstract class AbstractElementPropertySectionController
      *
      * @param height
      */
+    @Override
     public void setAdditionalHeightSize(int height) {
         this.additionalHeightSize = height;
     }
@@ -507,6 +514,7 @@ public abstract class AbstractElementPropertySectionController
      *
      * Configuration for necessay parameters from class DynamicTabbedPropertiesSection.
      */
+    @Override
     public void init(IDynamicProperty dp) {
         this.dynamicProperty = dp;
         hashCurControls = dp.getHashCurControls();
@@ -531,6 +539,10 @@ public abstract class AbstractElementPropertySectionController
      */
     public IDynamicProperty getDynamicProperty() {
         return this.dynamicProperty;
+    }
+
+    public IMultiPageTalendEditor getEditorPart() {
+        return this.part;
     }
 
     static WidgetFactory widgetFactory = null;
@@ -1200,16 +1212,6 @@ public abstract class AbstractElementPropertySectionController
     }
 
     @Override
-    public boolean handleWidgetEvent(IControllerContext context) {
-        return false;
-    }
-
-    @Override
-    public String getControllerName() {
-        return null;
-    }
-
-    @Override
     public void executeCommand(Command c) {
         if (c == null) {
             return;
@@ -1346,6 +1348,7 @@ public abstract class AbstractElementPropertySectionController
         }
     }
 
+    @Override
     public abstract void refresh(IElementParameter param, boolean check);
 
     /**
@@ -2624,6 +2627,7 @@ public abstract class AbstractElementPropertySectionController
         return null;
     }
 
+    @Override
     public void dispose() {
         if (widgetFactory != null) {
             widgetFactory.dispose();
@@ -2791,10 +2795,15 @@ public abstract class AbstractElementPropertySectionController
 
     }
 
+    public Composite getComposite() {
+        return composite;
+    }
+
     public List<Problem> getCodeProblems() {
         return this.codeProblems;
     }
 
+    @Override
     public void updateCodeProblems(List<Problem> codeProblems) {
         if (codeProblems != null) {
             this.codeProblems = new ArrayList<Problem>(codeProblems);
@@ -2834,7 +2843,7 @@ public abstract class AbstractElementPropertySectionController
         if (isInWizard()) {
             ConnectionItem connItem = null;
             if (dynamicProperty instanceof MissingSettingsMultiThreadDynamicComposite) {
-                connItem = ((MissingSettingsMultiThreadDynamicComposite) dynamicProperty).getConnectionItem();
+                connItem = dynamicProperty.getConnectionItem();
             }
             if (connItem == null) {
                 return;
@@ -2911,9 +2920,12 @@ public abstract class AbstractElementPropertySectionController
         return element.getElementParameters();
     }
 
-    @Override
-    public Command createCommand(IControllerContext context) {
-        return null;
+    public IElement getElement() {
+        return this.elem;
+    }
+
+    public IElementParameter getCurParameter() {
+        return curParameter;
     }
 
 }

@@ -23,9 +23,9 @@ import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.PluginChecker;
 import org.talend.core.model.process.EParameterFieldType;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
-import org.talend.designer.core.ui.editor.properties.controllers.AbstractElementPropertySectionController;
 import org.talend.designer.core.ui.editor.properties.controllers.AbstractRepositoryController;
 import org.talend.designer.core.ui.editor.properties.controllers.ControllerRepositoryValueHander;
+import org.talend.designer.core.ui.editor.properties.controllers.ISWTBusinessControllerUI;
 import org.talend.designer.core.ui.editor.properties.controllers.generator.IControllerGenerator;
 
 /**
@@ -44,41 +44,54 @@ public class DynamicPropertyGenerator {
 
     IConfigurationElement[] extensionElements = registry.getConfigurationElementsFor("org.talend.designer.core.generators"); //$NON-NLS-1$
 
-    private Map<EParameterFieldType, AbstractElementPropertySectionController> dtpControls = new HashMap<EParameterFieldType, AbstractElementPropertySectionController>();
+    private Map<EParameterFieldType, ISWTBusinessControllerUI> dtpControls = new HashMap<>();
+
+    private Map<EParameterFieldType, IControllerGenerator> generatorMap = new HashMap<>();
+
+    public void initGeneratorMap() {
+        for (IConfigurationElement element : extensionElements) {
+            try {
+                String controllerName = element.getAttribute("mapping"); //$NON-NLS-1$
+                EParameterFieldType key = EParameterFieldType.getFieldTypeByName(controllerName);
+                if (EParameterFieldType.DYNAMIC_GUESS_SCHEMA == key && !PluginChecker.isTIS()) {
+                    continue;
+                }
+                if (!dtpControls.containsKey(key)) {
+                    if (!controllerName.equals(key.toString())) {
+                        throw new RuntimeException("Mapping attribute " + controllerName //$NON-NLS-1$
+                                + " not included in eumn EParameterFieldType"); //$NON-NLS-1$
+                    }
+                    IControllerGenerator generator = (IControllerGenerator) element.createExecutableExtension("class"); //$NON-NLS-1$
+                    generatorMap.put(key, generator);
+                }
+            } catch (CoreException e) {
+                ExceptionHandler.process(e);
+            }
+        }
+    }
+
+    public Map<EParameterFieldType, IControllerGenerator> getGeneratorMap() {
+        if (generatorMap.isEmpty()) {
+            initGeneratorMap();
+        }
+        return generatorMap;
+    }
 
     /**
      * DOC yzhang Comment method "initController".
      */
     public void initController(IDynamicProperty dp) {
         if (!initialized) {
-
-            for (IConfigurationElement element : extensionElements) {
-                try {
-                    String controllerName = element.getAttribute("mapping"); //$NON-NLS-1$
-                    EParameterFieldType key = EParameterFieldType.getFieldTypeByName(controllerName);
-                    if (EParameterFieldType.DYNAMIC_GUESS_SCHEMA == key && !PluginChecker.isTIS()) {
-                        continue;
-                    }
-                    if (!dtpControls.containsKey(key)) {
-                        if (!controllerName.equals(key.toString())) {
-                            throw new RuntimeException("Mapping attribute " + controllerName //$NON-NLS-1$
-                                    + " not included in eumn EParameterFieldType"); //$NON-NLS-1$
-                        }
-                        IControllerGenerator generator = (IControllerGenerator) element.createExecutableExtension("class"); //$NON-NLS-1$
-                        generator.setDynamicProperty(dp);
-                        AbstractElementPropertySectionController controller = generator.generate();
-                        dtpControls.put(key, controller);
-                        if (controller instanceof AbstractRepositoryController) {
-                            ControllerRepositoryValueHander repositoryValueHander = ((AbstractRepositoryController) controller)
-                                    .getRepositoryValueHander();
-                            ControllerRepositoryValueHander.getRepositoryValueHandlerMap().put(key, repositoryValueHander);
-                        }
-                    }
-                } catch (CoreException e) {
-                    ExceptionHandler.process(e);
+            getGeneratorMap().forEach((key, gen) -> {
+                gen.setDynamicProperty(dp);
+                ISWTBusinessControllerUI controller = gen.generate();
+                dtpControls.put(key, controller);
+                if (controller instanceof AbstractRepositoryController) {
+                    ControllerRepositoryValueHander repositoryValueHander = ((AbstractRepositoryController) controller)
+                            .getRepositoryValueHander();
+                    ControllerRepositoryValueHander.getRepositoryValueHandlerMap().put(key, repositoryValueHander);
                 }
-
-            }
+            });
             initialized = true;
         }
     }
@@ -94,9 +107,9 @@ public class DynamicPropertyGenerator {
      * @param dtp
      * @return
      */
-    public AbstractElementPropertySectionController getController(EParameterFieldType controllerName, IDynamicProperty dp) {
+    public ISWTBusinessControllerUI getController(EParameterFieldType controllerName, IDynamicProperty dp) {
 
-        AbstractElementPropertySectionController controller = null;
+        ISWTBusinessControllerUI controller = null;
         if (dtpControls.containsKey(controllerName)) {
             controller = dtpControls.get(controllerName);
             if (controller != null) {
@@ -111,12 +124,13 @@ public class DynamicPropertyGenerator {
 
     public void dispose() {
         if (dtpControls != null) {
-            for (AbstractElementPropertySectionController controller : dtpControls.values()) {
+            for (ISWTBusinessControllerUI controller : dtpControls.values()) {
                 controller.dispose();
             }
             dtpControls.clear();
             // dtpControls = null;
         }
+        generatorMap.clear();
     }
 
 }

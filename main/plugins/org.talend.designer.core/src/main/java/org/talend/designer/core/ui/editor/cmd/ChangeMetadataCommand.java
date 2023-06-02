@@ -18,10 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.talend.commons.ui.gmf.util.DisplayUtils;
-import org.talend.commons.ui.runtime.TalendUI.AbsStudioRunnable;
-import org.talend.commons.ui.runtime.custom.MessageDialogBusinessHandler;
+import org.talend.commons.ui.runtime.custom.UIHandlerFactories;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.components.EComponentType;
 import org.talend.core.model.components.IODataComponent;
@@ -264,21 +261,9 @@ public class ChangeMetadataCommand extends AbstractCommand {
     }
 
     public static boolean askPropagate() {
-        MessageDialogBusinessHandler handler = new MessageDialogBusinessHandler(MessageDialog.QUESTION);
-        handler.setTitle(Messages.getString("ChangeMetadataCommand.messageDialog.propagate")); //$NON-NLS-1$
-        handler.setMessage(Messages.getString("ChangeMetadataCommand.messageDialog.questionMessage")); //$NON-NLS-1$
-        MessageDialogBusinessHandler result = handler.run(new AbsStudioRunnable<MessageDialogBusinessHandler>() {
-
-            @Override
-            public MessageDialogBusinessHandler doRun() {
-                boolean needPropagate = MessageDialog.openQuestion(DisplayUtils.getDefaultShell(false), handler.getTitle(),
-                        handler.getMessage());
-                handler.setOpenResult(needPropagate);
-                return handler;
-            }
-
-        });
-        Boolean needPropagate = Boolean.valueOf(result.getOpenResult().toString());
+        IChangeMetadataCommandUIHandler uiHandler = UIHandlerFactories.inst().getUIHandler(IChangeMetadataCommandUIHandler.class);
+        Boolean needPropagate = uiHandler.openQuestion(Messages.getString("ChangeMetadataCommand.messageDialog.propagate"),
+                Messages.getString("ChangeMetadataCommand.messageDialog.questionMessage"));
         return needPropagate;
     }
 
@@ -1006,6 +991,10 @@ public class ChangeMetadataCommand extends AbstractCommand {
      */
     public void setCurrentConnector(String currentConnector) {
         this.currentConnector = currentConnector;
+    }
+
+    public static interface IChangeMetadataCommandUIHandler extends ICommonCommandUIHandler {
+
     }
 
 }

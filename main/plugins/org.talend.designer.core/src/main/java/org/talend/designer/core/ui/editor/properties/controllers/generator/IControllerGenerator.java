@@ -12,8 +12,11 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.properties.controllers.generator;
 
+import org.talend.core.model.metadata.IDynamicBaseProperty;
+import org.talend.core.model.process.IElementParameter;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
-import org.talend.designer.core.ui.editor.properties.controllers.AbstractElementPropertySectionController;
+import org.talend.designer.core.ui.editor.properties.controllers.ISWTBusinessControllerUI;
+import org.talend.designer.core.ui.editor.properties.controllers.executors.IControllerExecutor;
 
 /**
  * DOC yzhang class global comment. Detailled comment <br/>
@@ -23,8 +26,12 @@ import org.talend.designer.core.ui.editor.properties.controllers.AbstractElement
  */
 public interface IControllerGenerator {
 
-    public AbstractElementPropertySectionController generate();
+    public ISWTBusinessControllerUI generate();
 
     public void setDynamicProperty(IDynamicProperty dp);
+
+    default IControllerExecutor createExecutor(IDynamicBaseProperty dynamicBaseProp, IElementParameter curParameter) {
+        throw new UnsupportedOperationException("Implement it!! => " + this.getClass().getCanonicalName());
+    }
 
 }

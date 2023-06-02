@@ -12,9 +12,11 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.properties.controllers.generator;
 
+import org.talend.core.model.metadata.IDynamicBaseProperty;
+import org.talend.core.model.process.IElementParameter;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
-import org.talend.designer.core.ui.editor.properties.controllers.AbstractElementPropertySectionController;
-import org.talend.designer.core.ui.editor.properties.controllers.SchemaTypeController;
+import org.talend.designer.core.ui.editor.properties.controllers.ISWTBusinessControllerUI;
+import org.talend.designer.core.ui.editor.properties.controllers.executors.ISchemaControllerExecutor;
 
 /**
  * DOC nrousseau class global comment. Detailled comment <br/>
@@ -26,21 +28,20 @@ public class SchemaTypeGenerator implements IControllerGenerator {
 
     private IDynamicProperty dp;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.talend.designer.core.ui.editor.properties.controllers.generator.IControllerGenerator#generate()
-     */
-    public AbstractElementPropertySectionController generate() {
-        return new SchemaTypeController(dp);
+    @Override
+    public ISWTBusinessControllerUI generate() {
+        return (ISWTBusinessControllerUI) ControllerFactories.inst().createUI(SchemaTypeGenerator.class.getCanonicalName(), dp);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.talend.designer.core.ui.editor.properties.controllers.generator.IControllerGenerator#setDynamicProperty(org.talend.designer.core.ui.editor.properties.controllers.generator.IDynamicProperty)
-     */
+    @Override
     public void setDynamicProperty(IDynamicProperty dp) {
         this.dp = dp;
     }
+
+    @Override
+    public ISchemaControllerExecutor createExecutor(IDynamicBaseProperty dynamicBaseProp, IElementParameter curParameter) {
+        return (ISchemaControllerExecutor) ControllerFactories.inst().createExecutor(SchemaTypeGenerator.class.getCanonicalName(),
+                dynamicBaseProp, curParameter);
+    }
+
 }
