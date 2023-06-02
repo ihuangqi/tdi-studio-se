@@ -331,7 +331,7 @@ public class ChangeValuesFromRepository extends ChangeMetadataCommand {
                 contextMap.put("NODE", (INode) elem);
             }
 
-            for (IElementParameter param : elementParameters) {
+            for (IElementParameter param : elementParameters) { // elementParameters: target component's element
 
                 String repositoryValue = param.getRepositoryValue();
                 if (param.getFieldType() == EParameterFieldType.PROPERTY_TYPE) {
@@ -339,6 +339,7 @@ public class ChangeValuesFromRepository extends ChangeMetadataCommand {
                 }
                 boolean isGenericRepositoryValue = RepositoryToComponentProperty.isGenericRepositoryValue(connection,
                         componentProperties, param.getName());
+                
                 String newRepValue = param.getName();
                 String newParamName;
                 if (elem instanceof ImplicitContextLoadElement) {
@@ -446,7 +447,13 @@ public class ChangeValuesFromRepository extends ChangeMetadataCommand {
                     }
 
                     if (objectValue != null) {
-                        oldValues.put(param.getName(), param.getValue());
+                        oldValues.put(param.getName(), param.getValue()); 
+                        
+                        if (!objectValue.equals("\"\"") && repositoryValue.equals("PASSWORD")
+                                && ((INode) elem).getComponent().getName().equals("cSQLConnection")) {
+                            elem.setPropertyValue("AUTH_REQUIRED", true);
+                        }
+                        
                         if (param.getFieldType().equals(EParameterFieldType.CLOSED_LIST)
                                 && "TYPE".equals(param.getRepositoryValue())) { //$NON-NLS-1$
                             String dbVersion = "";
@@ -701,7 +708,7 @@ public class ChangeValuesFromRepository extends ChangeMetadataCommand {
                         }
                     }
                 }
-            }
+            }//  for (IElementParameter param : elementParameters): end
         }
         toUpdate = false;
         // change AS400 value
