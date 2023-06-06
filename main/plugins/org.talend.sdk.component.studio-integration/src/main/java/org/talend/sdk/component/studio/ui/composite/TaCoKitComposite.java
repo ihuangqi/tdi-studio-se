@@ -66,6 +66,8 @@ public class TaCoKitComposite extends MissingSettingsMultiThreadDynamicComposite
 
     private final IProblemManager problemManager;
 
+    private Composite commonComposite;
+
     private PropertyChangeListener redrawListener = evt -> {
         if (!"show".equals(evt.getPropertyName())) {
             return;
@@ -199,7 +201,7 @@ public class TaCoKitComposite extends MissingSettingsMultiThreadDynamicComposite
         generator.initController(this);
         final Composite previousComposite = addCommonWidgets();
         final Optional<Layout> layout = getFormLayout();
-        layout.ifPresent(l -> fillComposite(composite, l, previousComposite));
+        layout.ifPresent(l -> fillComposite(commonComposite, l, previousComposite));
         resizeScrolledComposite();
     }
 
@@ -211,13 +213,19 @@ public class TaCoKitComposite extends MissingSettingsMultiThreadDynamicComposite
      * @return last Composite added
      */
     protected Composite addCommonWidgets() {
-        final Composite unifiedComposite = addUnified(composite);
-        final Composite propertyComposite = addPropertyType(composite, unifiedComposite);
-        final Composite existConnectionComposite = addUseExistConnection(composite, propertyComposite);
-        final Composite schemaComposite = addSchemas(composite, existConnectionComposite);
+        Composite previous = getMessagesComp();
+        commonComposite = new Composite(composite, SWT.NONE);
+        commonComposite.setBackground(composite.getBackground());
+        commonComposite.setLayout(new FormLayout());
+        commonComposite.setLayoutData(levelLayoutData(previous));
+
+        final Composite unifiedComposite = addUnified(commonComposite);
+        final Composite propertyComposite = addPropertyType(commonComposite, unifiedComposite);
+        final Composite existConnectionComposite = addUseExistConnection(commonComposite, propertyComposite);
+        final Composite schemaComposite = addSchemas(commonComposite, existConnectionComposite);
         final Composite statCatcherComposite = addStatCatcher(schemaComposite);
-        final Composite paralelizeComposite = addParalelize(composite, statCatcherComposite);
-        final Composite lastComposite = addParalelizeNum(composite, paralelizeComposite);
+        final Composite paralelizeComposite = addParalelize(commonComposite, statCatcherComposite);
+        final Composite lastComposite = addParalelizeNum(commonComposite, paralelizeComposite);
         return lastComposite;
     }
 
@@ -228,7 +236,7 @@ public class TaCoKitComposite extends MissingSettingsMultiThreadDynamicComposite
             final Composite unifiedComposite = new Composite(parent, SWT.NONE);
             unifiedComposite.setBackground(parent.getBackground());
             unifiedComposite.setLayout(new FormLayout());
-            unifiedComposite.setLayoutData(levelLayoutData(previous));
+            unifiedComposite.setLayoutData(levelLayoutData(previous, 3));
             addWidgetIfActive(unifiedComposite, parameter);
             return unifiedComposite;
         }
@@ -239,7 +247,7 @@ public class TaCoKitComposite extends MissingSettingsMultiThreadDynamicComposite
         final Composite propertyComposite = new Composite(parent, SWT.NONE);
         propertyComposite.setBackground(parent.getBackground());
         propertyComposite.setLayout(new FormLayout());
-        propertyComposite.setLayoutData(levelLayoutData(previous));
+        propertyComposite.setLayoutData(levelLayoutData(previous, 3));
         final IElementParameter propertyType = elem.getElementParameter("PROPERTY");
         addWidgetIfActive(propertyComposite, propertyType);
         return propertyComposite;
@@ -296,7 +304,7 @@ public class TaCoKitComposite extends MissingSettingsMultiThreadDynamicComposite
             final Composite schemaComposite = new Composite(parent, SWT.NONE);
             schemaComposite.setBackground(parent.getBackground());
             schemaComposite.setLayout(new FormLayout());
-            schemaComposite.setLayoutData(levelLayoutData(previousComposite));
+            schemaComposite.setLayoutData(levelLayoutData(previousComposite, 3));
             previousComposite = schemaComposite;
             addSchemaWidget(schemaComposite, schema);
         }
@@ -386,12 +394,16 @@ public class TaCoKitComposite extends MissingSettingsMultiThreadDynamicComposite
                     final Composite columnComposite = new Composite(levelComposite, SWT.NONE);
                     columnComposite.setLayout(new FormLayout());
                     columnComposite.setBackground(levelComposite.getBackground());
-                    final FormData columnLayoutData = new FormData();
-                    columnLayoutData.top = new FormAttachment(0, 0);
-                    columnLayoutData.left = new FormAttachment((100 / columnSize) * i, 0);
-                    columnLayoutData.right = new FormAttachment((100 / columnSize) * (i + 1), 0);
-                    columnLayoutData.bottom = new FormAttachment(100, 0);
-                    columnComposite.setLayoutData(columnLayoutData);
+                    if (columnSize == 1) {
+                        columnComposite.setLayoutData(columnLevelLayoutData(previousLevel, column));
+                    } else {
+                        final FormData columnLayoutData = new FormData();
+                        columnLayoutData.top = new FormAttachment(0, 2);
+                        columnLayoutData.left = new FormAttachment((100 / columnSize) * i, 0);
+                        columnLayoutData.right = new FormAttachment((100 / columnSize) * (i + 1), 0);
+                        columnLayoutData.bottom = new FormAttachment(100, 0);
+                        columnComposite.setLayoutData(columnLayoutData);
+                    }
                     fillComposite(columnComposite, column, null);
                 }
             }
@@ -447,14 +459,38 @@ public class TaCoKitComposite extends MissingSettingsMultiThreadDynamicComposite
     }
 
     private FormData levelLayoutData(final Composite previousLevel) {
+        return levelLayoutData(previousLevel, 0);
+    }
+
+    private FormData levelLayoutData(final Composite previousLevel, int offset) {
         final FormData layoutData = new FormData();
         if (previousLevel == null) {
-            layoutData.top = new FormAttachment(0, 0);
+            layoutData.top = new FormAttachment(0, offset);
         } else {
-            layoutData.top = new FormAttachment(previousLevel, 0);
+            layoutData.top = new FormAttachment(previousLevel, offset);
         }
         layoutData.left = new FormAttachment(0, 0);
         layoutData.right = new FormAttachment(100, 0);
+        return layoutData;
+    }
+
+    private FormData columnLevelLayoutData(final Composite previousLevel, final Layout column) {
+        final FormData layoutData = new FormData();
+        layoutData.left = new FormAttachment(0, 0);
+        layoutData.right = new FormAttachment(100, 0);
+        layoutData.bottom = new FormAttachment(100, 0);
+        //
+        int offset = 0;
+        final String path = column.getPath();
+        final IElementParameter parameter = elem.getElementParameter(path);
+        if (doShow(parameter)) {
+            offset = 2;
+        }
+        if (previousLevel == null) {
+            layoutData.top = new FormAttachment(0, offset);
+        } else {
+            layoutData.top = new FormAttachment(previousLevel, offset);
+        }
         return layoutData;
     }
 
