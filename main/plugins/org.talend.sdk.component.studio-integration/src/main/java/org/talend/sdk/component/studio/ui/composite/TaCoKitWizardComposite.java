@@ -120,6 +120,7 @@ public class TaCoKitWizardComposite extends TaCoKitComposite {
      */
     @Override
     protected Composite addCommonWidgets() {
+        commonComposite = composite;
         return addSchemas(composite, null);
     }
 
