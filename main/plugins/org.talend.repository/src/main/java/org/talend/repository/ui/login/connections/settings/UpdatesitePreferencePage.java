@@ -29,6 +29,8 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -44,15 +46,20 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.ExceptionHandler;
+import org.talend.commons.ui.runtime.ColorConstants;
 import org.talend.commons.ui.runtime.exception.ExceptionMessageDialog;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.general.ConnectionBean;
+import org.talend.core.model.utils.TalendWorkbenchUtil;
 import org.talend.core.service.IStudioLiteP2Service;
 import org.talend.core.service.IStudioLiteP2Service.UpdateSiteConfig;
+import org.talend.core.services.ICoreTisService;
 import org.talend.core.ui.branding.IBrandingService;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.i18n.Messages;
@@ -111,6 +118,8 @@ public class UpdatesitePreferencePage extends PreferencePage {
 
     private Button overwriteRemoteUpdateSettingsBtn;
 
+    private Composite overwriteWarnPanel;
+
     private Composite panel;
 
     private Composite remotePanel;
@@ -162,6 +171,7 @@ public class UpdatesitePreferencePage extends PreferencePage {
         isCloudConnection = LoginHelper.isCloudConnection(curConnection);
         isWorkbenchRunning = PlatformUI.isWorkbenchRunning();
         if (isWorkbenchRunning && isCloudConnection) {
+            syncUpdateSettingConfig();
             remoteGroup = new Group(remotePanel, SWT.NONE);
             String projectLabel = "";
             try {
@@ -258,6 +268,41 @@ public class UpdatesitePreferencePage extends PreferencePage {
             
             remoteTestAuth = new Button(authButtonPanel, SWT.NONE | SWT.CENTER);
             remoteTestAuth.setText(Messages.getString("UpdatesitePreferencePage.basicAuth.test"));
+
+            Composite adminInfoPanel = new Composite(remotePanel, SWT.NONE);
+            fd = new FormData();
+            fd.top = new FormAttachment(remoteGroup, 0, SWT.BOTTOM);
+            fd.left = new FormAttachment(0);
+            adminInfoPanel.setLayoutData(fd);
+            GridLayout infoPanelLayout = new GridLayout(3, false);
+            adminInfoPanel.setLayout(infoPanelLayout);
+            adminInfoPanel.setBackground(ColorConstants.INFO_COLOR);
+            Label infoImgLabel = new Label(adminInfoPanel, SWT.WRAP);
+            Image infoImage = ImageProvider.getImage(EImage.INFORMATION_ICON);
+            ImageData imageData = infoImage.getImageData();
+            imageData.scaledTo(16, 16);
+            infoImage.setBackground(ColorConstants.INFO_COLOR);
+            infoImgLabel.setImage(infoImage);
+            infoImgLabel.setBackground(ColorConstants.INFO_COLOR);
+            infoImgLabel.setLayoutData(new GridData(SWT.TOP));
+            Link adminInfoLabel = new Link(adminInfoPanel, SWT.WRAP);
+            adminInfoLabel.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+            adminInfoLabel.setBackground(ColorConstants.INFO_COLOR);
+            adminInfoLabel.setText(Messages.getString("UpdatesitePreferencePage.infoPanel") + " <a>"
+                    + Messages.getString("UpdatesitePreferencePage.infoPanel.link") + "</a>");
+            adminInfoLabel.addSelectionListener(new SelectionAdapter() {
+
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    Program.launch(Messages.getString("UpdatesitePreferencePage.infoPanel.linkUrl"));
+                }
+
+            });
+            Label moreImgLabel = new Label(adminInfoPanel, SWT.WRAP);
+            Image moreImage = ImageProvider.getImage(EImage.MOREINFO_ICON);
+            moreImage.setBackground(ColorConstants.INFO_COLOR);
+            moreImgLabel.setImage(moreImage);
+            moreImgLabel.setBackground(ColorConstants.INFO_COLOR);
         }
 
         boolean isCloudLicense = IBrandingService.get().isCloudLicense();
@@ -297,6 +342,21 @@ public class UpdatesitePreferencePage extends PreferencePage {
                 fd.top = new FormAttachment(overwriteRemoteUpdateSettingsBtn, 0, SWT.CENTER);
                 fd.left = new FormAttachment(overwriteRemoteUpdateSettingsBtn, 2, SWT.RIGHT);
                 help.setLayoutData(fd);
+            } else {
+                overwriteWarnPanel = new Composite(overwritePanel, SWT.NONE);
+                FormData warnFd = new FormData();
+                warnFd.top = new FormAttachment(overwriteRemoteUpdateSettingsBtn, 0, SWT.BOTTOM);
+                warnFd.left = new FormAttachment(0);
+                overwriteWarnPanel.setLayoutData(warnFd);
+                overwriteWarnPanel.setLayout(new GridLayout(2, false));
+                overwriteWarnPanel.setBackground(ColorConstants.WARN_COLOR);
+                Label warnImgLabel = new Label(overwriteWarnPanel, SWT.WRAP);
+                warnImgLabel.setImage(ImageProvider.getImage(EImage.WARNING_SMALL));
+                warnImgLabel.setBackground(ColorConstants.WARN_COLOR);
+                warnImgLabel.setLayoutData(new GridData(SWT.TOP));
+                Label overwriteInfoLabel = new Label(overwriteWarnPanel, SWT.WRAP);
+                overwriteInfoLabel.setBackground(ColorConstants.WARN_COLOR);
+                overwriteInfoLabel.setText(Messages.getString("UpdatesitePreferencePage.overwriteWarnPanel"));
             }
         } else {
             fd.height = 0;
@@ -564,7 +624,7 @@ public class UpdatesitePreferencePage extends PreferencePage {
     
     private void init() {
         try {
-            ((GridData) warningPanel.getLayoutData()).exclude = true;
+            // don't exclude to occupy place avoid hidden
             warningPanel.setVisible(false);
             warningPanel.getParent().getParent().layout();
             
@@ -600,6 +660,9 @@ public class UpdatesitePreferencePage extends PreferencePage {
             boolean overwriteTmcUpdateSettings = config.isOverwriteTmcUpdateSettings(monitor);
             if (overwriteRemoteUpdateSettingsBtn != null) {
                 overwriteRemoteUpdateSettingsBtn.setSelection(overwriteTmcUpdateSettings);
+                if (overwriteWarnPanel != null) {
+                    overwriteWarnPanel.setVisible(overwriteTmcUpdateSettings);
+                }
                 updateLocalPanelVisible(overwriteTmcUpdateSettings);
             }
 
@@ -628,6 +691,15 @@ public class UpdatesitePreferencePage extends PreferencePage {
         }
     }
 
+    private void syncUpdateSettingConfig() {
+        try {
+            ICoreTisService.get().syncProjectUpdateSettingsFromServer(new NullProgressMonitor(),
+                    ProjectManager.getInstance().getCurrentProject());
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+        }
+    }
+
     private void updateLocalPanelVisible(boolean visible) {
         if (!PlatformUI.isWorkbenchRunning() || !enableTmcUpdateSettings) {
             localPanel.setVisible(true);
@@ -642,7 +714,7 @@ public class UpdatesitePreferencePage extends PreferencePage {
             @Override
             public void modifyText(ModifyEvent e) {
                 updateLocalBasicAuthUI();
-                setValid(validateBasicAuth());
+                setValid(true);
                 refresh();
             }
         });
@@ -651,7 +723,7 @@ public class UpdatesitePreferencePage extends PreferencePage {
             @Override
             public void modifyText(ModifyEvent e) {
                 updateLocalBasicAuthUI();
-                setValid(validateBasicAuth());
+                setValid(true);
                 refresh();
             }
         });
@@ -912,6 +984,9 @@ public class UpdatesitePreferencePage extends PreferencePage {
     }
 
     private void onOverwriteRemoteUpdateSettingsBtn(SelectionEvent e) {
+        if (overwriteWarnPanel != null) {
+            overwriteWarnPanel.setVisible(overwriteRemoteUpdateSettingsBtn.getSelection());
+        }
         updateLocalPanelVisible(overwriteRemoteUpdateSettingsBtn.getSelection());
         updateLocalBasicAuthUI();
         updateRemoteBasicAuthUI();
@@ -1101,6 +1176,11 @@ public class UpdatesitePreferencePage extends PreferencePage {
     @Override
     public boolean performOk() {
         if (this.isControlCreated()) {
+            if (!validateBasicAuth()) {
+                setValid(false);
+                return false;
+            }
+
             try {
                 if (m2Delete.getSelection() != p2Service.removeM2()) {
                     p2Service.saveRemoveM2(m2Delete.getSelection());
@@ -1132,6 +1212,11 @@ public class UpdatesitePreferencePage extends PreferencePage {
                 if (overwriteRemoteUpdateSettingsBtn != null) {
                     config.overwriteTmcUpdateSettings(monitor, overwriteRemoteUpdateSettingsBtn.getSelection());
                 }
+                // after config set
+                if (isWorkbenchRunning && isCloudConnection) {
+                    p2Service.handleTmcUpdateObserve(!overwriteRemoteUpdateSettingsBtn.getSelection());
+                }
+                resetWorkbenchTitle();
                 // save basic authentication credentials
                 saveBasicAuth(config);
             } catch (Exception e) {
@@ -1142,6 +1227,22 @@ public class UpdatesitePreferencePage extends PreferencePage {
         return super.performOk();
     }
     
+    private void resetWorkbenchTitle() {
+        if (!isWorkbenchRunning || !isCloudConnection) {
+            return;
+        }
+
+        try {
+            IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+            Shell workbenchShell = window.getShell();
+            if (workbenchShell != null && !workbenchShell.isDisposed()) {
+                workbenchShell.setText(TalendWorkbenchUtil.getWorkbenchWindowTitle());
+            }
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+        }
+    }
+
     private void resetBasicAuth() {
         if (!enableTmcUpdateSettings || (enableTmcUpdateSettings && overwriteRemoteUpdateSettingsBtn.getSelection()) || localPanel.isVisible()) {
             // local
@@ -1441,11 +1542,10 @@ public class UpdatesitePreferencePage extends PreferencePage {
     }
     
     private void showWarning(boolean show) {
+        // don't exclude to occupy place avoid hidden
         if (show) {
-            ((GridData) warningPanel.getLayoutData()).exclude = false;
             warningPanel.setVisible(true);
         } else {
-            ((GridData) warningPanel.getLayoutData()).exclude = true;
             warningPanel.setVisible(false);
         }
         warningPanel.getParent().getParent().layout();
