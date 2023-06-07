@@ -449,7 +449,7 @@ public class ChangeValuesFromRepository extends ChangeMetadataCommand {
                     if (objectValue != null) {
                         oldValues.put(param.getName(), param.getValue()); 
                         
-                        if (!objectValue.equals("\"\"") && repositoryValue.equals("PASSWORD")
+                        if (!objectValue.equals("\"\"") && repositoryValue.equals("PASSWORD") && elem instanceof Node
                                 && ((INode) elem).getComponent().getName().equals("cSQLConnection")) {
                             elem.setPropertyValue("AUTH_REQUIRED", true);
                         }
