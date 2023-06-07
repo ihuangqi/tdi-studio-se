@@ -66,7 +66,7 @@ public class TaCoKitComposite extends MissingSettingsMultiThreadDynamicComposite
 
     private final IProblemManager problemManager;
 
-    private Composite commonComposite;
+    protected Composite commonComposite;
 
     private PropertyChangeListener redrawListener = evt -> {
         if (!"show".equals(evt.getPropertyName())) {
