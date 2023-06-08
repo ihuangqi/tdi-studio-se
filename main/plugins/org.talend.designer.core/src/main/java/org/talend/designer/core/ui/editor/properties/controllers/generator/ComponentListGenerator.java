@@ -12,9 +12,12 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.properties.controllers.generator;
 
+import org.talend.core.model.metadata.IDynamicBaseProperty;
+import org.talend.core.model.process.IElementParameter;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
-import org.talend.designer.core.ui.editor.properties.controllers.AbstractElementPropertySectionController;
-import org.talend.designer.core.ui.editor.properties.controllers.ComponentListController;
+import org.talend.designer.core.ui.editor.properties.controllers.ISWTBusinessControllerUI;
+import org.talend.designer.core.ui.editor.properties.controllers.executors.IComponentListControllerExecutor;
+import org.talend.designer.core.ui.editor.properties.controllers.executors.IControllerExecutor;
 import org.talend.designer.core.ui.editor.properties.controllers.tdq.ControllerUtils;
 import org.talend.designer.core.ui.editor.properties.controllers.tdq.TGKComponentListController;
 
@@ -26,30 +29,26 @@ public class ComponentListGenerator implements IControllerGenerator {
 
     private IDynamicProperty dp;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.talend.designer.core.ui.editor.properties.controllers.generator.IControllerGenerator#generate()
-     */
     @Override
-    public AbstractElementPropertySectionController generate() {
+    public ISWTBusinessControllerUI generate() {
         if (ControllerUtils.isFromTGenKey(dp.getElement())) {
             return new TGKComponentListController(dp);
         } else {
-            return new ComponentListController(dp);
+            return (ISWTBusinessControllerUI) ControllerFactories.inst().createUI(ComponentListGenerator.class.getCanonicalName(),
+                    dp);
         }
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.talend.designer.core.ui.editor.properties.controllers.generator.IControllerGenerator#setDynamicProperty(org
-     * .talend.designer.core.ui.editor.properties.controllers.generator.IDynamicProperty)
-     */
     @Override
     public void setDynamicProperty(IDynamicProperty dp) {
         this.dp = dp;
     }
+
+    @Override
+    public IControllerExecutor createExecutor(IDynamicBaseProperty dynamicBaseProp, IElementParameter curParameter) {
+        return (IComponentListControllerExecutor) ControllerFactories.inst()
+                .createExecutor(ComponentListGenerator.class.getCanonicalName(), dynamicBaseProp, curParameter);
+    }
+
 }

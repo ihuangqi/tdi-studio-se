@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.properties.controllers.ui;
 
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -346,6 +347,17 @@ public abstract class AbsRepositorySWTControllerUI extends AbsSWTControllerUI im
                 text.setText(toDisplay);
             }
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+     */
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        // TODO Auto-generated method stub
+
     }
 
     /**

@@ -66,7 +66,7 @@ public abstract class ControllerExecutor implements IControllerExecutor {
     }
 
     @Override
-    public boolean execute() {
+    public boolean execute(Map<String, Object> params) {
         throw new UnsupportedOperationException(
                 "Implement it in fragments for different Platform!! => " + this.getClass().getCanonicalName());
     }

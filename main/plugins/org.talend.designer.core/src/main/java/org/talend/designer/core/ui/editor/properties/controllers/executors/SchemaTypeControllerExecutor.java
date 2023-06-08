@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.properties.controllers.executors;
 
+import java.util.Map;
+
 import org.eclipse.gef.commands.Command;
 import org.talend.core.model.metadata.IMetadataTable;
 import org.talend.core.model.process.EParameterFieldType;
@@ -31,7 +33,7 @@ public class SchemaTypeControllerExecutor extends SchemaControllerExecutor imple
     }
 
     @Override
-    public boolean execute() {
+    public boolean execute(Map<String, Object> params) {
         Command command = createButtonCommand(getUi().getButtonContext());
         if (command != null) {
             if (command.canExecute()) {

@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.properties.controllers.executors;
 
+import java.util.Map;
+
 import org.talend.designer.core.ui.editor.properties.controllers.IControllerContext;
 import org.talend.designer.core.ui.editor.properties.controllers.ui.IControllerUI;
 
@@ -22,6 +24,10 @@ public interface IControllerExecutor {
 
     void init(IControllerContext ctx, IControllerUI ui);
 
-    boolean execute();
+    default Object getData(Map<String, Object> params) {
+        return null;
+    }
+
+    boolean execute(Map<String, Object> params);
 
 }

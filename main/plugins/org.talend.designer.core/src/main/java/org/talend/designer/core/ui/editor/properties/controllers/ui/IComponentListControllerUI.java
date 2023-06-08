@@ -12,21 +12,16 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.properties.controllers.ui;
 
+import org.talend.core.model.process.EParameterFieldType;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public interface IRepositoryControllerUI extends IBusinessControllerUI {
-
-    public static final String REPOSITORY_CHOICE = "REPOSITORY_CHOICE"; //$NON-NLS-1$
+public interface IComponentListControllerUI extends IBusinessControllerUI {
 
     @Override
-    default IWidgetContext getDefaultControlContext() {
-        return getButtonContext();
+    default String getControllerName() {
+        return EParameterFieldType.COMPONENT_LIST.getName();
     }
-
-    IWidgetContext getButtonContext();
-
-    IWidgetContext getComboContext();
 
 }

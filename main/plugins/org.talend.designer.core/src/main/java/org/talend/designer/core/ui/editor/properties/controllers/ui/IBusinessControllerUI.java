@@ -34,6 +34,8 @@ public interface IBusinessControllerUI extends IControllerUI {
     // PTODO qzhang use PARAMETER_NAME it for bug 853.
     public static final String PARAMETER_NAME = TypedTextCommandExecutor.PARAMETER_NAME;
 
+    IWidgetContext getDefaultControlContext();
+
     String getControllerName();
 
     void openSqlBuilder(ConnectionParameters connParameters);

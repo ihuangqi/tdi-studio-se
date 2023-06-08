@@ -16,6 +16,7 @@ import org.talend.core.model.metadata.IDynamicBaseProperty;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
 import org.talend.designer.core.ui.editor.properties.controllers.executors.IControllerExecutor;
+import org.talend.designer.core.ui.editor.properties.controllers.ui.ComponentListSWTControllerUI;
 import org.talend.designer.core.ui.editor.properties.controllers.ui.IControllerUI;
 import org.talend.designer.core.ui.editor.properties.controllers.ui.SchemaTypeSWTControllerUI;
 
@@ -29,6 +30,8 @@ public class DesignerSWTControllerFactory extends AbsControllerFactory {
     public IControllerUI createUI(String name, IDynamicProperty dp) {
         if (SchemaTypeGenerator.class.getCanonicalName().equals(name)) {
             return new SchemaTypeSWTControllerUI(dp);
+        } else if (ComponentListGenerator.class.getCanonicalName().equals(name)) {
+            return new ComponentListSWTControllerUI(dp);
         }
         return null;
     }

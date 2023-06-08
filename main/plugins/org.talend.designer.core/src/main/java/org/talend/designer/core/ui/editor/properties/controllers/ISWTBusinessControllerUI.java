@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.properties.controllers;
 
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
@@ -24,7 +25,7 @@ import org.talend.designer.core.ui.editor.properties.controllers.ui.IControllerU
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public interface ISWTBusinessControllerUI extends IControllerUI {
+public interface ISWTBusinessControllerUI extends IControllerUI, PropertyChangeListener {
 
     void init(IDynamicProperty dp);
 

@@ -10,23 +10,11 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.designer.core.ui.editor.properties.controllers.ui;
-
+package org.talend.designer.core.ui.editor.properties.controllers.executors;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public interface IRepositoryControllerUI extends IBusinessControllerUI {
-
-    public static final String REPOSITORY_CHOICE = "REPOSITORY_CHOICE"; //$NON-NLS-1$
-
-    @Override
-    default IWidgetContext getDefaultControlContext() {
-        return getButtonContext();
-    }
-
-    IWidgetContext getButtonContext();
-
-    IWidgetContext getComboContext();
+public interface IComponentListControllerExecutor extends IControllerExecutor {
 
 }

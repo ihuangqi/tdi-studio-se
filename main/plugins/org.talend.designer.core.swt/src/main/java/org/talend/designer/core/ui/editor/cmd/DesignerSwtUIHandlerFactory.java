@@ -14,6 +14,7 @@ package org.talend.designer.core.ui.editor.cmd;
 
 import org.talend.commons.ui.runtime.custom.IUIHandler;
 import org.talend.designer.core.ui.editor.cmd.ChangeMetadataCommand.IChangeMetadataCommandUIHandler;
+import org.talend.designer.core.ui.editor.properties.controllers.ui.ICommonUIHandler;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
@@ -28,6 +29,8 @@ public class DesignerSwtUIHandlerFactory extends AbsCmdUIHandlerFactory {
     public <T extends IUIHandler> T getUIHandler(Class<T> clz) {
         if (IChangeMetadataCommandUIHandler.class.equals(clz)) {
             return (T) new ChangeMetadataCommandSwtUIHandler();
+        } else if (ICommonUIHandler.class.equals(clz)) {
+            return (T) new CommonSwtUIHandler();
         }
         return null;
     }

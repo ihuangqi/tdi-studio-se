@@ -12,21 +12,14 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.properties.controllers.ui;
 
+import org.eclipse.gef.commands.Command;
+import org.talend.commons.ui.runtime.custom.IUIHandler;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public interface IRepositoryControllerUI extends IBusinessControllerUI {
+public interface ICommonUIHandler extends IUIHandler {
 
-    public static final String REPOSITORY_CHOICE = "REPOSITORY_CHOICE"; //$NON-NLS-1$
-
-    @Override
-    default IWidgetContext getDefaultControlContext() {
-        return getButtonContext();
-    }
-
-    IWidgetContext getButtonContext();
-
-    IWidgetContext getComboContext();
+    boolean execute(Command cmd);
 
 }
