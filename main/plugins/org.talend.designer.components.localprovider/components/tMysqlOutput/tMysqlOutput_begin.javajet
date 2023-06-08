@@ -137,17 +137,18 @@ boolean useExistingConnection = "true".equalsIgnoreCase(ElementParameterParser.g
 if(useExistingConnection) {
 	String connection = ElementParameterParser.getValue(node,"__CONNECTION__");
 	String conn = "conn_" + connection;
+	List< ? extends INode> nodes;
 	if(isAmazonAurora){
-		  conn += "_in";
-		  dbVersion = "MYSQL_5";
+      conn += "_in";
+      nodes = process.getNodesOfType("tAmazonAuroraConnection");
 	}else{
-		List< ? extends INode> nodes =  process.getNodesOfType("tMysqlConnection");
-		for (INode ne:nodes) {
-			if (connection.equals(ne.getUniqueName())) {
-				dbVersion = ElementParameterParser.getValue(ne, "__DB_VERSION__");
-			}
-		}
+		nodes = process.getNodesOfType("tMysqlConnection");
 	}
+	for (INode ne:nodes) {
+        if (connection.equals(ne.getUniqueName())) {
+            dbVersion = ElementParameterParser.getValue(ne, "__DB_VERSION__");
+        }
+    }
 %>
 	conn_<%=cid%> = (java.sql.Connection)globalMap.get("<%=conn%>");
 	<%dbLog.conn().useExistConn("conn_"+cid+".getMetaData().getURL()", "conn_"+cid+".getMetaData().getUserName()");%>
