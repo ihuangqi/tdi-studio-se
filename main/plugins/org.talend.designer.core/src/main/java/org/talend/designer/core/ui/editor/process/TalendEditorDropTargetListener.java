@@ -1910,6 +1910,29 @@ public class TalendEditorDropTargetListener extends TemplateTransferDropTargetLi
             componentNameList.add(component.getName());
         }
         String nodeComponentName = node.getComponent().getName();
+        if (connectionItem instanceof SAPConnectionItem && "tELTSAPMap".equals(nodeComponentName)) {
+            ERepositoryObjectType type = (ERepositoryObjectType) selectedNode.getProperties(EProperties.CONTENT_TYPE);
+            Object objProperty = null;
+            if (ERepositoryObjectType.METADATA_CON_TABLE == type) {
+                if (selectedNode.getParent() != null) {
+                    objProperty = selectedNode.getParent().getProperties(EProperties.CONTENT_TYPE);
+                }
+            } else if (ERepositoryObjectType.METADATA_CON_COLUMN == type) {
+                RepositoryNode pNode = selectedNode.getParent();
+                if (pNode != null) {
+                    pNode = pNode.getParent();
+                    if (pNode != null) {
+                        pNode = pNode.getParent();
+                        if (pNode != null) {
+                            objProperty = pNode.getProperties(EProperties.CONTENT_TYPE);
+                        }
+                    }
+                }
+            }
+            if (ERepositoryObjectType.METADATA_SAP_CDS_VIEW == objProperty) {
+                componentNameList.add("tELTSAPMap");
+            }
+        }
         if (componentNameList.contains(nodeComponentName)) {
             IElementParameter param = node.getElementParameterFromField(EParameterFieldType.PROPERTY_TYPE);
             if (param != null) {
