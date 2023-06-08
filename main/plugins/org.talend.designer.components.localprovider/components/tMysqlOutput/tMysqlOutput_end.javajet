@@ -102,18 +102,14 @@ skeleton="../templates/db_output_bulk.skeleton"
    	String dbVersion = "" ;
 	String connection = ElementParameterParser.getValue(node,"__CONNECTION__");
     if(useExistingConnection) {
-		if(isAmazonAurora){
-			  dbVersion = "MYSQL_5";
-		}else{
-			List<? extends INode> nodes =  process.getNodesOfType("tMysqlConnection");
-			for (INode ne:nodes) {
-				if (connection.equals(ne.getUniqueName())) {
-					dbVersion = ElementParameterParser.getValue(ne, "__DB_VERSION__");
-					setAutoCommit = "true".equals(ElementParameterParser.getValue(ne, "__AUTO_COMMIT__"));
-					break;
-				}
-			}
-		}
+    List<? extends INode> nodes = (isAmazonAurora) ? process.getNodesOfType("tAmazonAuroraConnection") : process.getNodesOfType("tMysqlConnection");
+    for (INode ne:nodes) {
+        if (connection.equals(ne.getUniqueName())) {
+            dbVersion = ElementParameterParser.getValue(ne, "__DB_VERSION__");
+            setAutoCommit = "true".equals(ElementParameterParser.getValue(ne, "__AUTO_COMMIT__"));
+            break;
+        }
+    }
 	} else {
 		dbVersion = ElementParameterParser.getValue(node, "__DB_VERSION__");
 	}

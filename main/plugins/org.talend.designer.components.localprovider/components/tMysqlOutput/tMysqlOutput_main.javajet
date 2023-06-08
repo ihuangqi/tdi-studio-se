@@ -463,16 +463,12 @@ if(columnList != null && columnList.size() > 0) {
 
     String connection = ElementParameterParser.getValue(node,"__CONNECTION__");
     if(("true").equals(useExistingConn)) {
-        if(isAmazonAurora){
-                  dbVersion = "MYSQL_5";
-            }else{
-                List<? extends INode> nodes =  process.getNodesOfType("tMysqlConnection");
-                for (INode ne:nodes) {
-                    if (connection.equals(ne.getUniqueName())) {
-                        dbVersion = ElementParameterParser.getValue(ne, "__DB_VERSION__");
-                    }
-                }
+    List<? extends INode> nodes = (isAmazonAurora) ? process.getNodesOfType("tAmazonAuroraConnection") : process.getNodesOfType("tMysqlConnection");
+        for (INode ne:nodes) {
+            if (connection.equals(ne.getUniqueName())) {
+                dbVersion = ElementParameterParser.getValue(ne, "__DB_VERSION__");
             }
+        }
     } else {
         dbVersion = ElementParameterParser.getValue(node, "__DB_VERSION__");
     }
