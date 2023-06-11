@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -66,6 +67,7 @@ import org.talend.core.model.utils.TalendTextUtils;
 import org.talend.core.runtime.services.IGenericWizardService;
 import org.talend.core.service.IJsonFileService;
 import org.talend.core.utils.TalendQuoteUtils;
+import org.talend.cwm.helper.ConnectionHelper;
 import org.talend.cwm.helper.TaggedValueHelper;
 import org.talend.designer.core.i18n.Messages;
 import org.talend.designer.core.model.components.EParameterName;
@@ -1105,19 +1107,21 @@ public class ChangeValuesFromRepository extends ChangeMetadataCommand {
             if (table != null && item != null) {
                 IElementParameter cdsParam = elem.getElementParameter("CDS_VIEWS");
                 IElementParameter listParam = elem.getElementParameter("CDS_VIEW_PARAMETERS");
-                if (cdsParam != null && listParam != null) {
-                    List<MetadataTable> tables = UpdateRepositoryUtils.getMetadataTablesFromItem(item);
+                if (cdsParam != null && listParam != null && SAPConnectionItem.class.isInstance(item)) {
+                    Set<MetadataTable> tables = ConnectionHelper.getTables(SAPConnectionItem.class.cast(item).getConnection());
                     MetadataTable metaTable = tables.stream().filter(Objects::nonNull)
-                            .filter(t -> t.getId().equals(table.getId())).findFirst().orElse(null);
-                    if (metaTable != null && ERepositoryObjectType.METADATA_SAP_CDS_VIEW.name()
-                            .equals(TaggedValueHelper.getValueString(EProperties.CONTENT_TYPE.name(), metaTable))) {
+                            .filter(t -> t.getId().equals(table.getId()))
+                            .filter(t -> ERepositoryObjectType.METADATA_SAP_CDS_VIEW.name()
+                                    .equals(TaggedValueHelper.getValueString(EProperties.CONTENT_TYPE.name(), t)))
+                            .findFirst().orElse(null);
+                    if (metaTable != null) {
                         List<Map<String, Object>> list = (List<Map<String, Object>>) listParam.getValue();
                         list.clear();
                         metaTable.getOwnedElement().stream().filter(MetadataColumn.class::isInstance)
                                 .map(MetadataColumn.class::cast).map(MetadataColumn::getName).forEach(name -> {
                                     Map<String, Object> map = new HashMap<>();
-                                    map.put("PARAMETER", name);
-                                    map.put("VALUE", "");
+                                    map.put("PARAMETER", TalendQuoteUtils.addQuotesIfNotExist(name));
+                                    map.put("VALUE", "\"\"");
                                     list.add(map);
                                 });
                         cdsParam.setValue(!list.isEmpty());
