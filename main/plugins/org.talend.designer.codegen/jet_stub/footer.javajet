@@ -968,7 +968,7 @@
         <%if(isLog4jEnabled && isLog4j2Enabled) {%>
             <%=MDC_CLASS%>.put("_context", contextStr);
             log.info("TalendJob: '<%=codeGenArgument.getJobName()%>' - Started.");
-            mdcInfo.putAll(<%=MDC_CLASS%>.getCopyOfContextMap());
+            java.util.Optional.ofNullable(<%=MDC_CLASS%>.getCopyOfContextMap()).ifPresent(mdcInfo::putAll);
         <%}%>
 
 <%
