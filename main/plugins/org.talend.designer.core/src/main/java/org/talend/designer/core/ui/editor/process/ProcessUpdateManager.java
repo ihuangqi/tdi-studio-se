@@ -2625,7 +2625,7 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
             Connection connection = connItem.getConnection();
             if (connection.isContextMode()) {
                 Set<String> neededVars = ConnectionContextHelper.retrieveContextVar(parameters, connection, category,
-                        contextData);
+                        true, contextData);
                 if (neededVars != null && !neededVars.isEmpty()) {
                     ContextItem contextItem = ContextUtils.getContextItemById2(connection.getContextId());
                     if (contextItem != null) {
