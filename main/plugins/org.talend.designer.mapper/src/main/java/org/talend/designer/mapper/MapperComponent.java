@@ -904,6 +904,10 @@ public class MapperComponent extends AbstractMapComponent implements IHashableIn
 
     }
 
+    /**
+     * This method checks if there is a complex expression( function used for one of the join keys) inside the mappers object.
+     * @return a boolean
+     */
     private boolean hasMapperNodeJoinExpression() {
         List<? extends IConnection> incomingConnections = this.getIncomingConnections(EConnectionType.FLOW_MAIN);
         if(incomingConnections.isEmpty()) {
@@ -920,7 +924,7 @@ public class MapperComponent extends AbstractMapComponent implements IHashableIn
                         .getMetadataTableEntries()
                         .stream()
                         .map(externalMapperTableEntry -> externalMapperTableEntry.getExpression())
-                        .filter(expression -> expression != null && !expression.equals("")))
+                        .filter(expression -> expression != null && !expression.equals("") && !isSimpleExpression(expression)))
                 .findFirst()
                 .isPresent();
     }
