@@ -14,6 +14,7 @@ package org.talend.designer.rowgenerator.ui.tabs;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -47,6 +48,7 @@ import org.talend.core.model.process.INode;
 import org.talend.core.runtime.services.IExpressionBuilderDialogService;
 import org.talend.core.ui.proposal.TalendProposalProvider;
 import org.talend.designer.rowgenerator.data.Function;
+import org.talend.designer.rowgenerator.data.FunctionManager.EFunctionParameter;
 import org.talend.designer.rowgenerator.data.ListParameter;
 import org.talend.designer.rowgenerator.data.Parameter;
 import org.talend.designer.rowgenerator.i18n.Messages;
@@ -101,6 +103,10 @@ public class FunParaTableView2 extends AbstractDataTableEditorView<Parameter> {
         column.setBeanPropertyAccessors(new IBeanPropertyAccessors<Parameter, Object>() {
 
             public String get(Parameter bean) {
+                String displayName = EFunctionParameter.getDisplayNameByName(bean.getName());
+                if (StringUtils.isNotBlank(displayName)) {
+                    return displayName;
+                }
                 return bean.getName();
             }
 
