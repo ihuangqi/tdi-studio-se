@@ -18,10 +18,6 @@ imports="
 
     String conn = "conn_" + connection;
     
-    boolean isAmazonAurora = node.isVirtualGenerateNode() && (connection.matches("^.*?tAmazonAuroraConnection_\\d+$") || connection.matches("^.*?tDBConnection_\\d+$"));
-    if(isAmazonAurora){
-    	  conn += "_in";
-    }
 %>
 	java.sql.Connection conn_<%=cid%> = (java.sql.Connection)globalMap.get("<%=conn%>");
 

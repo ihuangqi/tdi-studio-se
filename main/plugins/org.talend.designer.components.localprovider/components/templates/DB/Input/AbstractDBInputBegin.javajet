@@ -34,9 +34,7 @@ imports="
 			dbms = "";
 		}
 	}
-	
-	boolean isAmazonAurora = ("mysql_id".equalsIgnoreCase(dbms) || "amazon_aurora_id".equalsIgnoreCase(dbms)) && node.isVirtualGenerateNode() && (cid.matches("^.*?tAmazonAuroraInput_\\d+_in$") || cid.matches("^.*?tDBInput_\\d+_in$"));
-	
+
 	boolean isLog4jEnabled = ("true").equals(ElementParameterParser.getValue(node.getProcess(), "__LOG4J_ACTIVATE__"));
 
     boolean whetherTrimAllCol = ("true").equals(ElementParameterParser.getValue(node, "__TRIM_ALL_COLUMN__"));
@@ -56,10 +54,6 @@ imports="
 		    if(("true").equals(useExistingConn)) {
 		        String connection = ElementParameterParser.getValue(node,"__CONNECTION__");
 		        String conn = "conn_" + connection;
-		        
-		        if(isAmazonAurora){
-                    conn += "_in";
-                }
 %>
 				conn_<%=cid%> = (java.sql.Connection)globalMap.get("<%=conn%>");
 				<%log4jCodeGenerateUtil.useExistConnection(node);%>
@@ -79,18 +73,8 @@ imports="
 		    String dbquery_<%=cid%> = <%=dbInputBeginUtil.getQueryString(node)%>;
 		    <% log4jCodeGenerateUtil.query(node, "dbquery_" + cid); %>
 
-            <% 
-            if(isAmazonAurora){
-            // why 3: ==> "_in".length()
-            %>
-            	globalMap.put("<%= cid.substring(0,cid.length() - 3) %>_QUERY",dbquery_<%=cid%>);
-            <%
-            }else{
-            %>
-            	globalMap.put("<%=cid %>_QUERY",dbquery_<%=cid%>);
-            <%
-            }
-            %>
+		    globalMap.put("<%=cid %>_QUERY",dbquery_<%=cid%>);
+
 		    java.sql.ResultSet rs_<%=cid %> = null;
 
 		    try {

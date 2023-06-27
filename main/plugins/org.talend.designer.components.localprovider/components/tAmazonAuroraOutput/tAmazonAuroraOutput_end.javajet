@@ -1,2 +1,2 @@
-<%String connectionName = "tMysqlConnection";%>
+<%String connectionName = "tAmazonAuroraConnection";%>
 <%@ include file="../templates/DB/Output/AbstractMysqlOutput_end.javajet"%>

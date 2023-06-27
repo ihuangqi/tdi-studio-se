@@ -12,9 +12,6 @@ class BasicLogUtil{
     public BasicLogUtil(org.talend.core.model.process.INode node){
         this.node = node;
         String cidx = this.node.getUniqueName();
-        if(cidx.matches("^.*?tAmazonAuroraOutput_\\d+_out$") || cidx.matches("^.*?tDBOutput_\\d+_out$")){
-             cidx = cidx.substring(0,cidx.length()-4);// 4 ==> "_out".length();
-        }
         this.cid = cidx;
         this.log4jEnabled = ("true").equals(org.talend.core.model.process.ElementParameterParser.getValue(this.node.getProcess(), "__LOG4J_ACTIVATE__"));
         this.log4jEnabled = this.log4jEnabled &&

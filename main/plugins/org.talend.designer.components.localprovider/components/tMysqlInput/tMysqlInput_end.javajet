@@ -31,21 +31,7 @@ imports="
 	}
 %>
 }
-
-<%
-	boolean isAmazonAurora = node.isVirtualGenerateNode() && (cid.matches("^.*?tAmazonAuroraInput_\\d+_in$") || cid.matches("^.*?tDBInput_\\d+_in$"));
-	if(isAmazonAurora){
-		// why 3: ==> "_in".length()
-		%>
-		   globalMap.put("<%= cid.substring(0,cid.length() - 3) %>_NB_LINE",nb_line_<%=cid%>);
-		<%
-	}else{
-		%>
-		   globalMap.put("<%=cid %>_NB_LINE",nb_line_<%=cid%>);
-		<%
-}
- %>
-
+globalMap.put("<%=cid %>_NB_LINE",nb_line_<%=cid%>);
 <%
 log4jCodeGenerateUtil.retrieveRecordsCount(node);
 %>
