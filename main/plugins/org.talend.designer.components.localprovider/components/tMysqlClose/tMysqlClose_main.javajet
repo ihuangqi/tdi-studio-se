@@ -15,13 +15,7 @@ imports="
     String connection = ElementParameterParser.getValue(node,"__CONNECTION__");
 
     String conn = "conn_" + connection;
-    
-    //sometimes, studio will reuse mysql components in runtime model level, which is also virtual component
-    //so add more condition to check if it's amazon aurora components
-    boolean isAmazonAurora = node.isVirtualGenerateNode() && (connection.matches("^.*?tAmazonAuroraConnection_\\d+$") || connection.matches("^.*?tDBConnection_\\d+$"));
-    if(isAmazonAurora){
-    	  conn += "_in";
-    }
+
 %>
 	java.sql.Connection conn_<%=cid%> = (java.sql.Connection)globalMap.get("<%=conn%>");
 
