@@ -272,9 +272,7 @@ public class DbInfo {
                 driverClassName = EDatabase4DriverClassName.AMAZON_AURORA_3.getDriverClass();
             }
         } else if (dbType.equals(EDatabaseTypeName.VERTICA.getXmlName())) {
-            if (EDatabaseVersion4Drivers.VERTICA_9.getVersionValue().equals(dbVersion)) {
-                driverClassName = EDatabase4DriverClassName.VERTICA2.getDriverClass();
-            }
+            driverClassName = EDatabase4DriverClassName.VERTICA.getDriverClass();
         } else if (EDatabaseTypeName.SYBASEASE.getDisplayName().equals(dbType)) {
             if (EDatabaseVersion4Drivers.SYBASEIQ_16.getVersionValue().equals(dbVersion)) {
                 driverClassName = EDatabase4DriverClassName.SYBASEIQ_16.getDriverClass();
