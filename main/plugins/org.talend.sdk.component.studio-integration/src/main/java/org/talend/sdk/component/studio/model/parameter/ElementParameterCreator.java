@@ -50,6 +50,7 @@ import org.talend.sdk.component.studio.VirtualComponentModel;
 import org.talend.sdk.component.studio.i18n.Messages;
 import org.talend.sdk.component.studio.model.connector.ConnectorCreatorFactory;
 import org.talend.sdk.component.studio.util.TaCoKitConst;
+import org.talend.sdk.component.studio.util.TaCoKitSpeicalManager;
 import org.talend.sdk.component.studio.util.TaCoKitUtil;
 import org.talend.sdk.studio.process.TaCoKitNode;
 
@@ -275,7 +276,8 @@ public class ElementParameterCreator {
         if (this.component instanceof VirtualComponentModel) {
             return ((VirtualComponentModel) component).isShowPropertyParameter();
         }
-        return true;
+        String name = detail.getId().getName();
+        return TaCoKitSpeicalManager.supportUseExistingConnection(name);
     }
 
     /**

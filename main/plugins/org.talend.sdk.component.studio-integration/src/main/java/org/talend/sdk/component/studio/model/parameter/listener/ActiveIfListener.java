@@ -21,18 +21,24 @@ import static java.util.stream.Collectors.toMap;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.talend.core.model.components.IComponent;
+import org.talend.core.model.process.IElement;
 import org.talend.core.model.process.IElementParameter;
+import org.talend.core.model.process.INode;
+import org.talend.designer.core.model.FakeElement;
 import org.talend.sdk.component.studio.model.parameter.PropertyDefinitionDecorator;
 import org.talend.sdk.component.studio.model.parameter.TaCoKitElementParameter;
 import org.talend.sdk.component.studio.model.parameter.TableElementParameter;
 import org.talend.sdk.component.studio.model.parameter.TextElementParameter;
 import org.talend.sdk.component.studio.model.parameter.condition.ConditionGroup;
+import org.talend.sdk.component.studio.util.TaCoKitConst;
 
 /**
  * {@link PropertyChangeListener}, which activates/deactivates {@link IElementParameter} according target
@@ -71,21 +77,26 @@ public class ActiveIfListener implements PropertyChangeListener {
             return;
         }
         final boolean show = conditions.stream()
-                                       .allMatch(group -> group.getAggregator()
-                                                               .apply(group.getConditions().stream()
-                                                                           .map(this::evaluateCondition)));
-
+                .allMatch(group -> group.getAggregator().apply(group.getConditions().stream().map(this::evaluateCondition)));
         sourceParameter.setShow(show);
         sourceParameter.redraw(); // request source parameter redraw
         sourceParameter.firePropertyChange("show", null, show);
-        //need to revalidate to either show or hide the validation label
+        // need to revalidate to either show or hide the validation label
         sourceParameter.firePropertyChange("value", null, sourceParameter.getValue());
     }
 
+    public void propertyShow() {
+        final boolean show = conditions.stream()
+                .allMatch(group -> group.getAggregator().apply(group.getConditions().stream().map(this::evaluateCondition)));
+        sourceParameter.setShow(show);
+        sourceParameter.redraw(); // request source parameter redraw
+    }
+
     private boolean evaluateCondition(final PropertyDefinitionDecorator.Condition cond) {
-        //now tck add uiscope target, so the path may not exists in model, now not process here, only return true for that case, TODO process hide logic for studio from the json info
-        return targetParams.get(cond.getTargetPath()) == null
-                || cond.isNegation() != Stream.of(cond.getValues()).anyMatch(val -> evalute(cond, val));
+        if (targetParams.get(cond.getTargetPath()) == null) {
+            return evaluteScope(cond);
+        }
+        return cond.isNegation() != Stream.of(cond.getValues()).anyMatch(val -> evalute(cond, val));
     }
 
     private boolean evalute(final PropertyDefinitionDecorator.Condition condition, final String value) {
@@ -146,5 +157,50 @@ public class ActiveIfListener implements PropertyChangeListener {
                 }
                 throw new IllegalArgumentException("Not supported operation '" + evaluationStrategy + "'");
         }
+    }
+
+    private boolean evaluteScope(final PropertyDefinitionDecorator.Condition cond) {
+        String[] values = cond.getValues();
+        for (String value : values) {
+            String targetPath = cond.getTargetPath();
+            if (TaCoKitConst.TARGET.equalsIgnoreCase(targetPath)) {
+                TaCoKitElementParameter targetParam = targetParams.get(cond.getPath());
+                if (targetParam == null && sourceParameter.getName().equals(cond.getPath())) {
+                    targetParam = sourceParameter;
+                }
+                if (targetParam != null) {
+                    List contexts = evaluteContext(targetParam);
+                    String[] scopes = value.split(","); //$NON-NLS-1$
+                    for (String scope : scopes) {
+                        if (contexts.contains(scope)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private List evaluteContext(TaCoKitElementParameter targetParam) {
+        List<String> contextList = new ArrayList<String>();
+        contextList.add(TaCoKitConst.STUDIO_SCOPE);
+        if (targetParam != null) {
+            IElement element = targetParam.getElement();
+            if (element instanceof FakeElement) {
+                contextList.add(TaCoKitConst.STUDIO_METADATA_SCOPE);
+            } else if (element instanceof INode) {
+                contextList.add(TaCoKitConst.STUDIO_COMPONENT_SCOPE);
+                IComponent component = ((INode) element).getComponent();
+                if (component != null) {
+                    String componentName = component.getName();
+                    if (componentName != null && componentName.endsWith("Connection")) { //$NON-NLS-1$
+                        contextList.add(TaCoKitConst.STUDIO_CONNECTION_COMPONENT_SCOPE);
+                    }
+                }
+            }
+        }
+        return contextList;
     }
 }

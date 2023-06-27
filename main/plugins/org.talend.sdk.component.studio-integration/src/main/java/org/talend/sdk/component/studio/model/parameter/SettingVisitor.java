@@ -15,10 +15,12 @@
  */
 package org.talend.sdk.component.studio.model.parameter;
 
-import static java.util.Collections.*;
-import static java.util.Optional.*;
-import static java.util.function.Function.*;
-import static java.util.stream.Collectors.*;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Optional.ofNullable;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -179,13 +181,17 @@ public class SettingVisitor implements PropertyVisitor {
                 throw new RuntimeException("ElementParameter not found. Path: " + path);
             }
             param.setRedrawParameter(redrawParameter);
-
+            List<String> hasUIScopeList = new ArrayList<>();
             final Map<String, TaCoKitElementParameter> targetParams = conditionGroups.stream()
                     .flatMap(it -> it.getConditions().stream())
                     .map(PropertyDefinitionDecorator.Condition::getTargetPath)
                     .peek((String key) -> {
-                        if (!this.settings.containsKey(key) && !"ui.scope".equals(key)) {
-                            LOGGER.debug("Key " + key + " is not found for path " + path + " in settings for form " + this.form);
+                        if (!this.settings.containsKey(key)) {
+                            if("ui.scope".equals(key)) { //$NON-NLS-1$
+                                hasUIScopeList.add(path);
+                            }else {
+                                LOGGER.debug("Key " + key + " is not found for path " + path + " in settings for form " + this.form);
+                            }
                         }
                     })
                     .map(this.settings::get)
@@ -193,6 +199,18 @@ public class SettingVisitor implements PropertyVisitor {
                     .filter(TaCoKitElementParameter.class::isInstance)
                     .map(TaCoKitElementParameter.class::cast)
                     .collect(toMap(ElementParameter::getName, identity(), (a, b) -> a));
+
+            for (String key : hasUIScopeList) {
+                if (targetParams.size() == 0) {
+                    IElementParameter elem = this.settings.get(key);
+                    if (elem != null && elem instanceof TaCoKitElementParameter) {
+                        targetParams.put(key, (TaCoKitElementParameter) elem);
+                        final ActiveIfListener activationListener = new ActiveIfListener(conditionGroups, param, targetParams);
+                        activationListener.propertyShow();
+                        targetParams.clear();
+                    }
+                }
+            }
 
             final ActiveIfListener activationListener = new ActiveIfListener(conditionGroups, param, targetParams);
 

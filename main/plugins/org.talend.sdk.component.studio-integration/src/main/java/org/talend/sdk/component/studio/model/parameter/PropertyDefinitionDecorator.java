@@ -380,7 +380,7 @@ public class PropertyDefinitionDecorator extends SimplePropertyDefinition {
                     final String evaluationStrategyKey = CONDITION_IF_EVALUTIONSTRATEGY + index;
                     final String absoluteTargetPath = PATH_RESOLVER.resolveProperty(delegate.getPath(), meta.getValue());
                     return new Condition(
-                            delegate.getMetadata().getOrDefault(valueKey, "true").split(VALUE_SEPARATOR),
+                            delegate.getMetadata().getOrDefault(valueKey, "true").split(VALUE_SEPARATOR), delegate.getPath(),
                             absoluteTargetPath,
                             Boolean.parseBoolean(delegate.getMetadata().getOrDefault(negateKey, "false")),
                             delegate.getMetadata().getOrDefault(evaluationStrategyKey, "DEFAULT"));
@@ -633,6 +633,7 @@ public class PropertyDefinitionDecorator extends SimplePropertyDefinition {
 
     public static class Condition {
 
+        private String path;
         /**
          * Path to property to be evaluated (corresponds to ActiveIf.target())
          */
@@ -655,8 +656,22 @@ public class PropertyDefinitionDecorator extends SimplePropertyDefinition {
             this.hash = 31 * Objects.hash(targetPath, negation, evaluationStrategy) + Arrays.hashCode(values);
         }
 
+        public Condition(final String[] values, final String path, final String targetPath, final boolean negation,
+                final String evaluationStrategy) {
+            this.path = path;
+            this.targetPath = targetPath;
+            this.values = values;
+            this.negation = negation;
+            this.evaluationStrategy = evaluationStrategy == null || evaluationStrategy.isEmpty() ? "DEFAULT" : evaluationStrategy;
+            this.hash = 31 * Objects.hash(targetPath, negation, evaluationStrategy) + Arrays.hashCode(values);
+        }
+
         public String[] getValues() {
             return this.values;
+        }
+
+        public String getPath() {
+            return path;
         }
 
         public String getTargetPath() {

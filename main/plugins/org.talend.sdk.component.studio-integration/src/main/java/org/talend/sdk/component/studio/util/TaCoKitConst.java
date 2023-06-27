@@ -114,4 +114,16 @@ public class TaCoKitConst {
     public static final String DATASTORE_PATH = "DATASTORE_PATH";
 
     public static final String UNSET_CONNECTION_NAME = "default";
+
+    public static final String TARGET = "ui.scope";
+
+    public static final String STUDIO_SCOPE = "studio";
+
+    public static final String CLOUD_SCOPE = "cloud";
+
+    public static final String STUDIO_COMPONENT_SCOPE = "studio.component";
+
+    public static final String STUDIO_CONNECTION_COMPONENT_SCOPE = "studio.component.connection";
+
+    public static final String STUDIO_METADATA_SCOPE = "studio.metadata";
 }
