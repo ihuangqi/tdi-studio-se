@@ -19,5 +19,7 @@ Require-Bundle: org.apache.commons.lang,
  org.talend.model,
  org.talend.libraries.apache,
  org.talend.components.api,
- org.talend.core.runtime
+ org.talend.core.runtime,
+ org.talend.common.ui.runtime,
+ org.talend.commons.runtime
 Eclipse-LazyStart: true

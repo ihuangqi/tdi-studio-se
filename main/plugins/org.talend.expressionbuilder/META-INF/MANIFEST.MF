@@ -20,7 +20,11 @@ Require-Bundle: org.talend.commons.runtime,
  org.talend.metadata.managment,
  org.talend.libraries.apache,
  org.talend.components.api,
- org.talend.core.runtime
+ org.talend.core.runtime,
+ org.talend.common.ui.runtime,
+ org.eclipse.core.resources,
+ org.talend.studio.studio-utils,
+ org.talend.utils
 Eclipse-LazyStart: true
 Export-Package: org.talend.expressionbuilder,
  org.talend.expressionbuilder.model,

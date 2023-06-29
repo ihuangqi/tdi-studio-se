@@ -2,21 +2,28 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Data Integration View Plug-in
 Bundle-SymbolicName: org.talend.repository.view.di;singleton:=true
+Automatic-Module-Name: org.talend.repository.view.di
 Bundle-Version: 8.8.8.qualifier
 Bundle-Activator: org.talend.repository.view.di.DIRepositoryViewPlugin
 Bundle-Vendor: .Talend SA.
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.core.expressions;visibility:=reexport,
+ org.eclipse.core.expressions,
  org.eclipse.ui,
  org.eclipse.ui.navigator,
  org.talend.commons.ui,
  org.talend.core.runtime,
- org.talend.core.repository;visibility:=reexport,
+ org.talend.core.repository,
  org.talend.commons.runtime,
- org.talend.repository.view;visibility:=reexport,
+ org.talend.repository.view,
  org.talend.repository.items.importexport,
- org.talend.repository.items.importexport.ui
+ org.talend.repository.items.importexport.ui,
+ org.talend.common.ui.runtime,
+ org.talend.model,
+ org.eclipse.emf.common,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.ecore.xmi,
+ org.eclipse.core.resources
 Bundle-ActivationPolicy: lazy
 Export-Package: org.talend.repository.view.di,
  org.talend.repository.view.di.metadata.action,

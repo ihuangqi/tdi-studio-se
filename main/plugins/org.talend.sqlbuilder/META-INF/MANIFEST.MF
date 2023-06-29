@@ -22,7 +22,14 @@ Require-Bundle: org.talend.core.repository,
  org.talend.designer.core,
  org.talend.libraries.sqlbuilder,
  org.talend.commons.runtime,
- org.talend.core.runtime
+ org.talend.core.runtime,
+ org.apache.commons.lang,
+ org.apache.log4j,
+ org.apache.commons.lang3,
+ org.talend.common.ui.runtime,
+ org.eclipse.emf.ecore,
+ org.talend.cwm.mip,
+ org.talend.utils
 Eclipse-LazyStart: true
 Bundle-SymbolicName: org.talend.sqlbuilder; singleton:=true
 Export-Package: org.talend.sqlbuilder,

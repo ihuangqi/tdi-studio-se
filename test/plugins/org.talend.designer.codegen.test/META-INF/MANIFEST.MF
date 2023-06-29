@@ -4,4 +4,6 @@ Bundle-Name: Test
 Bundle-SymbolicName: org.talend.designer.codegen.test
 Bundle-Version: 8.8.8.qualifier
 Fragment-Host: org.talend.designer.codegen
-Require-Bundle: org.talend.testutils
+Require-Bundle: org.talend.testutils,
+ org.talend.studio.studio-utils,
+ org.junit

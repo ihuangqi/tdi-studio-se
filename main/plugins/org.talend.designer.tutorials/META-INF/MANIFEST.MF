@@ -27,6 +27,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.talend.updates.runtime,
  org.eclipse.ui.intro,
  org.eclipse.ui.forms,
- org.eclipse.jface.text
+ org.eclipse.jface.text,
+ org.talend.commons.runtime
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: .Talend SA.

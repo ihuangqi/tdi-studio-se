@@ -11,5 +11,9 @@ Export-Package: org.talend.designer.publish.core.actions,
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jface,
  org.talend.repository,
- org.talend.core.runtime
+ org.talend.core.runtime,
+ org.talend.model,
+ org.eclipse.emf.ecore,
+ org.talend.utils,
+ org.talend.commons.runtime
 Import-Package: org.talend.designer.maven.utils

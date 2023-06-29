@@ -13,6 +13,10 @@ Require-Bundle: org.eclipse.ui,
  org.talend.common.ui.runtime,
  org.talend.core.ui,
  org.talend.designer.core,
- org.talend.libraries.jackson
+ org.talend.libraries.jackson,
+ org.apache.commons.lang,
+ org.eclipse.gef,
+ org.apache.commons.lang3,
+ org.talend.commons.runtime
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/delegates/*.xml,OSGI-INF/*.xml

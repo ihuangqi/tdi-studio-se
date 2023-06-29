@@ -4,4 +4,5 @@ Bundle-Name: Test
 Bundle-SymbolicName: org.talend.presentation.onboarding.resource.test
 Bundle-Version: 8.8.8.qualifier
 Fragment-Host: org.talend.presentation.onboarding.resource
-Require-Bundle: org.talend.testutils
+Require-Bundle: org.talend.testutils,
+ org.junit

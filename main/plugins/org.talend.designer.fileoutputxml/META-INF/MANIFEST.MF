@@ -22,5 +22,7 @@ Require-Bundle: org.eclipse.ui.workbench,
  org.eclipse.jface,
  org.talend.libraries.apache,
  org.talend.datatools.xml,
- org.talend.components.api
+ org.talend.components.api,
+ org.talend.commons.runtime,
+ org.talend.common.ui.runtime
 Eclipse-LazyStart: true
