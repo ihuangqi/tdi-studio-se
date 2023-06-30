@@ -1124,7 +1124,7 @@ public class ChangeValuesFromRepository extends ChangeMetadataCommand {
                                     map.put("VALUE", "\"\"");
                                     list.add(map);
                                 });
-                        cdsParam.setValue(!list.isEmpty());
+                        cdsParam.setValue(true);
                     }
                 }
             }
