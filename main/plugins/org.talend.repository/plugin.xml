@@ -3863,6 +3863,15 @@
               name="RemoveUnwantedUsageDataMigrationTask"
               version="8.0.1">
         </projecttask>
+        <projecttask
+              beforeLogon="false"
+              breaks="8.0.1"
+              class="org.talend.repository.model.migration.ReplaceSQSCheckBoxWithDropDownListMigrationTask"
+              description="Replace SQS components &apos;inherit credentials&apos; checkbox for drop down list"
+              id="org.talend.repository.model.migration.ReplaceSQSCheckBoxWithDropDownListMigrationTask"
+              name="ReplaceSQSCheckBoxWithDropDownListMigrationTask"
+              version="8.0.1">
+        </projecttask>
    </extension>
 
    <extension
