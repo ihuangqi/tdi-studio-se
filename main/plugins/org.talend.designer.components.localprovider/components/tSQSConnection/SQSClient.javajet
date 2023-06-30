@@ -9,6 +9,8 @@
 	String useExistingConn = ElementParameterParser.getValue(node,"__USE_EXISTING_CONNECTION__");
 	List<Map<String,String>> clientConfiguration = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__CLIENT_CONFIGURATION__");
 	String region = ElementParameterParser.getValue(node,"__REGION__");
+    String profileName = ElementParameterParser.getValue(node, "__PROFILE_NAME__");
+    String profilePath = ElementParameterParser.getValue(node, "__PROFILE_PATH__");
 	
 	boolean assumeRole = "true".equals(ElementParameterParser.getValue(node, "__ASSUME_ROLE__"));
 	String arn = ElementParameterParser.getValue(node,"__ARN__");
@@ -51,8 +53,8 @@
 			log.info("<%=cid%> - Creating new connection.");
 		<%
 		}
-		boolean inherit_credentials = "true".equals(ElementParameterParser.getValue(node, "__INHERIT_CREDENTIALS__"));
-		if(!inherit_credentials) {
+        String settingCredentialProvider = ElementParameterParser.getValue(node, "__CREDENTIAL_PROVIDER__");
+        if ("STATIC_CREDENTIALS".equals(settingCredentialProvider)) {
 	    	String passwordFieldName = "__SECRET_KEY__";
 	    %>
     
@@ -61,12 +63,30 @@
 		com.amazonaws.auth.AWSCredentials credentials_<%=cid%> = new com.amazonaws.auth.BasicAWSCredentials(<%=accessKey%>,decryptedPassword_<%=cid%>);
 		com.amazonaws.auth.AWSCredentialsProvider credentialsProvider_<%=cid%> = new com.amazonaws.internal.StaticCredentialsProvider(credentials_<%=cid%>);
 		<%
-		} else {
-		%>
-		com.amazonaws.auth.AWSCredentialsProvider credentialsProvider_<%=cid%> = new com.amazonaws.auth.EC2ContainerCredentialsProviderWrapper();
-		<%
-		}
-		%>
+        } else if ("INHERIT_CREDENTIALS".equals(settingCredentialProvider)) {
+        %>
+            com.amazonaws.auth.AWSCredentialsProvider credentialsProvider_<%=cid%> = new com.amazonaws.auth.EC2ContainerCredentialsProviderWrapper();
+        <%
+        } else if ("PROFILE_INHERIT_CREDENTIALS".equals(settingCredentialProvider)){%>
+            com.amazonaws.auth.profile.ProfileCredentialsProvider profileCredentialsProvider_<%=cid%>;
+            String profileName_<%=cid%> = "".equals(<%=profileName%>)? "default" : <%=profileName%>;
+            if(!"".equals(<%=profilePath%>)){
+                profileCredentialsProvider_<%=cid%> = new com.amazonaws.auth.profile.ProfileCredentialsProvider( new com.amazonaws.auth.profile.ProfilesConfigFile(<%=profilePath%>) , profileName_<%=cid%> );
+            }else{
+                profileCredentialsProvider_<%=cid%> = new com.amazonaws.auth.profile.ProfileCredentialsProvider(profileName_<%=cid%>);
+            }
+            com.amazonaws.auth.AWSCredentialsProvider credentialsProvider_<%=cid%> =
+                        new com.amazonaws.auth.AWSCredentialsProviderChain(
+                            profileCredentialsProvider_<%=cid%>,
+                            new com.amazonaws.auth.EC2ContainerCredentialsProviderWrapper()
+                            );
+        <%
+        }else {
+        %>
+            // Unknown credential provider is used: <%=settingCredentialProvider%>
+        <%
+        }
+        %>
 		com.amazonaws.ClientConfiguration cc_<%=cid%> = new com.amazonaws.ClientConfiguration();
 		cc_<%=cid%>.setUserAgent(routines.system.Constant.getUserAgent("<%=AWSTracker%>"));
 		<%
