@@ -82,7 +82,7 @@ public class BigDataJobUtil {
                 || isBDJobWithFramework(ERepositoryObjectType.PROCESS_STORM, HadoopConstants.FRAMEWORK_SPARKSTREAMING)) {
             List<? extends IElementParameter> parameters = process.getElementParametersWithChildrens();
             for (IElementParameter pt : parameters) {
-            	boolean isSynapseSparkMode = HadoopConstants.SPARK_MODE_SYNAPSE.equals(pt.getName()) && ESparkMode.SYNAPSE.getValue().equals(pt.getValue());
+            	boolean isSynapseSparkMode = HadoopConstants.SPARK_MODE.equals(pt.getName()) && HadoopConstants.SPARK_MODE_SYNAPSE.equals(pt.getValue());
 		boolean isSynapseDistribution = pt.getName().equals("DISTRIBUTION") && EHadoopDistributions.AZURE_SYNAPSE.getName().equals(pt.getValue());
                 if (isSynapseSparkMode || isSynapseDistribution) {
                     isSparkWithSynapse = true;
