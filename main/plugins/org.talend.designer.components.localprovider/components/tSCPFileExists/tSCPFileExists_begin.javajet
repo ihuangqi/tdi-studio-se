@@ -46,7 +46,7 @@ imports="
         String username_<%=cid%> = <%=user%>;
  		<%if(isLog4jEnabled){%>
  			if(client_<%=cid %>!=null) {
- 				log.info("<%=cid%> - Uses an existing connection. Connection hostname: "+ <%=host %> + ". Connection port: <%=port %>.");
+ 				log.info("<%=cid%> - Uses an existing connection. Connection hostname: "+ <%=host %> + ". Connection port: "+ <%=port %> + "."); 
  			}
  		<%}%>
  	<%}else{%>
