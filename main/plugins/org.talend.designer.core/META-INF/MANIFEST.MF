@@ -47,7 +47,7 @@ Require-Bundle: org.talend.model,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.e4.ui.services,
  org.talend.registration,
- org.talend.themes.core;visibility:=reexport,
+ org.talend.themes.core,
  org.eclipse.swt,
  org.eclipse.gmf.runtime.draw2d.ui,
  org.eclipse.help.base,
@@ -71,7 +71,10 @@ Require-Bundle: org.talend.model,
  org.talend.common.ui.runtime,
  org.talend.studio.studio-utils,
  org.talend.utils,
- org.talend.repository.view
+ org.talend.repository.view,
+ org.apache.commons.lang3,
+ com.fasterxml.jackson.core.jackson-core,
+ com.fasterxml.jackson.core.jackson-databind
 Eclipse-LazyStart: true
 Plugin-Class: org.talend.designer.core.DesignerPlugin
 Export-Package: org.talend.designer.core;

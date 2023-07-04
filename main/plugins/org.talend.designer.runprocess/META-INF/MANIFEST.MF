@@ -49,7 +49,9 @@ Require-Bundle: org.talend.model,
  org.eclipse.equinox.preferences,
  org.eclipse.core.runtime,
  org.talend.common.ui.runtime,
- org.talend.libraries.apache
+ org.talend.libraries.apache,
+ org.talend.themes.core,
+ org.apache.commons.lang3
 Eclipse-LazyStart: true
 Export-Package: org.talend.designer.runprocess,
  org.talend.designer.runprocess.i18n,

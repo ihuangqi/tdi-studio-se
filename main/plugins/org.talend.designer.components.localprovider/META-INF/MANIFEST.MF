@@ -17,7 +17,8 @@ Require-Bundle: org.apache.commons.collections,
  org.eclipse.equinox.common,
  org.eclipse.osgi,
  org.eclipse.core.runtime,
- org.talend.commons.runtime
+ org.talend.commons.runtime,
+ org.talend.core.runtime
 Eclipse-LazyStart: true
 Bundle-Vendor: .Talend SA.
 Bundle-ClassPath: .

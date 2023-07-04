@@ -10,7 +10,8 @@ Require-Bundle: org.eclipse.ui,
  org.talend.designer.mapper,
  org.talend.core,
  org.talend.components.api,
- org.talend.commons.runtime
+ org.talend.commons.runtime,
+ org.talend.designer.abstractmap
 Eclipse-LazyStart: true
 Bundle-Vendor: .Talend SA.
 Export-Package: org.talend.designer.mapper.advanced
