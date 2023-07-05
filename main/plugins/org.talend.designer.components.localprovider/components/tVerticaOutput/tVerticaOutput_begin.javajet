@@ -79,7 +79,6 @@ skeleton="../templates/db_output_bulk.skeleton"
 
 	String dbschema = ElementParameterParser.getValue(node,"__SCHEMA_DB__");
 
-   	String db_version = ElementParameterParser.getValue(node, "__DB_VERSION__");
 %>
 
 int nb_line_<%=cid%> = 0;
@@ -141,18 +140,8 @@ if(columnList != null && columnList.size() > 0) {
 		   <%
 		    } else {
 		   %>
-		   		 dbschema_<%=cid%> = <%=dbschema%>;
-			<%
-				if("vertica_3.0_jdk_5.jar".equals(db_version) || "vertica_3.5_jdk_5.jar".equals(db_version) || "vertica_4.0_jdk_5.jar".equals(db_version) || "vertica_4.1.7_jdk_5.jar".equals(db_version) || "vertica_4.1.14_jdk_5.jar".equals(db_version)){
-			%>
-	 				String driverClass_<%=cid%> = "com.vertica.Driver";
-			<%
-				}else{
-			%>
-					String driverClass_<%=cid%> = "com.vertica.jdbc.Driver";
-			<%
-				}
-			%>
+		   		dbschema_<%=cid%> = <%=dbschema%>;
+				String driverClass_<%=cid%> = "com.vertica.jdbc.Driver";
 				java.lang.Class.forName(driverClass_<%=cid%>);
         		<%dbLog.conn().logJDBCDriver(dbLog.var("driverClass"));%>
 				<%if(dbproperties == null || ("\"\"").equals(dbproperties) || ("").equals(dbproperties)) {%>

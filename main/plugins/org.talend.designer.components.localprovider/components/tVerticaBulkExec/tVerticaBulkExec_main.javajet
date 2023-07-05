@@ -43,21 +43,10 @@ skeleton="../templates/db_output_bulk.skeleton"
 
     List<IMetadataColumn> columnList = getColumnList(node);
     boolean isLog4jEnabled = ("true").equals(ElementParameterParser.getValue(node.getProcess(), "__LOG4J_ACTIVATE__"));
-    String db_version = ElementParameterParser.getValue(node, "__DB_VERSION__");
     String dataAction = ElementParameterParser.getValue(node,"__DATA_ACTION__");
     String file = ElementParameterParser.getValue(node, "__REMOTE_FILENAME__");
     String table = ElementParameterParser.getValue(node, "__TABLE__");
-    boolean useExistingConnection = "true".equalsIgnoreCase(ElementParameterParser.getValue(node,"__USE_EXISTING_CONNECTION__"));
 
-    if(useExistingConnection) {
-        String dbConnName = ElementParameterParser.getValue(node,"__CONNECTION__");
-        INode con_node = NodeUtil.getNodeByUniqueName(node.getProcess(), dbConnName);
-        if(con_node!=null){
-            db_version = ElementParameterParser.getValue(con_node,"__DB_VERSION__");
-        }
-    }
-
-    boolean is_old_version = "vertica_3.0_jdk_5.jar".equals(db_version) || "vertica_3.5_jdk_5.jar".equals(db_version) || "vertica_4.0_jdk_5.jar".equals(db_version) || "vertica_4.1.7_jdk_5.jar".equals(db_version) || "vertica_4.1.14_jdk_5.jar".equals(db_version);
     if(is_stream) {
 %>
 java.io.FileInputStream fis_<%=cid %> = (java.io.FileInputStream)<%=connName %>.content;
@@ -98,37 +87,18 @@ stmtCreateTmp_<%=cid%>.close();
 if(("INSERT").equals(dataAction) || columnList != null && columnList.size() > 0) {
     if(!is_stream) {
 %>
-    fis_<%=cid%>= new java.io.FileInputStream(new java.io.File(<%=file%>));
+    	fis_<%=cid%>= new java.io.FileInputStream(new java.io.File(<%=file%>));
 <%
     }
-    if(is_old_version){
-%>
-    ((com.vertica.PGStatement) stmt_<%=cid%>).startCopyIn(sql_<%=cid%>, fis_<%=cid%>);
-    ((com.vertica.PGStatement) stmt_<%=cid%>).addStreamToCopyIn(fis_<%=cid%>);
-<%
-    if(isLog4jEnabled){
-%>
-    log.info("<%=cid%>- Bulk insert data into<%=manager.getLProtectedChar()%>" + tableName_<%=cid%>+ "<%=manager.getRProtectedChar()%>has finished.");
-<%
-    }
-%>
-
-<%
-    }
-    else {
 %>
     vcs_<%=cid%>.addStream(fis_<%=cid%>);
     vcs_<%=cid%>.execute();
 <%
-        if(isLog4jEnabled){
+    if(isLog4jEnabled){
 %>
-    log.info("<%=cid%> - Bulk insert data into <%=manager.getLProtectedChar()%>" + tableName_<%=cid%> + "<%=manager.getRProtectedChar()%> has finished.");
-<%
-        }
-%>
+    	log.info("<%=cid%> - Bulk insert data into <%=manager.getLProtectedChar()%>" + tableName_<%=cid%> + "<%=manager.getRProtectedChar()%> has finished.");
 <%
     }
-
 }
 
 if(isUpdate) {

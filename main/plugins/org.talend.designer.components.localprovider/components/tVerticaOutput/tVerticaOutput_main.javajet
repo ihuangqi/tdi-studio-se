@@ -46,14 +46,6 @@ skeleton="../templates/db_output_bulk.skeleton"
     final String batchSize = ElementParameterParser.getValue(node, "__BATCH_SIZE__");
     boolean useExistingConnection = "true".equalsIgnoreCase(ElementParameterParser.getValue(node,"__USE_EXISTING_CONNECTION__"));
 
-    String db_version = ElementParameterParser.getValue(node, "__DB_VERSION__");
-    if(useExistingConnection){
-        String connName = ElementParameterParser.getValue(node,"__CONNECTION__");
-        INode con_node = NodeUtil.getNodeByUniqueName(node.getProcess(),connName);
-        if(con_node!=null){
-            db_version = ElementParameterParser.getValue(con_node,"__DB_VERSION__");
-        }
-    }
     //feature:2880
     Manager manager = getManager(dbmsId, cid, node);
     boolean whereSupportNull = ElementParameterParser.getValue(node, "__SUPPORT_NULL_WHERE__").equals("true");
@@ -1336,19 +1328,13 @@ globalMap.put("<%=cid%>_ERROR_MESSAGE",e.getMessage());
                         } else {
                         %>
                         java.io.ByteArrayInputStream bais_<%=cid%> = new ByteArrayInputStream(stmtBuilder_<%=cid%>.toString().getBytes());
-                        <%if("vertica_3.0_jdk_5.jar".equals(db_version) || "vertica_3.5_jdk_5.jar".equals(db_version) || "vertica_4.0_jdk_5.jar".equals(db_version) || "vertica_4.1.7_jdk_5.jar".equals(db_version) || "vertica_4.1.14_jdk_5.jar".equals(db_version)){%>
-                             <%dbLog.batch().executeTry(dbLog.str(dataAction));%>
-                            ((com.vertica.PGStatement)stmt_<%=cid%>).executeCopyIn(template_<%=cid%>, bais_<%=cid%>);
-                            <%dbLog.batch().executeDone(dbLog.str(dataAction));%>
-                        <%}else{%>
-                           <%dbLog.batch().executeTry(dbLog.str(dataAction));%>
-                            com.vertica.jdbc.VerticaCopyStream vcs_<%=cid%> = new com.vertica.jdbc.VerticaCopyStream((com.vertica.jdbc.VerticaConnection)conn_<%=cid%>,template_<%=cid%>);
-                            vcs_<%=cid%>.start();
-                            vcs_<%=cid%>.addStream(bais_<%=cid%>);
-                            vcs_<%=cid%>.execute();
-                            vcs_<%=cid%>.finish();
-                            <%dbLog.batch().executeDone(dbLog.str(dataAction));%>
-                        <%}%>
+                        <%dbLog.batch().executeTry(dbLog.str(dataAction));%>
+                        com.vertica.jdbc.VerticaCopyStream vcs_<%=cid%> = new com.vertica.jdbc.VerticaCopyStream((com.vertica.jdbc.VerticaConnection)conn_<%=cid%>,template_<%=cid%>);
+                        vcs_<%=cid%>.start();
+                        vcs_<%=cid%>.addStream(bais_<%=cid%>);
+                        vcs_<%=cid%>.execute();
+                        vcs_<%=cid%>.finish();
+                        <%dbLog.batch().executeDone(dbLog.str(dataAction));%>
                         stmtBuilder_<%=cid%> = null;
                         if (bais_<%=cid%> != null) {
                             bais_<%=cid%>.close();
@@ -1375,17 +1361,10 @@ globalMap.put("<%=cid%>_ERROR_MESSAGE",e.getMessage());
                             rowsToCommitCount_<%=cid%> += pstmt_<%=cid %>.getUpdateCount();
                         <%
                         }else if (("COPY").equals(dataAction)) {
-                            if("vertica_3.0_jdk_5.jar".equals(db_version) || "vertica_3.5_jdk_5.jar".equals(db_version) || "vertica_4.0_jdk_5.jar".equals(db_version) || "vertica_4.1.7_jdk_5.jar".equals(db_version) || "vertica_4.1.14_jdk_5.jar".equals(db_version)){
                         %>
-                                copiedCount_<%=cid%> += stmt_<%=cid %>.getUpdateCount();
-                                rowsToCommitCount_<%=cid%> += stmt_<%=cid %>.getUpdateCount();
+                            copiedCount_<%=cid%> += vcs_<%=cid%>.getRowCount();
+                            rowsToCommitCount_<%=cid%> += vcs_<%=cid%>.getRowCount();
                         <%
-                            }else{
-                        %> 
-                                copiedCount_<%=cid%> += vcs_<%=cid%>.getRowCount();
-                                rowsToCommitCount_<%=cid%> += vcs_<%=cid%>.getRowCount();
-                        <%
-                            }
                         }
                         %>
                         batchSizeCounter_<%=cid%> = 0;
@@ -1406,7 +1385,7 @@ globalMap.put("<%=cid%>_ERROR_MESSAGE",e.getMessage());
             <%
         }
         ////////////commit every////////////
-        if(!useExistingConnection && ("vertica_3.0_jdk_5.jar".equals(db_version) || "vertica_3.5_jdk_5.jar".equals(db_version) || "vertica_4.0_jdk_5.jar".equals(db_version) || "vertica_4.1.7_jdk_5.jar".equals(db_version) || "vertica_4.1.14_jdk_5.jar".equals(db_version) || !"COPY".equals(dataAction))) {
+        if(!useExistingConnection && !"COPY".equals(dataAction)) {
             if(manualCommit) {
                 %>
                 commitCounter_<%=cid%>++;

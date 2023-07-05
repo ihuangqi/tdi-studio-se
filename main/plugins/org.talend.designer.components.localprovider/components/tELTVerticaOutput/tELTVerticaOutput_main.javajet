@@ -94,10 +94,7 @@ imports="
 		log4jCodeGenerateUtil.useExistConnection(node);
 	} else {
 		String db_version = ElementParameterParser.getValue(previousNode, "__DB_VERSION__");
-		String driverClass = "com.vertica.Driver";
-		if("VERTICA_9_0".equals(db_version) || "VERTICA_7_0_X".equals(db_version) || "VERTICA_6_1_X".equals(db_version) || "VERTICA_6_0".equals(db_version) || "VERTICA_5_1".equals(db_version)){
-			driverClass = "com.vertica.jdbc.Driver";
-		}
+		String driverClass = "com.vertica.jdbc.Driver";
 %>
 	    String driverClass_<%=cid%> = "<%=driverClass%>";
 	    java.lang.Class.forName(driverClass_<%=cid%>);

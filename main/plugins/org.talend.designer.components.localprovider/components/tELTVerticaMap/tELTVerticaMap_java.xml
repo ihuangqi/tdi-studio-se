@@ -38,17 +38,6 @@
 
   <PARAMETERS>
 
-  	<PARAMETER
-		NAME="DB_VERSION"
-		FIELD="CLOSED_LIST"
-		NUM_ROW="1"
-		REPOSITORY_VALUE="DB_VERSION"
-		SHOW_IF="(#LINK@CONNECTOR.OUT.TABLE_REF == '0') AND (USE_EXISTING_CONNECTION == 'false')">
-		<ITEMS DEFAULT="VERTICA_9_0">
-			<ITEM NAME="VERTICA_9_0" VALUE="VERTICA_9_0" />
-		</ITEMS>
-	</PARAMETER>
-
 	   <PARAMETER
 	     NAME="USE_EXISTING_CONNECTION"
 	     FIELD="CHECK"
@@ -183,7 +172,7 @@
 
    <CODEGENERATION>
      <IMPORTS>
-		<IMPORT NAME="Driver-VERTICA_9.0" MODULE="vertica-jdbc-9.3.1-0.jar" MVN="mvn:com.vertica/vertica-jdbc/9.3.1-0"   REQUIRED_IF="DB_VERSION=='VERTICA_9_0'" />
+		<IMPORT NAME="Driver-VERTICA_12.0" MODULE="vertica-jdbc-12.0.4-0.jar" MVN="mvn:com.vertica.jdbc/vertica-jdbc/12.0.4-0" />
      </IMPORTS>
    </CODEGENERATION>
 
