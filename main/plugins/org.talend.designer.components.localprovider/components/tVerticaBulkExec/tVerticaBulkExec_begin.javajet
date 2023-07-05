@@ -60,14 +60,6 @@ boolean useSchema = "true".equals(ElementParameterParser.getValue(node, "__USE_S
 boolean useExistingDynamic = ("true").equals(ElementParameterParser.getValue(node, "__USE_EXISTING_DYNAMIC__"));
 
 List<IMetadataColumn> columnList = getColumnList(node);
-String db_version = ElementParameterParser.getValue(node, "__DB_VERSION__");
-if(useExistingConnection) {
-    String dbConnName = ElementParameterParser.getValue(node,"__CONNECTION__");
-    INode con_node = NodeUtil.getNodeByUniqueName(node.getProcess(), dbConnName);
-    if(con_node!=null){
-        db_version = ElementParameterParser.getValue(con_node,"__DB_VERSION__");
-    }
-}
 String copySchema = null;
 if (useSchema && columnList != null && !columnList.isEmpty()) {
     StringBuilder copySchemaBuilder = new StringBuilder(" (");
@@ -76,13 +68,6 @@ if (useSchema && columnList != null && !columnList.isEmpty()) {
     }
     copySchemaBuilder.append(columnList.get(columnList.size() - 1).getOriginalDbColumnName()).append(")");
     copySchema = copySchemaBuilder.toString();
-}
-boolean is_old_version = "vertica_3.0_jdk_5.jar".equals(db_version) || "vertica_3.5_jdk_5.jar".equals(db_version) || "vertica_4.0_jdk_5.jar".equals(db_version) || "vertica_4.1.7_jdk_5.jar".equals(db_version) || "vertica_4.1.14_jdk_5.jar".equals(db_version);
-boolean is_version_ge_6 = "VERTICA_6_0".equals(db_version) || "VERTICA_6_1_X".equals(db_version) || "VERTICA_7_0_X".equals(db_version) || "VERTICA_7_1_X".equals(db_version) || "VERTICA_9_0".equals(db_version);
-
-if(!is_version_ge_6) {
-    compression = "";
-    stream_name = "";
 }
 
 %>
@@ -94,27 +79,14 @@ java.sql.Connection conn_<%=cid%> = null;
     		String connName = ElementParameterParser.getValue(node,"__CONNECTION__");
     		String conn = "conn_" + connName;
     		String existDbSchema = "dbschema_" + connName;
-			INode con_node = NodeUtil.getNodeByUniqueName(node.getProcess(),connName);
-			if(con_node!=null){
-				db_version = ElementParameterParser.getValue(con_node,"__DB_VERSION__");
-			}
 	%>
 		dbschema_<%=cid%> = (String)globalMap.get("<%=existDbSchema%>");
 	 	conn_<%=cid%> = (java.sql.Connection)globalMap.get("<%=conn%>");
 	 <%
 		log4jCodeGenerateUtil.useExistConnection(node);
 	 }else{
-		if(is_old_version){
-		%>
-	 		String driverClass_<%=cid%> = "com.vertica.Driver";
-		<%
-		}else{
-		%>
-	 		String driverClass_<%=cid%> = "com.vertica.jdbc.Driver";
-		<%
-		}
-		%>
-		java.lang.Class.forName(driverClass_<%=cid%>).newInstance();
+	 %>
+		java.lang.Class.forName("com.vertica.jdbc.Driver").newInstance();
 		
 		<%if(dbproperties == null || ("\"\"").equals(dbproperties) || ("").equals(dbproperties)) {%>
 		String url_<%=cid %> = "jdbc:vertica://" + <%=host%> + ":" + <%=port%> + "/" + <%=db%>;
@@ -212,25 +184,25 @@ if(("INSERT").equals(dataAction) || columnList != null && columnList.size() > 0)
 			+ copySchema_<%=cid %>
 		<%}%>		
 		+ " FROM STDIN <%=compression%> <%=stream_name%> DELIMITER '" + OUT_DELIM_<%=cid %> + "'"
-		<%if(is_version_ge_6 && is_trailing_null){%>
+		<%if(is_trailing_null){%>
 		+ " TRAILING NULLCOLS"
 		<%}%>
-		<%if(is_version_ge_6 && is_skipping){%>
+		<%if(is_skipping){%>
 		+ " SKIP " + <%=skipping_value%>
 		<%}%>
-		<%if(is_version_ge_6 && has_terminator){%>
+		<%if(has_terminator){%>
 		+ " RECORD TERMINATOR E'" + <%=terminator_value%> + "'"
 		<%}%>
-		<%if(is_version_ge_6 && has_enclosing_char){%>
+		<%if(has_enclosing_char){%>
 		+ " ENCLOSED BY E'" + <%=enclosing_char%> + "'"
 		<%}%>
-		<%if(is_version_ge_6 && is_enforcing_length){%>
+		<%if(is_enforcing_length){%>
 		+ " ENFORCELENGTH"
 		<%}%>
-		<%if(is_version_ge_6 && is_rejected_max){%>
+		<%if(is_rejected_max){%>
 		+ " REJECTMAX " + <%=rejected_max_value%>
 		<%}%>
-		<%if(is_version_ge_6 && is_abort_on_error){%>
+		<%if(is_abort_on_error){%>
 		+ " ABORT ON ERROR"
 		<%}%>
 		<%if(is_escape_char){%>
@@ -250,7 +222,7 @@ if(("INSERT").equals(dataAction) || columnList != null && columnList.size() > 0)
 		<%if(("INSERT").equals(dataAction) && exceptionFile!=null && !"".equals(exceptionFile) && !"\"\"".equals(exceptionFile)) {%>
 			+ " EXCEPTIONS '" + <%=exceptionFile%> + "'"
 		<%}%>
-	    <%if(is_version_ge_6 && is_no_commit){%>
+	    <%if(is_no_commit){%>
 	        + " NO COMMIT"
 	    <%}%>
 		;
@@ -259,22 +231,9 @@ if(("INSERT").equals(dataAction) || columnList != null && columnList.size() > 0)
 			log.debug("<%=cid%> - Bulk SQL:"+sql_<%=cid%>+".");
 			log.info("<%=cid%> - Bulk inserting data into <%=manager.getLProtectedChar()%>" + tableName_<%=cid%> + "<%=manager.getRProtectedChar()%>." );
         <%}%>
-<%
-	if(is_old_version){
-%>
-	    java.sql.Statement stmt_<%=cid %> = conn_<%=cid %>.createStatement();
-	    java.sql.ResultSet rs_<%=cid %> = stmt_<%=cid %>.executeQuery("select count(*) from " + tableName_<%=cid%>);
-	    int nbLineBeforeLoad_<%=cid %> = 0;
-	    while (rs_<%=cid %>.next()) {
-	    	nbLineBeforeLoad_<%=cid %> = rs_<%=cid %>.getInt(1);
-		}
-		
-<%
-	}else{
-%>
+        
 		com.vertica.jdbc.VerticaCopyStream vcs_<%=cid%> = new com.vertica.jdbc.VerticaCopyStream((com.vertica.jdbc.VerticaConnection)conn_<%=cid%>,sql_<%=cid %>);
 		vcs_<%=cid%>.start();
 <%
-    }
 }
 %>

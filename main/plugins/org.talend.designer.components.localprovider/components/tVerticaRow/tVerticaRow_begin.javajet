@@ -28,12 +28,7 @@ imports="
 		}
 		
 		public String getDirverClassName(INode node){
-			String db_version = ElementParameterParser.getValue(node, "__DB_VERSION__");
-			if("vertica_3.0_jdk_5.jar".equals(db_version) || "vertica_3.5_jdk_5.jar".equals(db_version) || "vertica_4.0_jdk_5.jar".equals(db_version) || "vertica_4.1.7_jdk_5.jar".equals(db_version) || "vertica_4.1.14_jdk_5.jar".equals(db_version)){
-				return "com.vertica.Driver";
-			}else{
-				return "com.vertica.jdbc.Driver";
-			}
+			return "com.vertica.jdbc.Driver";
 		}
 
 		public void afterConnection(INode node){

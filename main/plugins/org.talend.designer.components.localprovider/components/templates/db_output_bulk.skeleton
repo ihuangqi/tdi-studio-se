@@ -3858,7 +3858,7 @@ public class CLASS {
                 isObject = true;
                 setStmt.append("if(" + incomingConnName + "." + column.getName() + " == null) {\r\n");
                 if(column.column != null && "UUID".equals(column.column.getType())) {//TODO the same with the common dynamic process code, maybe need to use java.sql.Types.NULL always
-                	setStmt.append(prefix + cid + ".setNull(" + index + ", java.sql.Types.NULL);\r\n");
+                	setStmt.append(prefix + cid + ".setObject(" + index + ", \"00000000-0000-0000-0000-000000000000\");\r\n");
                 } else {
                 	setStmt.append(prefix + cid + ".setNull(" + index + ", java.sql.Types.OTHER);\r\n");                
                 }
@@ -3963,7 +3963,7 @@ public class CLASS {
                 if(column.column != null && ("BINARY".equals(column.column.getType()) || "VARBINARY".equals(column.column.getType()))) {
                     setStmt.append(prefix + cid + ".setBytes(" + index + dynamic + ", null);\r\n");
                 } else if(column.column != null && "UUID".equals(column.column.getType())) {//TODO the same with the common dynamic process code, maybe need to use java.sql.Types.NULL always
-                	setStmt.append(prefix + cid + ".setNull(" + index + dynamic + ", java.sql.Types.NULL);\r\n");
+                	setStmt.append(prefix + cid + ".setObject(" + index + dynamic + ", \"00000000-0000-0000-0000-000000000000\");\r\n");
                 } else {
                     setStmt.append(prefix + cid + ".setNull(" + index + dynamic + ", java.sql.Types.OTHER);\r\n");                
                 }               

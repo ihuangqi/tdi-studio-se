@@ -1815,25 +1815,20 @@ class VerticaManager extends Manager {
     private String host;
     private String port;
     private String dbSchema;
-    private String db_version;
     private boolean useExistingConnection;
     private String connection;        
     
-    public VerticaManager(String host, String port, String dbName, String tableName, String dbSchema, String userName, boolean useExistingConnection, String connection, String cid, String db_version, String additionalParams) {
+    public VerticaManager(String host, String port, String dbName, String tableName, String dbSchema, String userName, boolean useExistingConnection, String connection, String cid, String additionalParams) {
         super(dbName, tableName, userName ,cid, additionalParams);
         this.host = host;
         this.port = port;
         this.dbSchema = dbSchema;
-        this.db_version = db_version;
         this.useExistingConnection = useExistingConnection;
         this.connection = connection;
     }
     protected String getDriver() {
-		if("VERTICA_9_0".equals(db_version) || "VERTICA_7_1_X".equals(db_version) || "VERTICA_7_0_X".equals(db_version) || "VERTICA_6_1_X".equals(db_version) || "VERTICA_6_0".equals(db_version) || "VERTICA_5_1".equals(db_version)){
-			return "com.vertica.jdbc.Driver";
-		}else{
-			return "com.vertica.Driver";
-		}
+		return "com.vertica.jdbc.Driver";
+		
     }
     public String getSpecificConnectionURL() {
         return "\"jdbc:vertica://\" + " + host + " + \":\" + " + port + " + \"/\" + " + dbName;
@@ -2393,13 +2388,12 @@ class ManagerFactory {
         } else if(("VERTICA").equals(dbType)) {
             String host = ElementParameterParser.getValue(node, "__HOST__");
             String port = ElementParameterParser.getValue(node, "__PORT__");
-            String db_version = ElementParameterParser.getValue(node, "__DB_VERTICA_VERSION__");
             String dbSchema = ElementParameterParser.getValue(node, "__SCHEMA_DB__");
             String dbName = ElementParameterParser.getValue(node, "__DBNAME__");
             String userName = ElementParameterParser.getValue(node, "__USER__");
             boolean useExistingConnection = ("true").equals(ElementParameterParser.getValue(node, "__USE_EXISTING_CONNECTION__"));
             String connection = stringUtil.getString(ElementParameterParser.getValue(node, "__CONNECTION_"+dbType+"__"));
-            manager = new VerticaManager(host, port, dbName, tableName, dbSchema, userName, useExistingConnection, connection, cid,db_version, additionalParams);
+            manager = new VerticaManager(host, port, dbName, tableName, dbSchema, userName, useExistingConnection, connection, cid, additionalParams);
         } else if(("EXASOL").equals(dbType)) {
         	 String host = ElementParameterParser.getValue(node, "__HOST__");
              String port = ElementParameterParser.getValue(node, "__PORT__");

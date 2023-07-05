@@ -42,17 +42,6 @@
       SHOW_IF="USE_EXISTING_CONNECTION == 'false'"
     />
 
-	<PARAMETER
-		NAME="DB_VERSION"
-		FIELD="CLOSED_LIST"
-		NUM_ROW="100"
-		REPOSITORY_VALUE="DB_VERSION"
-		SHOW_IF="USE_EXISTING_CONNECTION == 'false'">
-		<ITEMS DEFAULT="VERTICA_9_0">
-			<ITEM NAME="VERTICA_9_0" VALUE="VERTICA_9_0" />
-		</ITEMS>
-	</PARAMETER>
-
     <PARAMETER
       NAME="USE_EXISTING_CONNECTION"
       FIELD="CHECK"
@@ -234,8 +223,7 @@
         NAME="STREAM_NAME"
         FIELD="TEXT"
         NUM_ROW="30"
-        REQUIRED="true"
-        SHOW_IF="(DB_VERSION == 'VERTICA_9_0')">
+        REQUIRED="true">
         <DEFAULT>"talend"</DEFAULT>
     </PARAMETER>
 
@@ -258,20 +246,18 @@
     <PARAMETER
       NAME="TRAILING_NULL"
       FIELD="CHECK"
-      NUM_ROW="65"
-      SHOW_IF="(DB_VERSION == 'VERTICA_9_0')">
+      NUM_ROW="65">
         <DEFAULT>false</DEFAULT>
     </PARAMETER>
     <PARAMETER
       NAME="SKIP_OPTION" FIELD="CHECK"
       REQUIRED="true"
-      NUM_ROW="66"
-      SHOW_IF="(DB_VERSION == 'VERTICA_9_0')">
+      NUM_ROW="66">
       <DEFAULT>false</DEFAULT>
     </PARAMETER>
     <PARAMETER
       NAME="SKIP_VALUE" FIELD="TEXT"
-      SHOW_IF="SKIP_OPTION == 'true' AND (DB_VERSION == 'VERTICA_9_0')"
+      SHOW_IF="SKIP_OPTION == 'true'"
       NUM_ROW="66">
       <DEFAULT>"1"</DEFAULT>
     </PARAMETER>
@@ -279,13 +265,12 @@
     <PARAMETER
       NAME="RECORD_TERMINATOR_OPTION" FIELD="CHECK"
       REQUIRED="true"
-      NUM_ROW="67"
-      SHOW_IF="(DB_VERSION == 'VERTICA_9_0')">
+      NUM_ROW="67">
       <DEFAULT>false</DEFAULT>
     </PARAMETER>
     <PARAMETER
       NAME="RECORD_TERMINATOR_VALUE" FIELD="TEXT"
-      SHOW_IF="RECORD_TERMINATOR_OPTION == 'true' AND (DB_VERSION == 'VERTICA_9_0')"
+      SHOW_IF="RECORD_TERMINATOR_OPTION == 'true'"
       NUM_ROW="67">
       <DEFAULT>"\n"</DEFAULT>
     </PARAMETER>
@@ -293,13 +278,12 @@
     <PARAMETER
       NAME="ENCLOSED_BY_OPTION" FIELD="CHECK"
       REQUIRED="true"
-      NUM_ROW="68"
-      SHOW_IF="(DB_VERSION == 'VERTICA_9_0')">
+      NUM_ROW="68">
       <DEFAULT>false</DEFAULT>
     </PARAMETER>
     <PARAMETER
       NAME="ENCLOSED_BY_VALUE" FIELD="TEXT"
-      SHOW_IF="ENCLOSED_BY_OPTION == 'true' AND (DB_VERSION == 'VERTICA_9_0')"
+      SHOW_IF="ENCLOSED_BY_OPTION == 'true'"
       NUM_ROW="68">
       <DEFAULT>"\""</DEFAULT>
     </PARAMETER>
@@ -344,7 +328,6 @@
       FIELD="CHECK"
       NUM_ROW="76"
       REQUIRED="true"
-      SHOW_IF="(DB_VERSION == 'VERTICA_9_0')"
     >
       <DEFAULT>false</DEFAULT>
     </PARAMETER>
@@ -353,13 +336,13 @@
         NAME="REJECTMAX_OPTION" FIELD="CHECK"
         REQUIRED="true"
         NUM_ROW="79"
-        SHOW_IF="ON_ERROR_ABORT_OPTION == 'false' AND (DB_VERSION == 'VERTICA_9_0')">
+        SHOW_IF="ON_ERROR_ABORT_OPTION == 'false'">
       <DEFAULT>false</DEFAULT>
     </PARAMETER>
     <PARAMETER
         NAME="REJECTMAX_VALUE" FIELD="TEXT"
         NUM_ROW="79"
-        SHOW_IF="ON_ERROR_ABORT_OPTION == 'false' AND REJECTMAX_OPTION == 'true' AND (DB_VERSION == 'VERTICA_9_0')">
+        SHOW_IF="ON_ERROR_ABORT_OPTION == 'false' AND REJECTMAX_OPTION == 'true'">
       <DEFAULT>"1000"</DEFAULT>
     </PARAMETER>
 
@@ -368,7 +351,7 @@
       FIELD="CHECK"
       NUM_ROW="85"
       REQUIRED="true"
-      SHOW_IF="REJECTMAX_OPTION == 'false' AND (DB_VERSION == 'VERTICA_9_0')">
+      SHOW_IF="REJECTMAX_OPTION == 'false'">
       <DEFAULT>false</DEFAULT>
     </PARAMETER>
 
@@ -377,7 +360,6 @@
       FIELD="CHECK"
       NUM_ROW="88"
       REQUIRED="true"
-      SHOW_IF="(DB_VERSION == 'VERTICA_9_0')"
     >
       <DEFAULT>false</DEFAULT>
     </PARAMETER>
@@ -423,7 +405,6 @@
 
       <TEMPLATE_PARAM SOURCE="self.USE_EXISTING_CONNECTION"   TARGET="tVBE.USE_EXISTING_CONNECTION" />
       <TEMPLATE_PARAM SOURCE="self.CONNECTION"   TARGET="tVBE.CONNECTION" />
-      <TEMPLATE_PARAM SOURCE="self.DB_VERSION"   TARGET="tVBE.DB_VERSION" />
       <TEMPLATE_PARAM SOURCE="self.HOST"   TARGET="tVBE.HOST" />
       <TEMPLATE_PARAM SOURCE="self.PORT"   TARGET="tVBE.PORT" />
       <TEMPLATE_PARAM SOURCE="self.DBNAME"   TARGET="tVBE.DBNAME" />
@@ -463,7 +444,7 @@
 
     </TEMPLATES>
     <IMPORTS>
-		<IMPORT NAME="Driver-VERTICA_9.0" MODULE="vertica-jdbc-9.3.1-0.jar" MVN="mvn:com.vertica/vertica-jdbc/9.3.1-0"   REQUIRED_IF="(USE_EXISTING_CONNECTION == 'false') and (DB_VERSION=='VERTICA_9_0')" />
+		<IMPORT NAME="Driver-VERTICA_12.0" MODULE="vertica-jdbc-12.0.4-0.jar" MVN="mvn:com.vertica.jdbc/vertica-jdbc/12.0.4-0"   REQUIRED_IF="USE_EXISTING_CONNECTION == 'false'" />
     </IMPORTS>
   </CODEGENERATION>
 

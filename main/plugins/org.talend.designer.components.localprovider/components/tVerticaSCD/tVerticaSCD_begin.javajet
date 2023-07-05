@@ -74,17 +74,7 @@ if(inputSchema != null && inputSchema.size() > 0 && outputSchema != null && outp
         java.sql.Connection connection_<%=cid%> = (java.sql.Connection) globalMap.get("<%=connectionName%>");
         <%        
     } else {
-    	String db_version = ElementParameterParser.getValue(node, "__DB_VERSION__");
-		if("vertica_3.0_jdk_5.jar".equals(db_version) || "vertica_3.5_jdk_5.jar".equals(db_version) || "vertica_4.0_jdk_5.jar".equals(db_version) || "vertica_4.1.7_jdk_5.jar".equals(db_version) || "vertica_4.1.14_jdk_5.jar".equals(db_version)){
-		%>
-			java.lang.Class.forName("com.vertica.Driver");
-		<%
-		}else{
-		%>
-        	java.lang.Class.forName("com.vertica.jdbc.Driver");
-		<%
-		}
-		%>
+    	java.lang.Class.forName("com.vertica.jdbc.Driver");
         dbschema_<%=cid%> = <%=dbschema%>;
         
         <%if(dbproperties == null || ("\"\"").equals(dbproperties) || ("").equals(dbproperties)) {%>
