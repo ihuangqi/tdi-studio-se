@@ -74,7 +74,9 @@ Require-Bundle: org.talend.model,
  org.talend.repository.view,
  org.apache.commons.lang3,
  com.fasterxml.jackson.core.jackson-core,
- com.fasterxml.jackson.core.jackson-databind
+ com.fasterxml.jackson.core.jackson-databind,
+ org.talend.cwm.mip,
+ org.eclipse.gmf.runtime.notation
 Eclipse-LazyStart: true
 Plugin-Class: org.talend.designer.core.DesignerPlugin
 Export-Package: org.talend.designer.core;
