@@ -129,9 +129,7 @@ public class TaCoKitPropertiesTableEditorView<B> extends PropertiesTableEditorVi
         int rowNumber = ((Table) combo.getParent()).getSelectionIndex();
         ComboBoxCellEditor cbc = ((ComboBoxCellEditor) cellEditor);
 
-        String val = String.valueOf(originalTypedValue);
-
-        TaCoKitUtil.updateElementParameter(element, currentParam, rowNumber, val);
+        TaCoKitUtil.updateElementParameter(element, currentParam, rowNumber, originalTypedValue);
         String[] listToDisplay = getItemsToDisplay(element, currentParam, rowNumber);
         if (!Arrays.equals(listToDisplay, cbc.getItems())) {
             ((ComboBoxCellEditor) cellEditor).setItems(listToDisplay);

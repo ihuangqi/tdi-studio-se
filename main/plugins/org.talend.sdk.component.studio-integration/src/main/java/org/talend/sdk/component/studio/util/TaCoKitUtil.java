@@ -738,7 +738,8 @@ public class TaCoKitUtil {
         return null;
     }
 
-    public static void updateElementParameter(final IElement element, final IElementParameter param, int rowNumber, String newValue) {
+    public static void updateElementParameter(final IElement element, final IElementParameter param, int rowNumber,
+            Object newValue) {
         if (param instanceof ValueSelectionParameter) {
             ValueSelectionParameter vsParam = ((ValueSelectionParameter) param);
             Map<String, String> suggestedValues = new LinkedHashMap<>();
@@ -747,8 +748,14 @@ public class TaCoKitUtil {
             if (!action.isMissingRequired()) {
                 suggestedValues = vsParam.getSuggestionValues();
             }
-            if (!StringUtils.isEmpty(newValue)) {
-                suggestedValues.put(newValue, newValue);
+            if (newValue instanceof ElementParameterValueModel) {
+                ElementParameterValueModel model = (ElementParameterValueModel) newValue;
+                suggestedValues.put(model.getLabel(), model.getValue());
+            } else {
+                String suggestedValue = String.valueOf(newValue);
+                if (!StringUtils.isEmpty(suggestedValue)) {
+                    suggestedValues.put(suggestedValue, suggestedValue);
+                }
             }
             updateElementParameter(param, suggestedValues);
         }
