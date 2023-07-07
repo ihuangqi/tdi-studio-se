@@ -19,7 +19,7 @@ import org.talend.repository.model.RepositoryNode;
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public class RepositoryReviewBusinessHandler extends AbsBusinessHandler<RepositoryReviewBusinessHandler> {
+public class RepositoryReviewBusinessHandler extends AbsBusinessHandler {
 
     private static final String UI_KEY = "RepositoryReviewDialog";
 

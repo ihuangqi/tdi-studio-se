@@ -56,11 +56,6 @@ import org.talend.designer.core.ui.editor.subjobcontainer.SubjobContainerPart;
  */
 public class PartFactory implements EditPartFactory {
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.eclipse.gef.EditPartFactory#createEditPart(org.eclipse.gef.EditPart, java.lang.Object)
-     */
     @Override
     public EditPart createEditPart(EditPart context, Object model) {
         EditPart part = null;
@@ -102,7 +97,7 @@ public class PartFactory implements EditPartFactory {
                     ISparkJobletProviderService sparkService = (ISparkJobletProviderService) GlobalServiceRegister.getDefault()
                             .getService(ISparkJobletProviderService.class);
                     if (sparkService != null) {
-                        part = (EditPart)sparkService.createEditorPart(model);
+                        part = (EditPart) sparkService.createEditorPart(model);
                         if (part != null) {
                             part.setModel(model);
                             return part;
@@ -114,7 +109,7 @@ public class PartFactory implements EditPartFactory {
                     ISparkStreamingJobletProviderService sparkService = (ISparkStreamingJobletProviderService) GlobalServiceRegister.getDefault()
                             .getService(ISparkStreamingJobletProviderService.class);
                     if (sparkService != null) {
-                        part = (EditPart)sparkService.createEditorPart(model);
+                        part = (EditPart) sparkService.createEditorPart(model);
                         if (part != null) {
                             part.setModel(model);
                             return part;

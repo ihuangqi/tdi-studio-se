@@ -26,14 +26,15 @@ import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.Request;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.talend.core.model.process.Element;
 import org.talend.designer.core.model.components.EParameterName;
+import org.talend.designer.core.ui.editor.AbstractSwtGraphicalEditPart;
 
 /**
  * DOC Administrator class global comment. Detailled comment
  */
-public class ConnectionResumingEditPart extends AbstractGraphicalEditPart implements PropertyChangeListener {
+public class ConnectionResumingEditPart extends AbstractSwtGraphicalEditPart
+        implements ICrossPlatformConnectionResumingEditPart, PropertyChangeListener {
 
     @Override
     public boolean isSelectable() {
@@ -45,6 +46,7 @@ public class ConnectionResumingEditPart extends AbstractGraphicalEditPart implem
      *
      * @see org.eclipse.gef.editparts.AbstractGraphicalEditPart#activate()
      */
+    @Override
     public void activate() {
         if (!isActive()) {
             super.activate();
@@ -52,6 +54,7 @@ public class ConnectionResumingEditPart extends AbstractGraphicalEditPart implem
         }
     }
 
+    @Override
     protected void addChildVisual(EditPart childEditPart, int index) {
         IFigure child = ((GraphicalEditPart) childEditPart).getFigure();
         getContentPane().add(child, index);
@@ -62,6 +65,7 @@ public class ConnectionResumingEditPart extends AbstractGraphicalEditPart implem
      *
      * @see org.eclipse.gef.editparts.AbstractGraphicalEditPart#deactivate()
      */
+    @Override
     public void deactivate() {
         if (isActive()) {
             super.deactivate();
@@ -156,6 +160,7 @@ public class ConnectionResumingEditPart extends AbstractGraphicalEditPart implem
      *
      * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
      */
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         String request = evt.getPropertyName();
         if (request.equals(EParameterName.RESUMING_CHECKPOINT.getName())) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -165,4 +170,5 @@ public class ConnectionResumingEditPart extends AbstractGraphicalEditPart implem
             refreshVisuals();
         }
     }
+
 }

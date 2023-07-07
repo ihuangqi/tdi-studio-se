@@ -22,7 +22,6 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.editparts.AbstractConnectionEditPart;
 import org.eclipse.gef.editpolicies.ConnectionEditPolicy;
 import org.eclipse.gef.editpolicies.ConnectionEndpointEditPolicy;
 import org.eclipse.gef.requests.GroupRequest;
@@ -39,6 +38,7 @@ import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.ui.editor.cmd.ConnectionDeleteCommand;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.nodes.NodeFigure;
+import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformEditPart;
 import org.talend.designer.core.ui.editor.subjobcontainer.SubjobContainer;
 import org.talend.designer.core.ui.preferences.TalendDesignerPrefConstants;
 import org.talend.designer.core.ui.views.CodeView;
@@ -50,7 +50,22 @@ import org.talend.designer.core.ui.views.properties.ComponentSettingsView;
  * $Id$
  *
  */
-public class ConnectionPart extends AbstractConnectionEditPart implements PropertyChangeListener {
+public class ConnectionPart extends AbstractSwtConnectionEditPart
+        implements ICrossPlatformConnectionPart, PropertyChangeListener {
+
+    public ConnectionPart() {
+        super();
+    }
+
+    @Override
+    public ICrossPlatformEditPart getCrossPlatformSource() {
+        return (ICrossPlatformEditPart) getSource();
+    }
+
+    @Override
+    public ICrossPlatformEditPart getCrossPlatformTarget() {
+        return (ICrossPlatformEditPart) getTarget();
+    }
 
     /*
      * (non-Javadoc)
@@ -161,8 +176,11 @@ public class ConnectionPart extends AbstractConnectionEditPart implements Proper
                 }
                 List<Connection> connectionList = new ArrayList<Connection>();
                 for (int i = 0; i < request.getEditParts().size(); i++) {
-                    if (request.getEditParts().get(i) instanceof ConnectionPart) {
-                        connectionList.add(((Connection) ((ConnectionPart) request.getEditParts().get(i)).getModel()));
+                    Object object = request.getEditParts().get(i);
+                    if (object instanceof ConnectionPart) {
+                        connectionList.add(((Connection) ((ConnectionPart) object).getModel()));
+                    } else if (object instanceof ICrossPlatformConnectionPart) {
+                        connectionList.add(((Connection) ((ICrossPlatformConnectionPart) object).getCrossPlatformModel()));
                     }
                 }
                 return new ConnectionDeleteCommand(connectionList);
@@ -311,4 +329,5 @@ public class ConnectionPart extends AbstractConnectionEditPart implements Proper
 
         return super.isSelectable();
     }
+
 }

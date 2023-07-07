@@ -19,9 +19,9 @@ import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.talend.commons.ui.utils.workbench.gef.SimpleHtmlFigure;
 import org.talend.commons.utils.workbench.preferences.GlobalConstant;
+import org.talend.designer.core.ui.editor.AbstractSwtGraphicalEditPart;
 
 /**
  * Edit part of connection performance.
@@ -31,7 +31,12 @@ import org.talend.commons.utils.workbench.preferences.GlobalConstant;
  * $Id: ConnectionPerformanceEditPart.java 下午02:24:35 2007-6-8 +0000 (2007-6-8) yzhang $
  *
  */
-public class ConnectionPerformanceEditPart extends AbstractGraphicalEditPart implements PropertyChangeListener {
+public class ConnectionPerformanceEditPart extends AbstractSwtGraphicalEditPart
+        implements ICrossPlatformConnectionPerformanceEditPart, PropertyChangeListener {
+
+    public ConnectionPerformanceEditPart() {
+        super();
+    }
 
     /*
      * (non-Javadoc)
@@ -100,6 +105,7 @@ public class ConnectionPerformanceEditPart extends AbstractGraphicalEditPart imp
      *
      * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
      */
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(ConnectionPerformance.LABEL_PROP)) {
             refreshVisuals();

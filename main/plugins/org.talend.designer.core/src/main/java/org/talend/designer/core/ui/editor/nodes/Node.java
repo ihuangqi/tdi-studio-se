@@ -33,7 +33,6 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
@@ -47,7 +46,9 @@ import org.talend.commons.CommonsPlugin;
 import org.talend.commons.exception.CommonExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.gmf.util.DisplayUtils;
+import org.talend.commons.ui.runtime.custom.ICommonUIHandler;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
+import org.talend.commons.utils.OsgiServices;
 import org.talend.components.api.properties.ComponentProperties;
 import org.talend.core.CorePlugin;
 import org.talend.core.GlobalServiceRegister;
@@ -130,7 +131,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.ContextParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
-import org.talend.designer.core.ui.ActiveProcessTracker;
+import org.talend.designer.core.ui.IActiveProcessTracker;
 import org.talend.designer.core.ui.editor.AbstractTalendEditor;
 import org.talend.designer.core.ui.editor.cmd.ChangeMetadataCommand;
 import org.talend.designer.core.ui.editor.cmd.ConnectionCreateCommand;
@@ -438,7 +439,7 @@ public class Node extends Element implements IGraphicalNode {
     public Node(IComponent component) {
         this.oldcomponent = component;
         this.delegateComponent = UnifiedComponentUtil.getDelegateComponent(component);
-        this.process = ActiveProcessTracker.getCurrentProcess();
+        this.process = OsgiServices.get(IActiveProcessTracker.class).getCurrentProcess();
         currentStatus = 0;
 
         init(component);
@@ -455,7 +456,7 @@ public class Node extends Element implements IGraphicalNode {
         this.oldcomponent = emfComponent;
         this.delegateComponent = delegateComponent;
         this.component = emfComponent;
-        this.process = ActiveProcessTracker.getCurrentProcess();
+        this.process = OsgiServices.get(IActiveProcessTracker.class).getCurrentProcess();
         currentStatus = 0;
 
         init(component);
@@ -473,7 +474,7 @@ public class Node extends Element implements IGraphicalNode {
         this.delegateComponent = UnifiedComponentUtil.getDelegateComponent(component);
         this.insertSet = insertSet;
         this.template = template;
-        this.process = ActiveProcessTracker.getCurrentProcess();
+        this.process = OsgiServices.get(IActiveProcessTracker.class).getCurrentProcess();
         if (this.process == null) {
             this.process = process;
         }
@@ -1590,7 +1591,7 @@ public class Node extends Element implements IGraphicalNode {
     }
 
     private boolean getTakeSchema() {
-        return MessageDialog.openQuestion(DisplayUtils.getDefaultShell(false), "", Messages.getString("Node.getSchemaOrNot")); //$NON-NLS-1$ //$NON-NLS-2$
+        return ICommonUIHandler.get().openQuestion("", Messages.getString("Node.getSchemaOrNot")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override

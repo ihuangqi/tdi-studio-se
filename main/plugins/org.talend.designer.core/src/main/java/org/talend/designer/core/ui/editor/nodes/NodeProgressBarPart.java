@@ -25,8 +25,8 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.Request;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.talend.designer.core.model.components.EParameterName;
+import org.talend.designer.core.ui.editor.AbstractSwtGraphicalEditPart;
 import org.talend.designer.core.ui.editor.nodecontainer.NodeContainer;
 import org.talend.designer.core.ui.editor.nodecontainer.NodeContainerPart;
 import org.talend.designer.core.ui.editor.process.ProcessPart;
@@ -35,7 +35,12 @@ import org.talend.designer.core.ui.editor.subjobcontainer.SubjobContainerPart;
 /**
  * DOC Administrator class global comment. Detailled comment
  */
-public class NodeProgressBarPart extends AbstractGraphicalEditPart implements PropertyChangeListener {
+public class NodeProgressBarPart extends AbstractSwtGraphicalEditPart
+        implements ICrossPlatformNodeProgressBarPart, PropertyChangeListener {
+
+    public NodeProgressBarPart() {
+        super();
+    }
 
     /*
      * (non-Javadoc)
@@ -98,6 +103,7 @@ public class NodeProgressBarPart extends AbstractGraphicalEditPart implements Pr
      *
      * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
      */
+    @Override
     public void propertyChange(final PropertyChangeEvent evt) {
         String request = evt.getPropertyName();
         Double extent = new Double(0);

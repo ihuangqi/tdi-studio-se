@@ -25,13 +25,13 @@ import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.talend.commons.ui.gmf.util.DisplayUtils;
 import org.talend.core.model.process.Element;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.TraceData;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.ui.dialog.FilterColumnDialog;
+import org.talend.designer.core.ui.editor.AbstractSwtGraphicalEditPart;
 import org.talend.designer.core.ui.editor.cmd.PropertyChangeCommand;
 
 /**
@@ -40,7 +40,8 @@ import org.talend.designer.core.ui.editor.cmd.PropertyChangeCommand;
  * $Id$
  *
  */
-public class ConnectionTraceEditPart extends AbstractGraphicalEditPart implements PropertyChangeListener {
+public class ConnectionTraceEditPart extends AbstractSwtGraphicalEditPart
+        implements ICrossPlatformConnectionTraceEditPart, PropertyChangeListener {
 
     @Override
     public boolean isSelectable() {
@@ -52,6 +53,7 @@ public class ConnectionTraceEditPart extends AbstractGraphicalEditPart implement
      *
      * @see org.eclipse.gef.editparts.AbstractGraphicalEditPart#activate()
      */
+    @Override
     public void activate() {
         if (!isActive()) {
             super.activate();
@@ -59,6 +61,7 @@ public class ConnectionTraceEditPart extends AbstractGraphicalEditPart implement
         }
     }
 
+    @Override
     protected void addChildVisual(EditPart childEditPart, int index) {
         IFigure child = ((GraphicalEditPart) childEditPart).getFigure();
         getContentPane().add(child, index);
@@ -69,6 +72,7 @@ public class ConnectionTraceEditPart extends AbstractGraphicalEditPart implement
      *
      * @see org.eclipse.gef.editparts.AbstractGraphicalEditPart#deactivate()
      */
+    @Override
     public void deactivate() {
         if (isActive()) {
             super.deactivate();
@@ -159,6 +163,7 @@ public class ConnectionTraceEditPart extends AbstractGraphicalEditPart implement
      *
      * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
      */
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         String request = evt.getPropertyName();
         if (request.equals("positionChange") || request.equals(ConnectionTrace.TRACE_PROP)) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -178,6 +183,7 @@ public class ConnectionTraceEditPart extends AbstractGraphicalEditPart implement
 
     }
 
+    @Override
     public void performRequest(Request req) {
         if (req.getType().equals(RequestConstants.REQ_OPEN)) {
             ConnectionTrace a = ((ConnectionTrace) this.getModel());

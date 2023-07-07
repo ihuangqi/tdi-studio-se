@@ -10,16 +10,15 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.designer.core.ui.editor.properties.controllers.ui;
+package org.talend.designer.core.ui.editor.connections;
 
-import org.eclipse.gef.commands.Command;
-import org.talend.commons.ui.runtime.custom.IUIHandler;
+import org.talend.designer.core.ui.editor.subjobcontainer.AbsCrossPlatformEditPart;
 
-/**
- * DOC cmeng  class global comment. Detailled comment
- */
-public interface ICommonUIHandler extends IUIHandler {
 
-    boolean execute(Command cmd);
+public class CrossPlatformConnectionPerformanceEditPart extends AbsCrossPlatformEditPart implements ICrossPlatformConnectionPerformanceEditPart {
+
+    public CrossPlatformConnectionPerformanceEditPart(Object model) {
+        super(model);
+    }
 
 }

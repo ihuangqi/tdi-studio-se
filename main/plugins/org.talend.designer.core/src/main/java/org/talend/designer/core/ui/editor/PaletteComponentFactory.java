@@ -24,7 +24,7 @@ import org.talend.designer.core.utils.UnifiedComponentUtil;
  * $Id$
  *
  */
-public class PaletteComponentFactory implements CreationFactory {
+public class PaletteComponentFactory implements CreationFactory, ICrossPlatformCreationFactory {
 
     protected IComponent component;
 

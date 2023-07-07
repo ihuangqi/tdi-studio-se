@@ -12,14 +12,12 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.cmd;
 
-import org.talend.commons.ui.runtime.custom.IUIHandler;
+import org.talend.commons.ui.runtime.custom.ICommonUIHandler;
 
 
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public interface ICommonCommandUIHandler extends IUIHandler {
-
-    boolean openQuestion(String title, String message);
+public interface ICommonCommandUIHandler extends ICommonUIHandler {
 
 }

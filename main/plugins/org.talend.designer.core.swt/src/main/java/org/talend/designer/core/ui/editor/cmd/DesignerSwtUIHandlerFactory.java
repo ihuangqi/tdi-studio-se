@@ -12,9 +12,9 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.cmd;
 
+import org.talend.commons.ui.runtime.custom.ICommonUIHandler;
 import org.talend.commons.ui.runtime.custom.IUIHandler;
 import org.talend.designer.core.ui.editor.cmd.ChangeMetadataCommand.IChangeMetadataCommandUIHandler;
-import org.talend.designer.core.ui.editor.properties.controllers.ui.ICommonUIHandler;
 
 /**
  * DOC cmeng  class global comment. Detailled comment

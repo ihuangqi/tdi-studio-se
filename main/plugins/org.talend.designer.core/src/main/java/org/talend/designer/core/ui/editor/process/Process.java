@@ -68,6 +68,7 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.runtime.model.emf.EmfHelper;
 import org.talend.commons.runtime.model.repository.ERepositoryStatus;
 import org.talend.commons.ui.gmf.util.DisplayUtils;
+import org.talend.commons.ui.runtime.TalendUI;
 import org.talend.commons.ui.runtime.image.ImageUtils;
 import org.talend.commons.utils.Hex;
 import org.talend.commons.utils.VersionUtils;
@@ -141,7 +142,6 @@ import org.talend.core.ui.ILastVersionChecker;
 import org.talend.core.ui.component.ComponentsFactoryProvider;
 import org.talend.core.ui.process.IGEFProcess;
 import org.talend.core.utils.KeywordsValidator;
-import org.talend.cwm.helper.StudioEncryptionHelper;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.designer.core.ITestContainerGEFService;
 import org.talend.designer.core.i18n.Messages;
@@ -293,6 +293,8 @@ public class Process extends Element implements IProcess2, IGEFProcess, ILastVer
     private static Perl5Matcher matcher;
 
     private static Pattern pattern;
+
+    private CommandStack defaultCmdStack;
 
     static {
         matcher = new Perl5Matcher();
@@ -1033,6 +1035,9 @@ public class Process extends Element implements IProcess2, IGEFProcess, ILastVer
      */
     @Override
     public boolean isGridEnabled() {
+        if (!TalendUI.get().isStudio()) {
+            return true;
+        }
         if (viewer == null) {
             retrieveAttachedViewer();
             if (viewer != null) {
@@ -2942,18 +2947,25 @@ public class Process extends Element implements IProcess2, IGEFProcess, ILastVer
             Object adapter = ((AbstractMultiPageTalendEditor) getEditor()).getTalendEditor().getAdapter(CommandStack.class);
             return (CommandStack) adapter;
         } else {
-            return new CommandStack() {
+            if (defaultCmdStack == null) {
+                if (TalendUI.get().isStudio()) {
+                    defaultCmdStack = new CommandStack() {
 
-                /*
-                 * (non-Javadoc)
-                 *
-                 * @see org.eclipse.gef.commands.CommandStack#execute(org.eclipse.gef.commands.Command)
-                 */
-                @Override
-                public void execute(Command command) {
-                    command.execute();
+                        /*
+                         * (non-Javadoc)
+                         *
+                         * @see org.eclipse.gef.commands.CommandStack#execute(org.eclipse.gef.commands.Command)
+                         */
+                        @Override
+                        public void execute(Command command) {
+                            command.execute();
+                        }
+                    };
+                } else {
+                    defaultCmdStack = new CommandStack();
                 }
-            };
+            }
+            return defaultCmdStack;
         }
     }
 
@@ -4120,6 +4132,10 @@ public class Process extends Element implements IProcess2, IGEFProcess, ILastVer
         return null;
     }
 
+    public CommandStackEventListener getCommandStackEventListener() {
+        return commandStackEventListener;
+    }
+
     CommandStackEventListener commandStackEventListener = new CommandStackEventListener() {
 
         @Override
@@ -4174,7 +4190,7 @@ public class Process extends Element implements IProcess2, IGEFProcess, ILastVer
                 }
             }
             CommandStack commandStack = (CommandStack) editor.getTalendEditor().getAdapter(CommandStack.class);
-            commandStack.addCommandStackEventListener(commandStackEventListener);
+            commandStack.addCommandStackEventListener(getCommandStackEventListener());
             if (!isReadOnly()) { // when readonly. don't check the modifications.
                 getUpdateManager().updateAll();
             }
@@ -4196,7 +4212,7 @@ public class Process extends Element implements IProcess2, IGEFProcess, ILastVer
     public void dispose() {
         if (editor != null && !duplicate) {
             CommandStack commandStack = (CommandStack) editor.getTalendEditor().getAdapter(CommandStack.class);
-            commandStack.removeCommandStackEventListener(commandStackEventListener);
+            commandStack.removeCommandStackEventListener(getCommandStackEventListener());
 
             // ProjectPreferences projectPreferences = (ProjectPreferences) Log4jPrefsSettingManager.getInstance()
             // .getLog4jPreferences(Log4jPrefsConstants.LOG4J_ENABLE_NODE, false);

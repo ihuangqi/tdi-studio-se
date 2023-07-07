@@ -28,9 +28,9 @@ public class ConnectionTableAndSchemaNameDialog extends Dialog {
 
     private Text schemaName;
 
-    private String tableNameValue = "\"\""; //$NON-NLS-1$
+    private String tableNameValue = ConnectionTableAndSchemaNameDialogBusinessHandler.DEFAULT_TABLE_NAME;
 
-    private String schemaNameValue = "\"\""; //$NON-NLS-1$
+    private String schemaNameValue = ConnectionTableAndSchemaNameDialogBusinessHandler.DEFAULT_SCHEMA_NAME;
 
     private Button okButton;
 

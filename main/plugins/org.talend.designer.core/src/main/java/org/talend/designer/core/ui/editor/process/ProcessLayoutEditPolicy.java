@@ -33,15 +33,15 @@ import org.talend.designer.core.assist.TalendEditorComponentCreationUtil;
 import org.talend.designer.core.assist.TalendEditorConnectionTargetAssist;
 import org.talend.designer.core.ui.editor.cmd.ConnectionCreateCommand;
 import org.talend.designer.core.ui.editor.cmd.CreateNodeContainerCommand;
-import org.talend.designer.core.ui.editor.cmd.CreateNoteCommand;
 import org.talend.designer.core.ui.editor.cmd.MoveNodeCommand;
 import org.talend.designer.core.ui.editor.cmd.MoveNoteCommand;
-import org.talend.designer.core.ui.editor.jobletcontainer.JobletContainer;
 import org.talend.designer.core.ui.editor.nodecontainer.NodeContainer;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.nodes.NodePart;
 import org.talend.designer.core.ui.editor.notes.Note;
 import org.talend.designer.core.ui.editor.notes.NoteEditPart;
+import org.talend.designer.core.ui.editor.subjobcontainer.CrossPlatformCreateRequestProxy;
+import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformEditPart;
 import org.talend.designer.core.ui.editor.subjobcontainer.SubjobContainer;
 import org.talend.designer.core.ui.editor.subjobcontainer.SubjobContainerPart;
 
@@ -52,6 +52,21 @@ import org.talend.designer.core.ui.editor.subjobcontainer.SubjobContainerPart;
  *
  */
 public class ProcessLayoutEditPolicy extends XYLayoutEditPolicy {
+
+    private CrossPlatformProcessLayoutEditPolicy editPolicy;
+
+    public ProcessLayoutEditPolicy() {
+        super();
+        editPolicy = new CrossPlatformProcessLayoutEditPolicy();
+    }
+
+    @Override
+    public void setHost(EditPart host) {
+        super.setHost(host);
+        if (host != null) {
+            editPolicy.setHost((ICrossPlatformEditPart) host);
+        }
+    }
 
     // ------------------------------------------------------------------------
     // Overridden from ConstrainedLayoutEditPolicy
@@ -159,18 +174,7 @@ public class ProcessLayoutEditPolicy extends XYLayoutEditPolicy {
             return null;
         }
         Rectangle constraint = (Rectangle) getConstraintFor(request);
-
-        Command command = null;
-        if (Note.class.equals(request.getNewObjectType())) {
-            command = new CreateNoteCommand((Process) getHost().getModel(), (Note) request.getNewObject(),
-                    constraint.getLocation());
-        } else if (request.getNewObject() instanceof Node) {
-            Node node = (Node) request.getNewObject();
-            NodeContainer nodeContainer = ((Process)node.getProcess()).loadNodeContainer(node, false);
-            command = new CreateNodeContainerCommand((Process) getHost().getModel(), nodeContainer, constraint.getLocation());
-        }
-
-        return command;
+        return editPolicy.getCreateCommand(new CrossPlatformCreateRequestProxy(request), constraint.getLocation());
     }
 
     /*

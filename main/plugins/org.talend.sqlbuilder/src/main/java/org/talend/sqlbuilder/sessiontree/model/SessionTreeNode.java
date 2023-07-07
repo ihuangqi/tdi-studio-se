@@ -319,7 +319,7 @@ public class SessionTreeNode implements ISessionTreeNode {
     }
 
     /**
-     * @see org.gnu.amaz.ISessionTreeNode#getChildren()
+     * @see org.gnu.amaz.ISessionTreeNode#getCrossPlatformChildren()
      * @return Children.
      */
     public Object[] getChildren() {

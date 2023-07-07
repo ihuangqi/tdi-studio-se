@@ -25,10 +25,11 @@ import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.SnapToGrid;
 import org.eclipse.gef.SnapToHelper;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.rulers.RulerProvider;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.designer.core.model.components.EParameterName;
+import org.talend.designer.core.ui.editor.AbstractSwtGraphicalEditPart;
+import org.talend.designer.core.ui.editor.nodes.ICrossPlatformNodePart;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.nodes.NodePart;
 import org.talend.designer.core.ui.editor.process.NodeSnapToGeometry;
@@ -39,7 +40,17 @@ import org.talend.designer.core.ui.editor.process.NodeSnapToGeometry;
  * $Id$
  *
  */
-public class NodeContainerPart extends AbstractGraphicalEditPart implements PropertyChangeListener, IAdaptable {
+public class NodeContainerPart extends AbstractSwtGraphicalEditPart
+        implements ICrossPlatformNodeContainerPart, PropertyChangeListener, IAdaptable {
+
+    public NodeContainerPart() {
+        super();
+    }
+
+    @Override
+    public ICrossPlatformNodePart getCrossPlatformNodePart() {
+        return (ICrossPlatformNodePart) getNodePart();
+    }
 
     @Override
     protected void unregisterVisuals() {
@@ -54,6 +65,7 @@ public class NodeContainerPart extends AbstractGraphicalEditPart implements Prop
         return false;
     }
 
+    @Override
     public void activate() {
         if (!isActive()) {
             super.activate();
@@ -62,6 +74,7 @@ public class NodeContainerPart extends AbstractGraphicalEditPart implements Prop
         }
     }
 
+    @Override
     public void deactivate() {
         if (isActive()) {
             super.deactivate();
@@ -116,6 +129,7 @@ public class NodeContainerPart extends AbstractGraphicalEditPart implements Prop
         installEditPolicy(EditPolicy.LAYOUT_ROLE, new NodeContainerLayoutEditPolicy());
     }
 
+    @Override
     protected void refreshVisuals() {
         Rectangle rectangle = ((NodeContainer) this.getModel()).getNodeContainerRectangle();
         Rectangle cleanRectangle = ((NodeContainer) this.getModel()).getNodeMarkRectangle();
@@ -123,6 +137,7 @@ public class NodeContainerPart extends AbstractGraphicalEditPart implements Prop
         ((NodeContainerFigure) getFigure()).initializeNodeContainer(cleanRectangle);
     }
 
+    @Override
     protected List getModelChildren() {
         return ((NodeContainer) this.getModel()).getElements();
     }
@@ -132,6 +147,7 @@ public class NodeContainerPart extends AbstractGraphicalEditPart implements Prop
      *
      * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
      */
+    @Override
     public void propertyChange(PropertyChangeEvent changeEvent) {
         if (changeEvent.getPropertyName().equals(EParameterName.VALIDATION_RULES.getName())) {
             Node node = ((NodeContainer) getModel()).getNode();

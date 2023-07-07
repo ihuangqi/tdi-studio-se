@@ -19,15 +19,20 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.gef.Request;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.talend.core.model.process.Element;
+import org.talend.designer.core.ui.editor.AbstractSwtGraphicalEditPart;
 
 /**
  * DOC YeXiaowei class global comment. Detailled comment
  */
-public class MonitorConnectionLabelPart extends AbstractGraphicalEditPart implements PropertyChangeListener {
+public class MonitorConnectionLabelPart extends AbstractSwtGraphicalEditPart
+        implements ICrossPlatformMonitorConnectionLabelPart, PropertyChangeListener {
+
+    public MonitorConnectionLabelPart() {
+        super();
+    }
 
     /*
      * (non-Javadoc)
@@ -73,6 +78,7 @@ public class MonitorConnectionLabelPart extends AbstractGraphicalEditPart implem
      *
      * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
      */
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         refreshVisuals();
     }

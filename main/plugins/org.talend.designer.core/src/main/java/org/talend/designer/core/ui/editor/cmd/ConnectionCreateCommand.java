@@ -18,9 +18,10 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.gef.commands.Command;
-import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.talend.commons.ui.runtime.custom.ICommonUIHandler;
+import org.talend.commons.ui.runtime.custom.ICustomUI;
+import org.talend.commons.ui.runtime.custom.InputDialogBusinessHandler;
+import org.talend.commons.ui.runtime.custom.InputDialogBusinessHandler.IInputDialogInputValidator;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.PluginChecker;
 import org.talend.core.model.components.ComponentCategory;
@@ -42,7 +43,8 @@ import org.talend.designer.core.i18n.Messages;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.components.ExternalUtilities;
 import org.talend.designer.core.model.process.ConnectionManager;
-import org.talend.designer.core.ui.dialog.mergeorder.ConnectionTableAndSchemaNameDialog;
+import org.talend.designer.core.ui.dialog.IDesignerCoreUIHandler;
+import org.talend.designer.core.ui.dialog.mergeorder.ConnectionTableAndSchemaNameDialogBusinessHandler;
 import org.talend.designer.core.ui.editor.connections.Connection;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.process.Process;
@@ -144,8 +146,9 @@ public class ConnectionCreateCommand extends Command {
             }
         }
         if (source.isELTComponent()) {
-            InputDialog id = new InputDialog(null, nodeLabel + Messages.getString("ConnectionCreateAction.dialogTitle"), //$NON-NLS-1$
-                    Messages.getString("ConnectionCreateAction.dialogMessage"), oldName, new IInputValidator() { //$NON-NLS-1$
+            InputDialogBusinessHandler handler = new InputDialogBusinessHandler(
+                    nodeLabel + Messages.getString("ConnectionCreateAction.dialogTitle"),
+                    Messages.getString("ConnectionCreateAction.dialogMessage"), oldName, new IInputDialogInputValidator() {
 
                         @Override
                         public String isValid(String newText) {
@@ -159,14 +162,16 @@ public class ConnectionCreateCommand extends Command {
                             return null;
                         }
                     });
-            id.open();
-            if (id.getReturnCode() == InputDialog.CANCEL) {
+
+            InputDialogBusinessHandler result = IDesignerCoreUIHandler.get().askForConnectionNameUI(handler);
+            if (result.getOpenResult().equals(ICustomUI.CANCEL)) {
                 return ""; //$NON-NLS-1$
             }
-            return id.getValue();
+            return result.getResult();
         } else {
-            InputDialog id = new InputDialog(null, nodeLabel + Messages.getString("ConnectionCreateAction.dialogTitle"), //$NON-NLS-1$
-                    Messages.getString("ConnectionCreateAction.dialogMessage"), oldName, new IInputValidator() { //$NON-NLS-1$
+            InputDialogBusinessHandler handler = new InputDialogBusinessHandler(
+                    nodeLabel + Messages.getString("ConnectionCreateAction.dialogTitle"),
+                    Messages.getString("ConnectionCreateAction.dialogMessage"), oldName, new IInputDialogInputValidator() {
 
                         @Override
                         public String isValid(String newText) {
@@ -179,11 +184,12 @@ public class ConnectionCreateCommand extends Command {
                             return null;
                         }
                     });
-            id.open();
-            if (id.getReturnCode() == InputDialog.CANCEL) {
+
+            InputDialogBusinessHandler result = IDesignerCoreUIHandler.get().askForConnectionNameUI(handler);
+            if (result.getOpenResult().equals(ICustomUI.CANCEL)) {
                 return ""; //$NON-NLS-1$
             }
-            return id.getValue();
+            return result.getResult();
         }
 
     }
@@ -236,17 +242,18 @@ public class ConnectionCreateCommand extends Command {
             }
         }
         String outName = ""; //$NON-NLS-1$
-        ConnectionTableAndSchemaNameDialog id = new ConnectionTableAndSchemaNameDialog(null, nodeLabel
-                + Messages.getString("ConnectionCreateAction.dialogTitle"), //$NON-NLS-1$
-                Messages.getString("ConnectionCreateAction.dialogMessage"), schemaName); //$NON-NLS-1$
-        id.open();
-        if (id.getReturnCode() == InputDialog.CANCEL) {
+        ConnectionTableAndSchemaNameDialogBusinessHandler handler = new ConnectionTableAndSchemaNameDialogBusinessHandler(
+                nodeLabel + Messages.getString("ConnectionCreateAction.dialogTitle"),
+                Messages.getString("ConnectionCreateAction.dialogMessage"), schemaName);
+        ConnectionTableAndSchemaNameDialogBusinessHandler result = IDesignerCoreUIHandler.get()
+                .openConnectionTableAndSchemaNameDialog(handler);
+        if (result.getOpenResult().equals(ICustomUI.CANCEL)) {
             return ""; //$NON-NLS-1$
         }
-        if (id.getSchemaName().length() != 0 && id.getTableName().length() != 0) {
-            outName = id.getSchemaName() + "." + id.getTableName(); //$NON-NLS-1$
-        } else if (id.getSchemaName().length() == 0 && id.getTableName().length() != 0) {
-            outName = id.getTableName();
+        if (result.getSchemaName().length() != 0 && result.getTableName().length() != 0) {
+            outName = result.getSchemaName() + "." + result.getTableName(); //$NON-NLS-1$
+        } else if (result.getSchemaName().length() == 0 && result.getTableName().length() != 0) {
+            outName = result.getTableName();
         }
 
         return outName;
@@ -343,7 +350,7 @@ public class ConnectionCreateCommand extends Command {
                     } else {
                         String message = Messages.getString("ConnectionCreateAction.errorCreateConnectionName", //$NON-NLS-1$
                                 connectionName);
-                        MessageDialog.openError(null, Messages.getString("ConnectionCreateAction.error"), message); //$NON-NLS-1$
+                        ICommonUIHandler.get().openError(Messages.getString("ConnectionCreateAction.error"), message); //$NON-NLS-1$
                     }
                 }
 

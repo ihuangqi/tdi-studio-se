@@ -15,9 +15,12 @@ package org.talend.designer.core;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.talend.commons.ui.runtime.TalendUI;
+import org.talend.commons.ui.runtime.custom.ICrossPlatformPreferenceStore;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.IService;
 import org.talend.designer.codegen.ICodeGeneratorService;
+import org.talend.designer.core.ui.preferences.SwtPreferenceStoreProxy;
 import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryService;
@@ -68,6 +71,14 @@ public class DesignerPlugin extends AbstractUIPlugin {
 
     public static DesignerPlugin getDefault() {
         return plugin;
+    }
+
+    public ICrossPlatformPreferenceStore getCrossPlatformPreferenceStore() {
+        if (TalendUI.get().isStudio()) {
+            return new SwtPreferenceStoreProxy(getPreferenceStore());
+        } else {
+            return null;
+        }
     }
 
     /**

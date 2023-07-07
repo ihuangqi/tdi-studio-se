@@ -25,6 +25,7 @@ import org.talend.core.ui.process.IGraphicalNode;
 import org.talend.designer.core.ui.editor.nodecontainer.NodeContainer;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.nodes.NodePart;
+import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformEditPart;
 import org.talend.designer.core.ui.editor.subjobcontainer.SubjobContainer;
 
 /**
@@ -34,6 +35,8 @@ import org.talend.designer.core.ui.editor.subjobcontainer.SubjobContainer;
 public interface ITestContainerGEFService extends IService {
 
     public EditPart createEditorPart(Object model);
+
+    public ICrossPlatformEditPart createCrossPlatformEditorPart(Object model);
 
     public Element getJunitContainer(IProcess2 process);
 

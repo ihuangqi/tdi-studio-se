@@ -29,7 +29,6 @@ import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.SnapToGrid;
 import org.eclipse.gef.SnapToHelper;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editpolicies.SnapFeedbackPolicy;
 import org.eclipse.gef.rulers.RulerProvider;
 import org.eclipse.swt.SWT;
@@ -37,6 +36,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.IEditorInput;
 import org.talend.core.model.process.INode;
 import org.talend.designer.core.DesignerPlugin;
+import org.talend.designer.core.ui.editor.AbstractSwtGraphicalEditPart;
 import org.talend.designer.core.ui.editor.ProcessEditorInput;
 import org.talend.designer.core.ui.editor.TalendScalableFreeformRootEditPart;
 import org.talend.designer.core.ui.editor.nodes.Node;
@@ -54,17 +54,16 @@ import org.talend.repository.model.RepositoryNode;
  * $Id$
  *
  */
-public class ProcessPart extends AbstractGraphicalEditPart implements PropertyChangeListener, IAdaptable {
+public class ProcessPart extends AbstractSwtGraphicalEditPart
+        implements ICrossPlatformProcessPart, PropertyChangeListener, IAdaptable {
 
     private FreeformLayer fig2;
 
     private RepositoryNode node;
 
-    // private static final Color READ_WRITE_COLOR = new Color(null, DesignerColorUtils.getPreferenceDesignerEditorRGB(
-    // DesignerColorUtils.JOBDESIGNER_EGITOR_BACKGROUND_COLOR_NAME, DesignerColorUtils.DEAULT_EDITOR_COLOR));
-    //
-    // private static final Color READ_ONLY_COLOR = new Color(null, DesignerColorUtils.getPreferenceReadonlyRGB(
-    // DesignerColorUtils.READONLY_BACKGROUND_COLOR_NAME, DesignerColorUtils.DEAULT_READONLY_COLOR));
+    public ProcessPart() {
+        super();
+    }
 
     /*
      * (non-Javadoc)

@@ -17,8 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.commands.Command;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
+import org.talend.commons.ui.runtime.custom.ICommonUIHandler;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.metadata.IMetadataTable;
 import org.talend.core.model.process.IExternalNode;
@@ -167,8 +166,7 @@ public class ConnectionDeleteCommand extends Command {
         final INode target = connection.getTarget();
         if (target instanceof Node && ((Node) target).getNodeContainer() != null) {
             if (((Node) target).getJobletNode() != null) {
-                MessageDialog.openWarning(Display.getCurrent().getActiveShell(),
-                        Messages.getString("ConnectionDeleteCommand.COLLAPSE"), //$NON-NLS-1$
+                ICommonUIHandler.get().openWarning(Messages.getString("ConnectionDeleteCommand.COLLAPSE"), //$NON-NLS-1$
                         Messages.getString("ConnectionDeleteCommand.COLLAPSEJOBLET")); //$NON-NLS-1$
                 return true;
             }
@@ -177,8 +175,7 @@ public class ConnectionDeleteCommand extends Command {
         final INode source = connection.getSource();
         if (source instanceof Node && ((Node) source).getNodeContainer() != null) {
             if (((Node) source).getJobletNode() != null) {
-                MessageDialog.openWarning(Display.getCurrent().getActiveShell(),
-                        Messages.getString("ConnectionDeleteCommand.COLLAPSE"), //$NON-NLS-1$
+                ICommonUIHandler.get().openWarning(Messages.getString("ConnectionDeleteCommand.COLLAPSE"), //$NON-NLS-1$
                         Messages.getString("ConnectionDeleteCommand.COLLAPSEJOBLET")); //$NON-NLS-1$
                 return true;
             }

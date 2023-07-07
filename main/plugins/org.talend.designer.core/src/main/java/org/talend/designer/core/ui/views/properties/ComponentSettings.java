@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.talend.commons.ui.runtime.TalendUI;
 import org.talend.core.model.process.Element;
 import org.talend.designer.core.ui.editor.process.JobTemplateViewsAndProcessUtil;
 
@@ -26,6 +27,9 @@ import org.talend.designer.core.ui.editor.process.JobTemplateViewsAndProcessUtil
 public class ComponentSettings {
 
     public static void switchToCurComponentSettingsView() {
+        if (!TalendUI.get().isStudio()) {
+            return;
+        }
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         IViewPart view = page.findView(ComponentSettingsView.ID);
         if (view == null) {

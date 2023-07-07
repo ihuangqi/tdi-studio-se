@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.gef.commands.Command;
+import org.talend.commons.ui.runtime.custom.ICommonUIHandler;
 import org.talend.commons.ui.runtime.custom.UIHandlerFactories;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.PluginChecker;
@@ -37,7 +38,6 @@ import org.talend.core.ui.process.IGraphicalNode;
 import org.talend.designer.core.model.process.statsandlogs.StatsAndLogsManager;
 import org.talend.designer.core.ui.editor.cmd.PropertyChangeCommand;
 import org.talend.designer.core.ui.editor.nodes.Node;
-import org.talend.designer.core.ui.editor.properties.controllers.ui.ICommonUIHandler;
 import org.talend.designer.core.ui.editor.properties.controllers.ui.IComponentListControllerUI;
 import org.talend.designer.core.ui.editor.properties.controllers.ui.IWidgetContext;
 import org.talend.designer.core.utils.DesignerUtilities;

@@ -26,12 +26,12 @@ import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.editpolicies.ConnectionEditPolicy;
 import org.eclipse.gef.requests.GroupRequest;
 import org.talend.commons.ui.utils.workbench.gef.LabelCellEditorLocator;
 import org.talend.core.model.process.Element;
 import org.talend.core.model.process.IConnectionCategory;
+import org.talend.designer.core.ui.editor.AbstractSwtGraphicalEditPart;
 import org.talend.designer.core.ui.editor.cmd.ConnectionDeleteCommand;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.subjobcontainer.SubjobContainer;
@@ -42,9 +42,14 @@ import org.talend.designer.core.ui.editor.subjobcontainer.SubjobContainer;
  * $Id$
  *
  */
-public class ConnLabelEditPart extends AbstractGraphicalEditPart implements PropertyChangeListener {
+public class ConnLabelEditPart extends AbstractSwtGraphicalEditPart
+        implements ICrossPlatformConnLabelEditPart, PropertyChangeListener {
 
     NodeLabelEditManager manager = null;
+
+    public ConnLabelEditPart() {
+        super();
+    }
 
     /*
      * (non-Javadoc)
@@ -91,6 +96,7 @@ public class ConnLabelEditPart extends AbstractGraphicalEditPart implements Prop
      *
      * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
      */
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         String request = evt.getPropertyName();
         if (request.equals("positionChange") || request.equals("textChange")) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -116,9 +122,12 @@ public class ConnLabelEditPart extends AbstractGraphicalEditPart implements Prop
                 }
                 List<Connection> connectionList = new ArrayList<Connection>();
                 for (int i = 0; i < request.getEditParts().size(); i++) {
-                    if (request.getEditParts().get(i) instanceof ConnLabelEditPart) {
-                        connectionList.add(((ConnectionLabel) ((ConnLabelEditPart) request.getEditParts().get(i)).getModel())
-                                .getConnection());
+                    Object object = request.getEditParts().get(i);
+                    if (object instanceof ConnLabelEditPart) {
+                        connectionList.add(((ConnectionLabel) ((ConnLabelEditPart) object).getModel()).getConnection());
+                    } else if (object instanceof ICrossPlatformConnLabelEditPart) {
+                        connectionList
+                                .add(((ConnectionLabel) ((ICrossPlatformConnLabelEditPart) object).getCrossPlatformModel()).getConnection());
                     }
                 }
                 return new ConnectionDeleteCommand(connectionList);

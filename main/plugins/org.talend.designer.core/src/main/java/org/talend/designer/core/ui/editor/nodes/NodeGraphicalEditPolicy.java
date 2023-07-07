@@ -12,21 +12,19 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.nodes;
 
-import java.util.List;
-
 import org.eclipse.draw2d.ConnectionRouter;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editpolicies.GraphicalNodeEditPolicy;
 import org.eclipse.gef.requests.CreateConnectionRequest;
 import org.eclipse.gef.requests.ReconnectRequest;
-import org.talend.core.model.process.ProcessUtils;
 import org.talend.designer.core.DesignerPlugin;
-import org.talend.designer.core.ui.editor.cmd.ConnectionCreateCommand;
-import org.talend.designer.core.ui.editor.cmd.ConnectionReconnectCommand;
-import org.talend.designer.core.ui.editor.connections.Connection;
 import org.talend.designer.core.ui.editor.connections.TalendBorderItemRectilinearRouter;
 import org.talend.designer.core.ui.editor.connections.TalendDummyConnection;
+import org.talend.designer.core.ui.editor.subjobcontainer.CrossPlatformCreateConnectionRequestProxy;
+import org.talend.designer.core.ui.editor.subjobcontainer.CrossPlatformReconnectRequestProxy;
+import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformEditPart;
 import org.talend.designer.core.ui.preferences.TalendDesignerPrefConstants;
 
 /**
@@ -37,49 +35,39 @@ import org.talend.designer.core.ui.preferences.TalendDesignerPrefConstants;
  */
 public class NodeGraphicalEditPolicy extends GraphicalNodeEditPolicy {
 
+    private CrossPlatformNodeGraphicalEditPolicy editPolicy;
+
+    public NodeGraphicalEditPolicy() {
+        editPolicy = new CrossPlatformNodeGraphicalEditPolicy();
+    }
+
+    @Override
+    public void setHost(EditPart host) {
+        super.setHost(host);
+        if (host != null) {
+            editPolicy.setHost((ICrossPlatformEditPart) host);
+        }
+    }
+
     @Override
     protected Command getConnectionCompleteCommand(CreateConnectionRequest request) {
-        ConnectionCreateCommand cmd = (ConnectionCreateCommand) request.getStartCommand();
-        cmd.setTarget((Node) getHost().getModel());
-        return cmd;
+        return editPolicy.getConnectionCompleteCommand(new CrossPlatformCreateConnectionRequestProxy(request));
     }
 
     @Override
     @SuppressWarnings("unchecked")
     protected Command getConnectionCreateCommand(CreateConnectionRequest request) {
-        Node source = (Node) getHost().getModel();
-        if (checkConnectionStatus(source)) {
-            return null;
-        }
-        String style = (String) request.getNewObjectType();
-        ConnectionCreateCommand cmd = new ConnectionCreateCommand(source, style, (List<Object>) request.getNewObject());
-        request.setStartCommand(cmd);
-        return cmd;
+        return editPolicy.getConnectionCreateCommand(new CrossPlatformCreateConnectionRequestProxy(request));
     }
 
     @Override
     protected Command getReconnectSourceCommand(ReconnectRequest request) {
-        Connection conn = (Connection) request.getConnectionEditPart().getModel();
-        Node newSource = (Node) getHost().getModel();
-        if (checkConnectionStatus(newSource)) {
-            return null;
-        }
-        ConnectionReconnectCommand cmd = new ConnectionReconnectCommand(conn);
-        cmd.setNewSource(newSource);
-        return cmd;
+        return editPolicy.getReconnectSourceCommand(new CrossPlatformReconnectRequestProxy(request));
     }
 
     @Override
     protected Command getReconnectTargetCommand(ReconnectRequest request) {
-        Connection conn = (Connection) request.getConnectionEditPart().getModel();
-        Node newTarget = (Node) getHost().getModel();
-        if (checkConnectionStatus(newTarget)) {
-            return null;
-        }
-
-        ConnectionReconnectCommand cmd = new ConnectionReconnectCommand(conn);
-        cmd.setNewTarget(newTarget);
-        return cmd;
+        return editPolicy.getReconnectTargetCommand(new CrossPlatformReconnectRequestProxy(request));
     }
 
     /*
@@ -111,10 +99,4 @@ public class NodeGraphicalEditPolicy extends GraphicalNodeEditPolicy {
         return super.getDummyConnectionRouter(request);
     }
 
-    private boolean checkConnectionStatus(Node node) {
-        if (node.isReadOnly() && !ProcessUtils.isTestContainer(node.getProcess())) {
-            return true;
-        }
-        return false;
-    }
 }

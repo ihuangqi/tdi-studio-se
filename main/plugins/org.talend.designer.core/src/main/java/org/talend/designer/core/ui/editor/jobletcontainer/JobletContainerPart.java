@@ -22,13 +22,16 @@ import org.talend.designer.core.ui.editor.TalendScalableFreeformRootEditPart;
 import org.talend.designer.core.ui.editor.nodecontainer.NodeContainer;
 import org.talend.designer.core.ui.editor.nodecontainer.NodeContainerPart;
 import org.talend.designer.core.ui.editor.nodes.Node;
-import org.talend.designer.core.ui.editor.nodes.NodePart;
 import org.talend.designer.core.ui.editor.process.NodeSnapToGeometry;
 import org.talend.designer.core.ui.editor.process.ProcessPart;
 import org.talend.designer.core.ui.editor.subjobcontainer.SubjobContainer;
 import org.talend.designer.core.ui.editor.subjobcontainer.SubjobContainerPart;
 
-public class JobletContainerPart extends NodeContainerPart {
+public class JobletContainerPart extends NodeContainerPart implements ICrossPlatformJobletContainerPart {
+
+    public JobletContainerPart() {
+        super();
+    }
 
     @Override
     protected IFigure createFigure() {
@@ -69,15 +72,6 @@ public class JobletContainerPart extends NodeContainerPart {
     @Override
     public void setSelected(int value) {
         super.setSelected(SELECTED_NONE);
-    }
-
-    @Override
-    public NodePart getNodePart() {
-        Object o = this.getChildren().get(0);
-        if (o instanceof NodePart) {
-            return (NodePart) o;
-        }
-        return null;
     }
 
     /*

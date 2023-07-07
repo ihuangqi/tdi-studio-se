@@ -54,6 +54,7 @@ import org.talend.core.model.process.Problem;
 import org.talend.core.model.process.Problem.ProblemStatus;
 import org.talend.core.model.properties.JobletProcessItem;
 import org.talend.designer.core.ui.dialog.mergeorder.ErrorMessageDialog;
+import org.talend.designer.core.ui.editor.AbstractSwtGraphicalEditPart;
 import org.talend.designer.core.ui.editor.jobletcontainer.AbstractJobletContainer;
 import org.talend.designer.core.ui.editor.jobletcontainer.JobletContainer;
 import org.talend.designer.core.ui.editor.nodecontainer.NodeContainer;
@@ -67,7 +68,12 @@ import org.talend.librariesmanager.ui.views.ModulesView;
 /**
  * DOC nrousseau class global comment. Detailled comment
  */
-public class SubjobContainerPart extends AbstractGraphicalEditPart implements PropertyChangeListener, IAdaptable, NodeEditPart {
+public class SubjobContainerPart extends AbstractSwtGraphicalEditPart
+        implements ICrossPlatformSubjobContainerPart, PropertyChangeListener, IAdaptable, NodeEditPart {
+
+    public SubjobContainerPart() {
+        super();
+    }
 
     /*
      * (non-Javadoc)
@@ -436,4 +442,5 @@ public class SubjobContainerPart extends AbstractGraphicalEditPart implements Pr
             ExceptionHandler.process(e);
         }
     }
+
 }

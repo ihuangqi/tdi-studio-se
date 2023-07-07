@@ -22,7 +22,6 @@ import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.tools.DirectEditManager;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
@@ -33,14 +32,19 @@ import org.eclipse.ui.PlatformUI;
 import org.talend.commons.ui.utils.image.ColorUtils;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
+import org.talend.designer.core.ui.editor.AbstractSwtGraphicalEditPart;
 import org.talend.designer.core.ui.editor.cmd.ChangeNoteOpacityCommand;
 import org.talend.designer.core.ui.views.properties.ComponentSettingsView;
 
 /**
  */
-public class NoteEditPart extends AbstractGraphicalEditPart implements PropertyChangeListener {
+public class NoteEditPart extends AbstractSwtGraphicalEditPart implements ICrossPlatformNoteEditPart, PropertyChangeListener {
 
     private DirectEditManager directEditManager;
+
+    public NoteEditPart() {
+        super();
+    }
 
     @Override
     protected void unregisterVisuals() {

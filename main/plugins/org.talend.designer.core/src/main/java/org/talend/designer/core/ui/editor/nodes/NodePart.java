@@ -36,7 +36,6 @@ import org.eclipse.gef.RequestConstants;
 import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.gef.requests.CreateConnectionRequest;
 import org.eclipse.gef.requests.ReconnectRequest;
 import org.eclipse.gef.tools.DirectEditManager;
@@ -86,6 +85,7 @@ import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.components.ExternalUtilities;
 import org.talend.designer.core.model.process.AbstractProcessProvider;
 import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
+import org.talend.designer.core.ui.editor.AbstractSwtGraphicalEditPart;
 import org.talend.designer.core.ui.editor.ETalendSelectionType;
 import org.talend.designer.core.ui.editor.TalendSelectionManager;
 import org.talend.designer.core.ui.editor.cmd.ExternalNodeChangeCommand;
@@ -108,11 +108,16 @@ import org.talend.repository.RepositoryWorkUnit;
  * $Id$
  *
  */
-public class NodePart extends AbstractGraphicalEditPart implements PropertyChangeListener, NodeEditPart {
+public class NodePart extends AbstractSwtGraphicalEditPart
+        implements ICrossPlatformNodePart, PropertyChangeListener, NodeEditPart {
 
     protected DirectEditManager manager;
 
     private boolean isDrop;
+
+    public NodePart() {
+        super();
+    }
 
     /*
      * (non-Javadoc)

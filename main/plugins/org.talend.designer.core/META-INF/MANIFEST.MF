@@ -137,6 +137,7 @@ Export-Package: org.talend.designer.core;
    org.eclipse.jface.viewers,
    org.talend.repository.ui.actions,
    org.eclipse.gef",
+ org.talend.designer.core.ui.action.business,
  org.talend.designer.core.ui.celleditor,
  org.talend.designer.core.ui.dialog,
  org.talend.designer.core.ui.dialog.mergeorder,
@@ -268,5 +269,6 @@ Export-Package: org.talend.designer.core;
  org.talend.designer.unifiedcomponent.unifier
 Bundle-Vendor: .Talend SA.
 Service-Component: OSGI-INF/core.xml
+Eclipse-ExtensibleAPI: true
 Import-Package: org.talend.hadoop.distribution,
  org.talend.hadoop.distribution.component

@@ -17,7 +17,6 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.ImageFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -26,13 +25,10 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.Request;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
-import org.eclipse.swt.graphics.Image;
 import org.talend.commons.ui.gmf.util.DisplayUtils;
-import org.talend.commons.ui.runtime.image.ECoreImage;
-import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.ui.dialog.mergeorder.ErrorMessageDialog;
+import org.talend.designer.core.ui.editor.AbstractSwtGraphicalEditPart;
 import org.talend.designer.core.ui.editor.nodecontainer.NodeContainer;
 import org.talend.designer.core.ui.editor.nodecontainer.NodeContainerPart;
 import org.talend.designer.core.ui.editor.process.ProcessPart;
@@ -41,7 +37,12 @@ import org.talend.designer.core.ui.editor.subjobcontainer.SubjobContainerPart;
 /**
  * DOC hwang class global comment. Detailled comment
  */
-public class NodeErrorEditPart extends AbstractGraphicalEditPart implements PropertyChangeListener {
+public class NodeErrorEditPart extends AbstractSwtGraphicalEditPart
+        implements ICrossPlatformNodeErrorEditPart, PropertyChangeListener {
+
+    public NodeErrorEditPart() {
+        super();
+    }
 
     /*
      * (non-Javadoc)
@@ -103,6 +104,7 @@ public class NodeErrorEditPart extends AbstractGraphicalEditPart implements Prop
      *
      * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
      */
+    @Override
     public void propertyChange(final PropertyChangeEvent evt) {
         String request = evt.getPropertyName();
         if (request.equals("UPDATE_STATUS")) { //$NON-NLS-1$

@@ -26,7 +26,6 @@ import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
-import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.ui.utils.workbench.gef.SimpleHtmlCellEditorLocator;
@@ -35,6 +34,7 @@ import org.talend.commons.ui.utils.workbench.gef.SimpleHtmlTextEditManager;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.ui.services.ISQLBuilderService;
 import org.talend.designer.core.model.components.EParameterName;
+import org.talend.designer.core.ui.editor.AbstractSwtGraphicalEditPart;
 import org.talend.designer.core.ui.editor.process.ProcessPart;
 import org.talend.designer.core.ui.editor.subjobcontainer.SubjobContainerPart;
 import org.talend.designer.core.ui.views.properties.ComponentSettingsView;
@@ -45,7 +45,12 @@ import org.talend.designer.core.ui.views.properties.ComponentSettingsView;
  * $Id$
  *
  */
-public class NodeLabelEditPart extends AbstractGraphicalEditPart implements PropertyChangeListener {
+public class NodeLabelEditPart extends AbstractSwtGraphicalEditPart
+        implements ICrossPlatformNodeLabelEditPart, PropertyChangeListener {
+
+    public NodeLabelEditPart() {
+        super();
+    }
 
     SimpleHtmlTextEditManager manager = null;
 
@@ -112,6 +117,7 @@ public class NodeLabelEditPart extends AbstractGraphicalEditPart implements Prop
      *
      * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
      */
+    @Override
     public void propertyChange(final PropertyChangeEvent evt) {
         String request = evt.getPropertyName();
 
