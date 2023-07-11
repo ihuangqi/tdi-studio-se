@@ -864,7 +864,7 @@
 
 		<IMPORT NAME="Driver-MYSQL5" MODULE="mysql-connector-java-5.1.49.jar" MVN="mvn:mysql/mysql-connector-java/5.1.49"  REQUIRED_IF="(USE_EXISTING_CONNECTION == 'false') and (DBTYPE=='MYSQL') and (DB_MYSQL_VERSION=='MYSQL_5')"/>
 		<IMPORT NAME="Driver-MYSQL8"  MODULE="mysql-connector-j-8.0.33.jar" MVN="mvn:com.mysql/mysql-connector-j/8.0.33" REQUIRED_IF="(DB_MYSQL_VERSION == 'MYSQL_8') AND (USE_EXISTING_CONNECTION == 'false') AND (DBTYPE=='MYSQL')" />
-		<IMPORT NAME="Driver-MARIADB"  MODULE="mariadb-java-client-2.5.3.jar" MVN="mvn:org.mariadb.jdbc/mariadb-java-client/2.5.3"  REQUIRED_IF="(USE_EXISTING_CONNECTION == 'false') and (DBTYPE=='MYSQL') and (DB_MYSQL_VERSION=='MARIADB')" />
+		<IMPORT NAME="Driver-MARIADB"  MODULE="mariadb-java-client-3.1.4.jar" MVN="mvn:org.mariadb.jdbc/mariadb-java-client/3.1.4"  REQUIRED_IF="(USE_EXISTING_CONNECTION == 'false') and (DBTYPE=='MYSQL') and (DB_MYSQL_VERSION=='MARIADB')" />
         <IMPORT NAME="Driver-Oracle11g" MODULE="ojdbc6.jar" MVN="mvn:org.talend.libraries/ojdbc6/6.0.0"  REQUIRED_IF="(DBTYPE=='DBORACLE') AND (DB_VERSION == 'ORACLE_11') AND (USE_EXISTING_CONNECTION == 'false')" />
         <IMPORT NAME="Driver-Oracle12c" MODULE="ojdbc7.jar" MVN="mvn:org.talend.libraries/ojdbc7/6.0.0"  REQUIRED_IF="(DBTYPE=='DBORACLE') AND (DB_VERSION == 'ORACLE_12') AND (USE_EXISTING_CONNECTION == 'false')" />
         <IMPORT NAME="ORACLE_18"        MODULE="ojdbc8-19.3.0.0.jar" MVN="mvn:com.oracle.ojdbc/ojdbc8/19.3.0.0" REQUIRED_IF="(DBTYPE=='DBORACLE') AND (DB_VERSION == 'ORACLE_18') AND (USE_EXISTING_CONNECTION == 'false')" />
