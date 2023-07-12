@@ -20,12 +20,13 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.DragTracker;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.talend.designer.core.ui.editor.AbstractSwtGraphicalEditPart;
 import org.talend.designer.gefabstractmap.editor.MapperSelectEditPartTracker;
 
 /**
  * wchen class global comment. Detailled comment
  */
-public class BaseEditPart extends AbstractGraphicalEditPart implements Adapter {
+public class BaseEditPart extends AbstractSwtGraphicalEditPart implements Adapter {
 
     @Override
     public void notifyChanged(Notification notification) {

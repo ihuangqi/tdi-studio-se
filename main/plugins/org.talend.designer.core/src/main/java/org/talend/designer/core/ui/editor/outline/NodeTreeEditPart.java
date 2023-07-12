@@ -17,7 +17,6 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import org.eclipse.gef.EditPolicy;
-import org.eclipse.gef.editparts.AbstractTreeEditPart;
 import org.eclipse.swt.widgets.Display;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.nodes.NodeEditPolicy;
@@ -28,7 +27,7 @@ import org.talend.designer.core.ui.editor.nodes.NodeEditPolicy;
  * $Id$
  *
  */
-public class NodeTreeEditPart extends AbstractTreeEditPart implements PropertyChangeListener {
+public class NodeTreeEditPart extends AbstractSwtTreeEditPart implements PropertyChangeListener {
 
     private NodeTransferDragSourceListener nodeTransferDragSourceListener = NodeTransferDragSourceListener.getInstance();
 

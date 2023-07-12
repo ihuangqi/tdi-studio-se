@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.editparts.AbstractTreeEditPart;
 import org.talend.commons.utils.StringUtils;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.process.Process;
@@ -34,7 +33,7 @@ import org.talend.designer.core.ui.editor.process.Process;
  * $Id$
  *
  */
-public class ProcessTreeEditPart extends AbstractTreeEditPart implements PropertyChangeListener {
+public class ProcessTreeEditPart extends AbstractSwtTreeEditPart implements PropertyChangeListener {
 
     private NodeTransferDragSourceListener nodeTransferDragSourceListener = NodeTransferDragSourceListener.getInstance();
 

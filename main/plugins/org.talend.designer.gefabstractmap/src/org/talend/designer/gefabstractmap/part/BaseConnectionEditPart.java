@@ -13,12 +13,12 @@
 package org.talend.designer.gefabstractmap.part;
 
 import org.eclipse.gef.EditPart;
-import org.eclipse.gef.editparts.AbstractConnectionEditPart;
+import org.talend.designer.core.ui.editor.connections.AbstractSwtConnectionEditPart;
 
 /**
  * DOC talend class global comment. Detailled comment
  */
-public abstract class BaseConnectionEditPart extends AbstractConnectionEditPart {
+public abstract class BaseConnectionEditPart extends AbstractSwtConnectionEditPart {
 
     private boolean nodeCollapsed = false;
 

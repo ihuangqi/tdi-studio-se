@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef.EditPolicy;
-import org.eclipse.gef.editparts.AbstractTreeEditPart;
 import org.talend.core.model.process.INodeReturn;
 import org.talend.designer.core.ui.editor.nodes.NodeEditPolicy;
 
@@ -26,7 +25,7 @@ import org.talend.designer.core.ui.editor.nodes.NodeEditPolicy;
  * $Id$
  *
  */
-public class NodeReturnsTreeEditPart extends AbstractTreeEditPart {
+public class NodeReturnsTreeEditPart extends AbstractSwtTreeEditPart {
 
     @Override
     public Object getAdapter(Class key) {
