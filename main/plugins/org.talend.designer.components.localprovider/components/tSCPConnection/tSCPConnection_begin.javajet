@@ -38,35 +38,16 @@ imports="
 		<%}%>
 		client_<%=cid%>.setUserAuthFactories(java.util.Collections.singletonList(org.apache.sshd.client.auth.pubkey.UserAuthPublicKeyFactory.INSTANCE));
 		java.nio.file.Path privateKey_<%=cid%> = java.nio.file.Paths.get(<%=privatekey%>);
-		java.util.List<String> lines_<%=cid%> = java.nio.file.Files.readAllLines(privateKey_<%=cid%>);
-        globalMap.put("privateKey_<%=cid%>",privateKey_<%=cid%>);
-        globalMap.put("lines_<%=cid%>",lines_<%=cid%>);
+		<%String passwordFieldName = "__PASSPHRASE__";%>
+        <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>   
+		final org.apache.sshd.common.config.keys.FilePasswordProvider PASSWORD_PROVIDER_<%=cid%> = (sessionContext, namedResource, i) -> decryptedPassword_<%=cid%>;
 
-		 org.apache.sshd.common.util.security.bouncycastle.BouncyCastleGeneratorHostKeyProvider keyProvider_<%=cid%> =
-                new org.apache.sshd.common.util.security.bouncycastle.BouncyCastleGeneratorHostKeyProvider(privateKey_<%=cid%>)
 
-				{
-
-                    @Override
-                    protected Iterable<java.security.KeyPair> doReadKeyPairs(org.apache.sshd.common.session.SessionContext session,
-                            org.apache.sshd.common.NamedResource resourceKey, java.io.InputStream inputStream)
-                            throws java.io.IOException, java.security.GeneralSecurityException {
-                    <%String passwordFieldName = "__PASSPHRASE__";%>
-                    <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
-                        Iterable<java.security.KeyPair> keyPairs =
-                                org.apache.sshd.common.util.security.SecurityUtils.loadKeyPairIdentities(session, resourceKey, inputStream,
-                                        (sessionContext, namedResource, i) -> decryptedPassword_<%=cid%>);
-                        return keyPairs;
-                    }
-                };
-		if (lines_<%=cid%>.size()>0) {
-            String[] line_<%=cid%> = lines_<%=cid%>.get(0).split(" ");
-            if ("-----BEGIN".equals(line_<%=cid%>[0])) {
-                keyProvider_<%=cid%>.setAlgorithm(line_<%=cid%>[1]);
-            }
-        }
-				client_<%=cid%>.setKeyIdentityProvider(keyProvider_<%=cid%>);
-
+	    org.apache.sshd.common.util.io.resource.PathResource location_<%=cid%> = new org.apache.sshd.common.util.io.resource.PathResource(privateKey_<%=cid%>, org.apache.sshd.common.util.io.IoUtils.EMPTY_OPEN_OPTIONS);
+        final Iterable<java.security.KeyPair> keyPairs_<%=cid%> = org.apache.sshd.common.util.security.SecurityUtils.loadKeyPairIdentities(null, location_<%=cid%>, location_<%=cid%>.openInputStream(), PASSWORD_PROVIDER_<%=cid%>);
+        java.security.KeyPair kp_<%=cid%> = org.apache.sshd.common.util.GenericUtils.head(keyPairs_<%=cid%>);
+        client_<%=cid%>.setKeyIdentityProvider(new org.apache.sshd.common.keyprovider.FileKeyPairProvider(privateKey_<%=cid%>));
+        
         <%}%>
 		<%
         if (("KEYBOARDINTERACTIVE").equals(authMethod)) {
@@ -130,19 +111,15 @@ imports="
                     		    <%}%>
 
         			session_<%=cid%> = client_<%=cid%>.connect(username_<%=cid%>, hostname_<%=cid%>, Integer.parseInt(<%=port %>+"")).verify().getClientSession();
+        			<%
+                    if (("PUBLICKEY").equals(authMethod)) {	
+                        %>
+            			session_<%=cid%>.addPublicKeyIdentity(kp_<%=cid%>);
+            			<%}%>
         	    try {
                     session_<%=cid%>.auth().verify();
                 }catch (org.apache.sshd.common.SshException se_<%=cid%>){
         		    globalMap.put("<%=cid %>_EXIT_CODE",se_<%=cid%>.getDisconnectCode());
-        		<%
-                if (("PUBLICKEY").equals(authMethod)) {
-                %>
-                try {
-        			java.nio.file.Files.write(privateKey_<%=cid%>,lines_<%=cid%>);
-                } catch (java.lang.Exception e) {
-                	//ignore
-                }
-        		<%}%>
                     if(14 == se_<%=cid%>.getDisconnectCode()){
                         throw new IllegalArgumentException("Authentication failed.");
                     }else{
