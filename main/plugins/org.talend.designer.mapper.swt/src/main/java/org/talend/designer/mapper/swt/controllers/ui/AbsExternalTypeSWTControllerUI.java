@@ -1,16 +1,4 @@
-// ============================================================================
-//
-// Copyright (C) 2006-2021 Talend Inc. - www.talend.com
-//
-// This source code is available under agreement available at
-// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
-//
-// You should have received a copy of the agreement
-// along with this program; if not, write to Talend SA
-// 9 rue Pages 92150 Suresnes, France
-//
-// ============================================================================
-package org.talend.designer.core.ui.editor.properties.controllers;
+package org.talend.designer.mapper.swt.controllers.ui;
 
 import java.beans.PropertyChangeEvent;
 
@@ -26,71 +14,34 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.model.process.IElementParameter;
-import org.talend.core.model.process.IExternalNode;
 import org.talend.core.ui.CoreUIPlugin;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
-import org.talend.designer.core.model.components.ExternalUtilities;
-import org.talend.designer.core.ui.editor.cmd.ExternalNodeChangeCommand;
 import org.talend.designer.core.ui.editor.nodes.Node;
+import org.talend.designer.core.ui.editor.properties.controllers.executors.ExternalTypeControllerExecutor;
+import org.talend.designer.core.ui.editor.properties.controllers.ui.AbsSWTControllerUI;
+import org.talend.designer.core.ui.editor.properties.controllers.ui.IExternalControllerUI;
+import org.talend.designer.core.ui.editor.properties.controllers.ui.IWidgetContext;
+import org.talend.designer.core.ui.editor.properties.controllers.ui.StudioWidgetContext;
+import org.talend.designer.core.ui.editor.properties.controllers.ui.WidgetContext;
 
-/**
- * DOC yzhang class global comment. Detailled comment <br/>
- *
- * $Id: ExternalController.java 1 2006-12-12 上午11:20:24 +0000 (上午11:20:24) yzhang $
- *
- */
-public class ExternalController extends AbstractElementPropertySectionController {
+public abstract class AbsExternalTypeSWTControllerUI extends AbsSWTControllerUI implements IExternalControllerUI {
 
-    private static final String EXTERNAL = "EXTERNAL"; //$NON-NLS-1$
 
-    /**
-     * DOC yzhang ExternalController constructor comment.
-     *
-     * @param parameterBean
-     */
-    public ExternalController(IDynamicProperty dp) {
-        super(dp);
+    public AbsExternalTypeSWTControllerUI(IDynamicProperty dp, ExternalTypeControllerExecutor executor) {
+        super(dp, executor);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.talend.designer.core.ui.editor.properties2.editors.AbstractElementPropertySectionController#createCommand()
-     */
-    private Command createCommand() {
-        Node node = (Node) elem;
-        IExternalNode externalNode = ExternalUtilities.getExternalNodeReadyToOpen(node);
-
-        if (externalNode == null) {
-            MessageBox mBox = new MessageBox(composite.getShell(), SWT.ICON_ERROR);
-            mBox.setText("Error"); //$NON-NLS-1$
-            mBox.setMessage("Component plugin not found: " + node.getComponent().getPluginExtension()); //$NON-NLS-1$
-            mBox.open();
-        } else {
-            if (externalNode.open(composite.getShell()) == SWT.OK) {
-                return new ExternalNodeChangeCommand(node, externalNode);
-
-            } else {
-                externalNode.setExternalData(node.getExternalData());
-            }
-        }
-        return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.talend.designer.core.ui.editor.properties2.editors.AbstractElementPropertySectionController#createControl()
-     */
     @Override
-    public Control createControl(final Composite subComposite, final IElementParameter param, final int numInRow,
-            final int nbInRow, final int top, final Control lastControl) {
+    public ExternalTypeControllerExecutor getControllerExecutor() {
+        return (ExternalTypeControllerExecutor) super.getControllerExecutor();
+    }
+
+    @Override
+    public Control createControl(Composite subComposite, IElementParameter param, int numInRow, int nbInRow, int top,
+            Control lastControl) {
         Button btnEdit;
 
         btnEdit = getWidgetFactory().createButton(subComposite, "", SWT.PUSH); //$NON-NLS-1$
@@ -157,13 +108,22 @@ public class ExternalController extends AbstractElementPropertySectionController
         return btnEdit;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * org.talend.designer.core.ui.editor.properties.controllers.AbstractElementPropertySectionController#estimateRowSize
-     * (org.eclipse.swt.widgets.Composite, org.talend.core.model.process.IElementParameter)
-     */
+    protected SelectionListener listenerSelection = new SelectionListener() {
+
+        @Override
+        public void widgetDefaultSelected(SelectionEvent e) {
+            // do nothing.
+        }
+
+        @Override
+        public void widgetSelected(SelectionEvent e) {
+            if (e.getSource() instanceof Button) {
+                Command cmd = getControllerExecutor().createCommand(new StudioWidgetContext((Button) e.getSource()));
+                executeCommand(cmd);
+            }
+        }
+    };
+
     @Override
     public int estimateRowSize(Composite subComposite, IElementParameter param) {
         Button btnEdit = getWidgetFactory().createButton(subComposite, "", SWT.PUSH); //$NON-NLS-1$
@@ -171,6 +131,12 @@ public class ExternalController extends AbstractElementPropertySectionController
         Point initialSize = btnEdit.computeSize(SWT.DEFAULT, SWT.DEFAULT);
         btnEdit.dispose();
         return initialSize.y + ITabbedPropertyConstants.VSPACE;
+    }
+
+    @Override
+    public void refresh(IElementParameter param, boolean check) {
+        // TODO Auto-generated method stub
+
     }
 
     /*
@@ -184,27 +150,19 @@ public class ExternalController extends AbstractElementPropertySectionController
 
     }
 
-    SelectionListener listenerSelection = new SelectionListener() {
-
-        @Override
-        public void widgetDefaultSelected(SelectionEvent e) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void widgetSelected(SelectionEvent e) {
-            Command cmd = createCommand();
-            executeCommand(cmd);
-
-        }
-
-    };
+    @Override
+    public IWidgetContext getDefaultControlContext() {
+        return getButtonContext();
+    }
+    
 
     @Override
-    public void refresh(IElementParameter param, boolean check) {
-        // TODO Auto-generated method stub
-
+    public IWidgetContext getButtonContext() {
+        WidgetContext widgetContext = new WidgetContext();
+        widgetContext.setData(NAME, getControllerName());
+        widgetContext.setData(PARAMETER_NAME, getCurParameter().getName());
+        return widgetContext;
     }
+
 
 }

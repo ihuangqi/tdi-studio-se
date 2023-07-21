@@ -12,9 +12,11 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.properties.controllers.generator;
 
+import org.talend.core.model.metadata.IDynamicBaseProperty;
+import org.talend.core.model.process.IElementParameter;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
-import org.talend.designer.core.ui.editor.properties.controllers.AbstractElementPropertySectionController;
-import org.talend.designer.core.ui.editor.properties.controllers.ExternalController;
+import org.talend.designer.core.ui.editor.properties.controllers.ISWTBusinessControllerUI;
+import org.talend.designer.core.ui.editor.properties.controllers.executors.IExternalTypeControllerExecutor;
 
 /**
  * DOC yzhang class global comment. Detailled comment <br/>
@@ -31,8 +33,8 @@ public class ExternalGenerator implements IControllerGenerator {
      *
      * @see org.talend.designer.core.ui.editor.properties.controllers.generator.IControllerGenerator#generate()
      */
-    public AbstractElementPropertySectionController generate() {
-        return new ExternalController(dp);
+    public ISWTBusinessControllerUI generate() {
+        return (ISWTBusinessControllerUI) ControllerFactories.inst().createUI(ExternalGenerator.class.getCanonicalName(), dp);
     }
 
     /*
@@ -43,4 +45,12 @@ public class ExternalGenerator implements IControllerGenerator {
     public void setDynamicProperty(IDynamicProperty dp) {
         this.dp = dp;
     }
+    
+
+    @Override
+    public IExternalTypeControllerExecutor createExecutor(IDynamicBaseProperty dynamicBaseProp, IElementParameter curParameter) {
+        return (IExternalTypeControllerExecutor) ControllerFactories.inst().createExecutor(ExternalGenerator.class.getCanonicalName(),
+                dynamicBaseProp, curParameter);
+    }
+
 }

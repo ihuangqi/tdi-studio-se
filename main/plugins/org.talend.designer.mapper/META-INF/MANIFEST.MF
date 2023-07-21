@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Automatic-Module-Name: org.talend.designer.mapper
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.talend.designer.mapper;singleton:=true
@@ -38,6 +39,7 @@ Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
+Service-Component: OSGI-INF/core.xml
 Export-Package: org.talend.designer.mapper,
  org.talend.designer.mapper.external.data,
  org.talend.designer.mapper.language,

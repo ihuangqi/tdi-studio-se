@@ -188,6 +188,14 @@
          unpack="false"/>
 
    <plugin
+         id="org.talend.designer.mapper.swt"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
          id="org.talend.designer.rowgenerator"
          download-size="0"
          install-size="0"
