@@ -180,6 +180,17 @@ public class GenericService implements IGenericService {
                 ps = conn.getProperties("referencedComponent"); //$NON-NLS-1$
             }
         }
+        if (ps == null) {
+            // TSnowflakeOutputBulkProperties is not a sub class of SnowflakeConnectionTableProperties but
+            // extends FixedConnectorsComponentProperties directly so there's no "connection" property
+            // need to get "snowflakeConnectionProperties" from TSnowflakeOutputBulkProperties as "connection"
+            if (pros.getClass().getSimpleName().equals("TSnowflakeOutputBulkProperties")) {
+                Properties conn = pros.getProperties("snowflakeConnectionProperties"); //$NON-NLS-1$
+                if (conn != null) {
+                    ps = conn.getProperties("referencedComponent"); //$NON-NLS-1$
+                }
+            }
+        }
         if(ps == null){
             return null;
         }
