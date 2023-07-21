@@ -417,7 +417,7 @@ public class JobJavaScriptOSGIForESBManager extends JobJavaScriptsManager {
     }
 
     private boolean isRESTRequestNeededLibs(ModuleNeeded module) {
-        return module.getModuleName().startsWith("delight-rhino-sandbox") || module.getModuleName().startsWith("rhino");
+        return module.getModuleName().startsWith("delight-rhino-sandbox");
     }
 
     @Override
