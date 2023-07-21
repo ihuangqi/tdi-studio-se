@@ -7,6 +7,6 @@
     <version>8.8.8-SNAPSHOT</version>
     <relativePath>../../../</relativePath>
   </parent>
-  <artifactId>org.talend.designer.mapper.swt2</artifactId>
+  <artifactId>org.talend.designer.mapper.swt</artifactId>
   <packaging>eclipse-plugin</packaging>
 </project>
