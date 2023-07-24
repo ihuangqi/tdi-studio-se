@@ -78,11 +78,13 @@ public class ActiveIfListener implements PropertyChangeListener {
         }
         final boolean show = conditions.stream()
                 .allMatch(group -> group.getAggregator().apply(group.getConditions().stream().map(this::evaluateCondition)));
-        sourceParameter.setShow(show);
-        sourceParameter.redraw(); // request source parameter redraw
-        sourceParameter.firePropertyChange("show", null, show);
-        // need to revalidate to either show or hide the validation label
-        sourceParameter.firePropertyChange("value", null, sourceParameter.getValue());
+        if(sourceParameter.isDisplayedByDefault()  != show) {
+            sourceParameter.setShow(show);
+            sourceParameter.redraw(); // request source parameter redraw
+            sourceParameter.firePropertyChange("show", null, show);
+            //need to revalidate to either show or hide the validation label
+            sourceParameter.firePropertyChange("value", null, sourceParameter.getValue());
+        }
     }
 
     public void propertyShow() {

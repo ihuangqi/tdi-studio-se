@@ -19,7 +19,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.beans.PropertyChangeEvent;
 import java.util.HashMap;
@@ -52,7 +51,7 @@ public class ActiveIfListenerTest {
                     singletonList(new Condition(new String[] { "A" }, "a", false, "contains")), true)),
                 param, singletonMap("a", new TacokitTestParameter("bAr")))
                 .propertyChange(new PropertyChangeEvent(param, "value", "foo", "bAr"));
-        assertTrue(param.setShowValue);
+        assertFalse(param.setShowValue);
     }
 
     @Test
@@ -64,7 +63,7 @@ public class ActiveIfListenerTest {
                             new String[] { "a" }, "a", false, "contains(lowercase=true)")), true)),
                 param, singletonMap("a", new TacokitTestParameter("bAR")))
                 .propertyChange(new PropertyChangeEvent(param, "value", "foo", "bAr"));
-        assertTrue(param.setShowValue);
+        assertFalse(param.setShowValue);
     }
 
     @Test
@@ -86,7 +85,7 @@ public class ActiveIfListenerTest {
                     singletonList(new Condition(new String[] { "A" }, "a", false, "DEFAULT")), true)),
                 param, singletonMap("a", new TacokitTestParameter("A")))
                 .propertyChange(new PropertyChangeEvent(param, "value", "foo", "bar"));
-        assertTrue(param.setShowValue);
+        assertFalse(param.setShowValue);
     }
 
     @Test
@@ -102,7 +101,7 @@ public class ActiveIfListenerTest {
                     put("a", new TacokitTestParameter("A"));
                     put("b", new TacokitTestParameter("B"));
         }}).propertyChange(new PropertyChangeEvent(param, "value", "foo", "bar"));
-        assertTrue(param.setShowValue);
+        assertFalse(param.setShowValue);
     }
 
     @Test
@@ -118,7 +117,7 @@ public class ActiveIfListenerTest {
                     put("a", new TacokitTestParameter("A"));
                     put("b", new TacokitTestParameter("C"));
         }}).propertyChange(new PropertyChangeEvent(param, "value", "foo", "bar"));
-        assertTrue(param.setShowValue);
+        assertFalse(param.setShowValue);
     }
 
     private static class TacokitTestParameter extends TextElementParameter {
