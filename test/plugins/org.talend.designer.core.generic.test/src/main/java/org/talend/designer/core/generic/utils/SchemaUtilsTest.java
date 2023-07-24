@@ -185,7 +185,7 @@ public class SchemaUtilsTest {
         if (schemaValue instanceof Schema) {
             avroSchema = (Schema) schemaValue;
         } else if (schemaValue instanceof String) {
-            avroSchema = new Schema.Parser().parse((String) schemaValue);
+            avroSchema = new Schema.Parser().setValidateDefaults(false).parse((String) schemaValue);
         }
         return avroSchema;
     }

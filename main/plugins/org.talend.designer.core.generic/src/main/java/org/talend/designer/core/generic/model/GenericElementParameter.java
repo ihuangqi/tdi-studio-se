@@ -171,7 +171,7 @@ public class GenericElementParameter extends ElementParameter implements IGeneri
         NamedThing widgetProperty = widget.getContent();
         if (widgetProperty instanceof SchemaProperty) {
             if (newValue instanceof String) {
-                ((SchemaProperty) widgetProperty).setValue(new Schema.Parser().parse((String) newValue));
+                ((SchemaProperty) widgetProperty).setValue(new Schema.Parser().setValidateDefaults(false).parse((String) newValue));
             } else if (newValue instanceof Schema) {
                 ((SchemaProperty) widgetProperty).setValue(((Schema) newValue));
             }

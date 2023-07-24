@@ -85,7 +85,7 @@ public class RepositoryChangeMetadataCommandTest extends AbstractMetadataCommand
                 .getStringValue();
 
         assertNotNull(avroSchemaStr);
-        Schema avroSchema = new Schema.Parser().parse(avroSchemaStr);
+        Schema avroSchema = new Schema.Parser().setValidateDefaults(false).parse(avroSchemaStr);
         assertEquals(2, avroSchema.getFields().size());
         assertNull(avroSchema.getField("C1")); //$NON-NLS-1$
         assertEquals(avroSchemaStr, schemaParam.getValue().toString());

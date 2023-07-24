@@ -164,7 +164,7 @@ public class SchemaUtils {
 
         Object schemaObj = ComponentsUtils.getGenericPropertyValue(properties, schemaPropertyName);
         if (schemaObj instanceof String) {
-            Schema avroSchema = new Schema.Parser().parse((String) schemaObj);
+            Schema avroSchema = new Schema.Parser().setValidateDefaults(false).parse((String) schemaObj);
             convertComponentSchemaIntoTalendSchema(avroSchema, metadataTable);
         } else if (schemaObj instanceof Schema) {
             convertComponentSchemaIntoTalendSchema((Schema) schemaObj, metadataTable);
@@ -225,7 +225,7 @@ public class SchemaUtils {
         metadataTable.setSourceName(name);
         Object schemaObj = ComponentsUtils.getGenericPropertyValue(properties, schemaPropertyName);
         if (schemaObj instanceof String) {
-            Schema avroSchema = new Schema.Parser().parse((String) schemaObj);
+            Schema avroSchema = new Schema.Parser().setValidateDefaults(false).parse((String) schemaObj);
             convertComponentSchemaIntoTalendSchema(avroSchema, metadataTable);
         } else if (schemaObj instanceof Schema) {
             convertComponentSchemaIntoTalendSchema((Schema) schemaObj, metadataTable);
@@ -464,7 +464,7 @@ public class SchemaUtils {
         Schema avroSchema = null;
         Object schemaObj = ComponentsUtils.getGenericPropertyValue(properties, schemaPropertyName);
         if (schemaObj instanceof String) {
-            avroSchema = new Schema.Parser().parse((String) schemaObj);
+            avroSchema = new Schema.Parser().setValidateDefaults(false).parse((String) schemaObj);
         } else if (schemaObj instanceof Schema) {
             avroSchema = (Schema) schemaObj;
         }

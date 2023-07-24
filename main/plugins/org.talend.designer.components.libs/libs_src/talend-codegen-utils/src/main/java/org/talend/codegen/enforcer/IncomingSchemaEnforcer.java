@@ -374,9 +374,17 @@ public class IncomingSchemaEnforcer {
      * @return field copy
      */
     private Field copyField(Field original) {
-        Field copy = new Schema.Field(original.name(), original.schema(), original.doc(), original.defaultVal());
-        for (Map.Entry<String, Object> e : original.getObjectProps().entrySet()) {
-            copy.addProp(e.getKey(), e.getValue());
+        Field copy = null;
+        try {
+            copy =  new Schema.Field(original.name(), original.schema(), original.doc(), original.defaultVal());
+        } catch(AvroTypeException e) {
+            copy =  new Schema.Field(original.name(), original.schema(), original.doc(), null);
+        }
+        
+        if(copy != null) {
+            for (Map.Entry<String, Object> e : original.getObjectProps().entrySet()) {
+                copy.addProp(e.getKey(), e.getValue());
+            }
         }
         return copy;
     }

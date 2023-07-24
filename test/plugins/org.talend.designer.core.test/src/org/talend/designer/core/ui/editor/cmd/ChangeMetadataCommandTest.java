@@ -86,7 +86,7 @@ public class ChangeMetadataCommandTest extends AbstractMetadataCommandTest {
         String avroSchemaStr = ((SchemaProperties) node.getComponentProperties().getProperties("module.main")).schema
                 .getStringValue();
         assertNotNull(avroSchemaStr);
-        Schema avroSchema = new Schema.Parser().parse(avroSchemaStr);
+        Schema avroSchema = new Schema.Parser().setValidateDefaults(false).parse(avroSchemaStr);
         assertEquals(2, avroSchema.getFields().size());
         assertNull(avroSchema.getField("C1")); //$NON-NLS-1$
         assertEquals(avroSchemaStr, schemaParam.getValue().toString());
@@ -135,7 +135,7 @@ public class ChangeMetadataCommandTest extends AbstractMetadataCommandTest {
         table = node.getMetadataList().get(0);
         String avroSchemaStr = inputProps.schema.schema.getStringValue();
         assertNotNull(avroSchemaStr);
-        Schema avroSchema = new Schema.Parser().parse(avroSchemaStr);
+        Schema avroSchema = new Schema.Parser().setValidateDefaults(false).parse(avroSchemaStr);
 
         assertEquals(3, avroSchema.getFields().size());
         assertNotNull(avroSchema.getField("C1")); //$NON-NLS-1$

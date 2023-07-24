@@ -138,7 +138,7 @@
  		                    SchemaSettingTool_<%=cid%>_<%=schemaIndex%>_<%=classNameTail%> sst_<%=cid%>_<%=schemaIndex%>_<%=classNameTail%> = new SchemaSettingTool_<%=cid%>_<%=schemaIndex%>_<%=classNameTail%>();
  		                    
  		                    props_<%=cid %><%=propInfo.fieldName%>.setValue("<%=property.getName()%>",
- 		                        new org.apache.avro.Schema.Parser().parse(sst_<%=cid%>_<%=schemaIndex%>_<%=classNameTail%>.getSchemaValue()));
+ 		                        new org.apache.avro.Schema.Parser().setValidateDefaults(false).parse(sst_<%=cid%>_<%=schemaIndex%>_<%=classNameTail%>.getSchemaValue()));
  		                    <%
  		                } else if (!(value instanceof String) || !((String)value).equals("")) {
  		                    %>
