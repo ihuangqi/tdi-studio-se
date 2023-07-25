@@ -5,7 +5,7 @@
 final boolean needPassphrase = "PUBLICKEY".equals(authMethod) || "PUBLIC_KEY_AND_PASSWORD".equals(authMethod);
 %>
 
-class MyUserInfo implements com.jcraft.jsch.UserInfo, com.jcraft.jsch.UIKeyboardInteractive {
+class MyUserInfo_<%=cid%> implements com.jcraft.jsch.UserInfo, com.jcraft.jsch.UIKeyboardInteractive {
 
     <%
     if(needPassphrase) {
@@ -59,7 +59,7 @@ class MyUserInfo implements com.jcraft.jsch.UserInfo, com.jcraft.jsch.UIKeyboard
         <% } %>
     }
 };
-final com.jcraft.jsch.UserInfo defaultUserInfo_<%=cid%> = new MyUserInfo();
+final com.jcraft.jsch.UserInfo defaultUserInfo_<%=cid%> = new MyUserInfo_<%=cid%>();
 
 <%
 passwordFieldName = passwordFieldKey;
