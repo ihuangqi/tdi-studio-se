@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.codegen;
 
+import org.apache.avro.AvroTypeException;
 import org.apache.avro.Schema;
 import org.talend.daikon.avro.AvroUtils;
 
@@ -38,5 +39,13 @@ public final class DynamicFieldUtils {
     public static int getDynamicFieldPosition(Schema schema) {
         return AvroUtils.isIncludeAllFields(schema)
                 ? Integer.valueOf(schema.getProp(DiSchemaConstants.TALEND6_DYNAMIC_COLUMN_POSITION)) : NO_DYNAMIC_FIELD;
+    }
+
+    public static Schema.Field cloneAvroField(Schema.Field origin) {
+        try {
+            return new Schema.Field(origin.name(), origin.schema(), origin.doc(), origin.defaultVal());
+        } catch (AvroTypeException e) {
+            return new Schema.Field(origin.name(), origin.schema(), origin.doc(), null);
+        }
     }
 }

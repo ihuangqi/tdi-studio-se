@@ -37,6 +37,7 @@ import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.avro.SchemaParseException;
 import org.talend.codegen.DiSchemaConstants;
+import org.talend.codegen.DynamicFieldUtils;
 import org.talend.daikon.avro.AvroUtils;
 import org.talend.daikon.avro.LogicalTypeUtils;
 import org.talend.daikon.avro.NameUtil;
@@ -374,17 +375,9 @@ public class IncomingSchemaEnforcer {
      * @return field copy
      */
     private Field copyField(Field original) {
-        Field copy = null;
-        try {
-            copy =  new Schema.Field(original.name(), original.schema(), original.doc(), original.defaultVal());
-        } catch(AvroTypeException e) {
-            copy =  new Schema.Field(original.name(), original.schema(), original.doc(), null);
-        }
-        
-        if(copy != null) {
-            for (Map.Entry<String, Object> e : original.getObjectProps().entrySet()) {
-                copy.addProp(e.getKey(), e.getValue());
-            }
+        Field copy = DynamicFieldUtils.cloneAvroField(original);
+        for (Map.Entry<String, Object> e : original.getObjectProps().entrySet()) {
+            copy.addProp(e.getKey(), e.getValue());
         }
         return copy;
     }
