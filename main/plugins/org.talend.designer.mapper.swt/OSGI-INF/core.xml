@@ -10,7 +10,7 @@
 	</component>
 	<component name="MapperSwtUIHandlerFactory">
 		<implementation
-			class="org.talend.designer.mapper.swt.editor.cmd" />
+			class="org.talend.designer.mapper.swt.editor.cmd.MapperSwtUIHandlerFactory" />
 		<service>
 			<provide
 				interface="org.talend.commons.ui.runtime.custom.IUIHandlerFactory" />
