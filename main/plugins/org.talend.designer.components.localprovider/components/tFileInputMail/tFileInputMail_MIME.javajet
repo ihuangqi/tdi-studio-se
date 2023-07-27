@@ -36,37 +36,6 @@
 		%>
 		};
 		java.io.FileInputStream fileInput<%=cid%>=null;	
-	
-		class DecodeString_<%=cid%> {
-			<%//str is sth like : To:"=?ISO8859-1?B?**code**?=" <sb@company.com> , "=?ISO8859-1?B?**code**?=" <sb@company.com>%>
-			public String decode(String str){
-				if(str==null){
-					return null;
-				}
-				String res = "";
-				int first = str.indexOf("=?");
-			    int last = str.indexOf("?=");
-				if(first!=-1 && last!=-1){
-					try {
-						res = str.substring(0,first)+javax.mail.internet.MimeUtility.decodeWord(str.substring(first,last+2))+str.substring(last+2);
-						if(res.equals(str)){
-							return res;
-						}else{
-							return decode(res);
-						}
-					} catch (java.lang.Exception e) {
-globalMap.put("<%=cid%>_ERROR_MESSAGE",e.getMessage());
-						<%if(isLog4jEnabled){%>
-							log.warn("<%=cid%> - " + str);
-						<%}%>
-						return str;
-					}
-				}else{
-					return str;
-				}
-			}
-		}
-		DecodeString_<%=cid%> decode_<%=cid%> = new DecodeString_<%=cid%>();
 
 		try{
 			fileInput<%=cid%> = new java.io.FileInputStream(<%=filename %>);
@@ -189,7 +158,7 @@ globalMap.put("<%=cid%>_ERROR_MESSAGE",e.getMessage());
 					while (em.hasMoreElements()) {
 						tempStr_<%=cid %> = tempStr_<%=cid %> + (String) em.nextElement() + sep_<%=cid%> ;
 					}
-					list_<%=cid%>.add(decode_<%=cid%>.decode(tempStr_<%=cid%>));
+					list_<%=cid%>.add(tempStr_<%=cid%> == null ? null :javax.mail.internet.MimeUtility.decodeText(tempStr_<%=cid%>));
 				} else {
 					if(("true").equals(mailChecked_<%=cid %>[i_<%=cid%>])){
 						String[] sa_<%=cid%> = msg_<%=cid %>.getHeader(part_<%=cid%>);
@@ -201,10 +170,10 @@ globalMap.put("<%=cid%>_ERROR_MESSAGE",e.getMessage());
 						}else{
 							tempStr_<%=cid%>=null;
 						}
-						list_<%=cid%>.add(decode_<%=cid%>.decode(tempStr_<%=cid%>));
+						list_<%=cid%>.add(tempStr_<%=cid%> == null ? null :javax.mail.internet.MimeUtility.decodeText(tempStr_<%=cid%>));
 					}else{
 					   String content_<%=cid %> = msg_<%=cid %>.getHeader(part_<%=cid %>, null);
-					   list_<%=cid %>.add(decode_<%=cid%>.decode(content_<%=cid %>));
+					   list_<%=cid %>.add(content_<%=cid%> == null ? null :javax.mail.internet.MimeUtility.decodeText(content_<%=cid %>));
 					}
 				}
 			}
