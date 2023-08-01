@@ -52,9 +52,9 @@ import org.talend.designer.scd.util.TableEditorManager;
  */
 public class Type3Section extends ScdSection implements IDragDropDelegate {
 
-    private static final String PREVIOUS_HEADER = "previous value"; //$NON-NLS-1$
+    public static final String PREVIOUS_HEADER = "previous value"; //$NON-NLS-1$
 
-    private static final String CURRENT_HEADER = "current value"; //$NON-NLS-1$
+    public static final String CURRENT_HEADER = "current value"; //$NON-NLS-1$
 
     private static final int CURRENT_COLUMN_INDEX = 0;
 

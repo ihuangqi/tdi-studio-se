@@ -27,6 +27,7 @@ import org.talend.core.model.process.IComponentDocumentation;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.IExternalData;
 import org.talend.designer.scd.ui.ScdUI;
+import org.talend.core.model.genhtml.HTMLDocUtils;
 
 /**
  * DOC hcw class global comment. Detailled comment
@@ -51,13 +52,12 @@ public class ScdComponent extends AbstractExternalNode {
      * @see org.talend.core.model.process.IExternalNode#getComponentDocumentation(java.lang.String, java.lang.String)
      */
     public IComponentDocumentation getComponentDocumentation(String componentName, String tempFolderPath) {
-        // ScdComponentDocumentation componentDocumentation = new ScdComponentDocumentation();
-        // componentDocumentation.setComponentName(componentName);
-        // componentDocumentation.setTempFolderPath(tempFolderPath);
-        // componentDocumentation.setPreviewPicPath(HTMLDocUtils.getPreviewPicPath(this));
-        //
-        // return componentDocumentation;
-        return null;
+         ScdComponentDocumentation componentDocumentation = new ScdComponentDocumentation();
+         componentDocumentation.setComponentName(componentName);
+         componentDocumentation.setTempFolderPath(tempFolderPath);
+         componentDocumentation.setPreviewPicPath(HTMLDocUtils.getPreviewPicPath(this));
+         componentDocumentation.setExternalNode(getExternalNode());
+         return componentDocumentation;
     }
 
     /*
