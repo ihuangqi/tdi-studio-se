@@ -33,10 +33,17 @@
     </CONNECTORS>
     <PARAMETERS>
         <PARAMETER
+                NAME="PROPERTY"
+                FIELD="PROPERTY_TYPE"
+                NUM_ROW="1"
+                REPOSITORY_VALUE="BIGQUERY"
+        />
+
+        <PARAMETER
                 NAME="SCHEMA"
                 FIELD="SCHEMA_TYPE"
                 REQUIRED="true"
-                NUM_ROW="1"
+                NUM_ROW="2"
         />
 
         <PARAMETER NAME="AUTH_MODE" FIELD="CLOSED_LIST" NUM_ROW="3" REQUIRED="true" GROUP="AUTHENTICATION"
@@ -108,6 +115,7 @@
                 FIELD="TEXT"
                 NUM_ROW="40"
                 REQUIRED="true"
+                REPOSITORY_VALUE="PROJECT_ID"
         >
             <DEFAULT>""</DEFAULT>
         </PARAMETER>
@@ -137,6 +145,7 @@
                 FIELD="MEMO_SQL"
                 NUM_ROW="50"
                 REQUIRED="true"
+                REPOSITORY_VALUE="QUERY"
         >
             <DEFAULT>"select id, name from employee"</DEFAULT>
         </PARAMETER>
@@ -146,7 +155,7 @@
 					FIELD="CHECK" 
 					NUM_ROW="4" 
 					EQUIRED="true"	
-					GROUP="REGION_ENDPOINT_GROUP" 
+					GROUP="REGION_ENDPOINT_GROUP" REPOSITORY_VALUE="USE_REGION_ENDPOINT"
 					SHOW_IF="(AUTH_MODE == 'SERVICEACCOUNT')" >
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
@@ -154,7 +163,7 @@
 					FIELD="TEXT" 
 					NUM_ROW="6" 
 					REQUIRED="false" 
-					GROUP="REGION_ENDPOINT_GROUP" 
+					GROUP="REGION_ENDPOINT_GROUP" REPOSITORY_VALUE="REGION_ENDPOINT_BQ"
 					SHOW_IF="(AUTH_MODE == 'SERVICEACCOUNT') AND (USE_REGION_ENDPOINT == 'true')" >
 		  <DEFAULT>"https://bigquery.googleapis.com"</DEFAULT>
 		</PARAMETER>
