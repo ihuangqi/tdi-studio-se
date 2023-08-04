@@ -117,7 +117,7 @@ public class StatsAndLogsConstants {
             "ORACLE_18", "ORACLE_12", "ORACLE_11" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
     public static final String[] ORACLE_VERSION_DRIVER = new String[] {
-            "ojdbc8-19.3.0.0.jar", "ojdbc7.jar", "ojdbc6.jar" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            "ojdbc8-19.19.0.0.jar", "ojdbc7.jar", "ojdbc6.jar" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
     // for bug 11487
     public static final String[] MYSQL_VERSION_DISPLAY = new String[] { "MySQL 8", "MySQL 5", "MariaDB" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
