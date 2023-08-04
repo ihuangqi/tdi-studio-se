@@ -256,7 +256,7 @@ bw_<%=cid%>.write("!set showHeader false\n");
                 String objectKey_<%=cid%> = gsUriMatcher.group(2);
                 <%
                 boolean useStorageCreds = "USER_ACCOUNT_HMAC".equals(ElementParameterParser.getValue(node, "__AUTH_TYPE__"));
-                if (useStorageCreds) {
+                if (useStorageCreds && ! ElementParameterParser.getBooleanValue(node,"__USE_EXISTING_CONNECTION__")) {
                     String accessKey = ElementParameterParser.getValue(node, "__ACCESS_KEY__");
                     String passwordFieldName = "__SECRET_KEY__";
                     String googleTracker = org.talend.core.utils.TrackerUtil.getGoogleTracker();
