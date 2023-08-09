@@ -28,7 +28,6 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.projectsetting.ProjectPreferenceManager;
 import org.talend.repository.RepositoryPlugin;
 import org.talend.repository.i18n.Messages;
-import org.talend.utils.security.StudioEncryption;
 import org.talend.utils.sugars.TypedReturnCode;
 
 public class ArtifactProxySettingForm extends AbstractArtifactProxySettingForm {
@@ -285,8 +284,6 @@ public class ArtifactProxySettingForm extends AbstractArtifactProxySettingForm {
         enableProxySettingBtn.setSelection(false);
         prefManager.setValue(TalendLibsServerManager.ENABLE_PROXY_SETTING, false);
         prefManager.setValue(TalendLibsServerManager.NEXUS_PROXY_URL, "");
-        prefManager.setValue(TalendLibsServerManager.NEXUS_PROXY_USERNAME, "");
-        prefManager.setValue(TalendLibsServerManager.NEXUS_PROXY_PASSWORD, "");
         prefManager.setValue(TalendLibsServerManager.NEXUS_PROXY_REPOSITORY_ID, "");
         prefManager.setValue(TalendLibsServerManager.NEXUS_PROXY_TYPE, "");
         prefManager.save();
@@ -307,8 +304,6 @@ public class ArtifactProxySettingForm extends AbstractArtifactProxySettingForm {
         if(enableFlag) {
             prefManager.setValue(TalendLibsServerManager.ENABLE_PROXY_SETTING, enableFlag);
             prefManager.setValue(TalendLibsServerManager.NEXUS_PROXY_URL, proxyUrl);
-            prefManager.setValue(TalendLibsServerManager.NEXUS_PROXY_USERNAME, username);
-            prefManager.setValue(TalendLibsServerManager.NEXUS_PROXY_PASSWORD, StudioEncryption.getStudioEncryption(StudioEncryption.EncryptionKeyName.SYSTEM).encrypt(password));
             prefManager.setValue(TalendLibsServerManager.NEXUS_PROXY_REPOSITORY_ID, repositoryId);
             prefManager.setValue(TalendLibsServerManager.NEXUS_PROXY_TYPE, type);
             prefManager.save();
@@ -323,10 +318,15 @@ public class ArtifactProxySettingForm extends AbstractArtifactProxySettingForm {
         }
         enableProxySettingBtn.setSelection(enableProxy);
         urlText.setText(prefManager.getValue(TalendLibsServerManager.NEXUS_PROXY_URL));
-        usernameText.setText(prefManager.getValue(TalendLibsServerManager.NEXUS_PROXY_USERNAME));
-        talendLibPasswordText.setText(StudioEncryption.getStudioEncryption(StudioEncryption.EncryptionKeyName.SYSTEM).decrypt(prefManager.getValue(TalendLibsServerManager.NEXUS_PROXY_PASSWORD)));
         repositoryIdText.setText(prefManager.getValue(TalendLibsServerManager.NEXUS_PROXY_REPOSITORY_ID));
         artifactType.setText(prefManager.getValue(TalendLibsServerManager.NEXUS_PROXY_TYPE));
+        String[] credentials = TalendLibsServerManager.getInstance().getProxyArtifactCredentials(urlText.getText(),
+                repositoryIdText.getText(), TalendLibsServerManager.NEXUS_PROXY_USERNAME,
+                TalendLibsServerManager.NEXUS_PROXY_PASSWORD);
+        if (credentials != null) {
+            usernameText.setText(credentials[0]);
+            talendLibPasswordText.setText(credentials[1]);
+        }
     }
 
     private void save() {
@@ -338,11 +338,11 @@ public class ArtifactProxySettingForm extends AbstractArtifactProxySettingForm {
         String type = artifactType.getText();
         prefManager.setValue(TalendLibsServerManager.ENABLE_PROXY_SETTING, enableFlag);
         prefManager.setValue(TalendLibsServerManager.NEXUS_PROXY_URL, url);
-        prefManager.setValue(TalendLibsServerManager.NEXUS_PROXY_USERNAME, username);
-        prefManager.setValue(TalendLibsServerManager.NEXUS_PROXY_PASSWORD, StringUtils.isEmpty(password)? password : StudioEncryption.getStudioEncryption(StudioEncryption.EncryptionKeyName.SYSTEM).encrypt(password));
         prefManager.setValue(TalendLibsServerManager.NEXUS_PROXY_REPOSITORY_ID, repositoryId);
         prefManager.setValue(TalendLibsServerManager.NEXUS_PROXY_TYPE, type);
         prefManager.save();
+        TalendLibsServerManager.getInstance().saveProxyArtifactCredentials(url, repositoryId,
+                TalendLibsServerManager.NEXUS_PROXY_USERNAME, username, TalendLibsServerManager.NEXUS_PROXY_PASSWORD, password);
     }
 
     private ArtifactRepositoryBean getServerBean() {

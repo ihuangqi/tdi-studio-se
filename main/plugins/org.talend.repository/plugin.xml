@@ -3797,6 +3797,15 @@
         </projecttask>
         <projecttask
               beforeLogon="true"
+              breaks="8.0.0"
+              class="org.talend.repository.model.migration.CleanArtifactProxyCredentialFromPreferenceMigrationTask"
+              description="Claen artifact proxy credential from preference and change to use secure storage store credential."
+              id="org.talend.repository.model.migration.CleanArtifactProxyCredentialFromPreferenceMigrationTask"
+              name="CleanArtifactProxyCredentialFromPreferenceMigrationTask"
+              version="8.0.1">
+        </projecttask>
+        <projecttask
+              beforeLogon="true"
               breaks="7.3.1"
               class="org.talend.repository.model.migration.EncryptPasswordForNexusProxyPasswordMigrationTask"
               id="org.talend.repository.model.migration.EncryptPasswordForNexusProxyPasswordMigrationTask"
