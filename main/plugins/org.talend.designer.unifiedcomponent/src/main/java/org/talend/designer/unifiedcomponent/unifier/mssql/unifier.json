@@ -69,14 +69,6 @@
         "exclude":"PORT,DB_VERSION"}
 },
 {
-    "component_delegate":"tDBCDC",
-    "component":"tMSSqlCDC",
-    "category":"DI",
-    "family":"",
-    "parameter":{
-        "exclude":"PORT,DB_VERSION"}
-},
-{
     "component_delegate":"tDBInvalidRows",
     "component":"tMSSqlInvalidRows",
     "category":"DI",

@@ -77,14 +77,6 @@
         "exclude":"PORT,DB_VERSION"}
 },
 {
-    "component_delegate":"tDBCDC",
-    "component":"tMysqlCDC",
-    "category":"DI",
-    "family":"",
-    "parameter":{
-        "exclude":"PORT,DB_VERSION"}
-},
-{
     "component_delegate":"tDBInvalidRows",
     "component":"tMySQLInvalidRows",
     "category":"DI",
