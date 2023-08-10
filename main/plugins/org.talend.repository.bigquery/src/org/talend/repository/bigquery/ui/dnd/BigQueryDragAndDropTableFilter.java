@@ -28,11 +28,13 @@ public class BigQueryDragAndDropTableFilter extends DefaultRepositoryComponentDn
     @Override
     public boolean valid(Item item, ERepositoryObjectType type, RepositoryNode seletetedNode, IComponent component,
             String repositoryType) {
-        IRepositoryViewObject repositoryObject = seletetedNode.getObject();
-        if (repositoryObject instanceof MetadataTableRepositoryObject) {
-            MetadataTableRepositoryObject tableObject = (MetadataTableRepositoryObject) repositoryObject;
-            if (tableObject.getAbstractMetadataObject() instanceof MetadataTable) {//BigQueryTable
-                return isBigQueryComponent(component);
+        if (item instanceof BigQueryConnectionItem && seletetedNode != null) {
+            IRepositoryViewObject repositoryObject = seletetedNode.getObject();
+            if (repositoryObject instanceof MetadataTableRepositoryObject) {
+                MetadataTableRepositoryObject tableObject = (MetadataTableRepositoryObject) repositoryObject;
+                if (tableObject.getAbstractMetadataObject() instanceof MetadataTable) {// BigQueryTable
+                    return isBigQueryComponent(component);
+                }
             }
         }
         
