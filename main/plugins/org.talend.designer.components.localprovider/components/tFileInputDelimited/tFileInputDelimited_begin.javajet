@@ -38,6 +38,10 @@
 	int dynamic_index = -1;
 	boolean hasDynamic = false;
 	int dynamicColumnlength = 100;
+	String dynamic = ElementParameterParser.getValue(node, "__DYNAMIC__");
+	final boolean useExistingDynamic = "true".equals(ElementParameterParser.getValue(node, "__USE_EXISTING_DYNAMIC__"));
+	final String useHeaderAsIs = ElementParameterParser.getValue(node, "__USE_HEADER_AS_IS__");
+	final String dyn = dynamic+"_DYNAMIC";
 	List<IMetadataColumn> columnList = null;
 	List<IMetadataTable> metadatas = node.getMetadataList();
 	IMetadataTable metadata = null;
@@ -73,32 +77,46 @@
 		%>
 			if(isFirstCheckDyn_<%=cid %>){// for the header line
 				<%
-				if(isCsv){
+				if(useExistingDynamic){
 				%>
-					int colsLen_<%=cid %> = row<%=cid %>.length;
+				dynamic_<%=cid %> = (routines.system.Dynamic)globalMap.get("<%=dyn%>");
+				isFirstCheckDyn_<%=cid %> = false;
 				<%
-				}else{
-				%>
-					int colsLen_<%=cid %> = fid_<%=cid %>.getColumnsCountOfCurrentRow();
+				} else {
+					if(isCsv){
+					%>
+						int colsLen_<%=cid %> = row<%=cid %>.length;
+					<%
+					}else{
+					%>
+						int colsLen_<%=cid %> = fid_<%=cid %>.getColumnsCountOfCurrentRow();
+					<%
+					}
+					%>
+						for (int i = <%=dynamic_index-1%>; i < colsLen_<%=cid %>-<%=colLen-dynamic_index%>; i++) {
+							routines.system.DynamicMetadata dynamicMetadata_<%=cid%> = new routines.system.DynamicMetadata();
+							if(<%=useHeaderAsIs%>) {
+								dynamicMetadata_<%=cid%>.setName(<%if(isCsv){%>row<%=cid %>[i]<%}else{%>fid_<%=cid %>.get(i)<%}%>);
+							} else {
+								dynamicMetadata_<%=cid%>.setName(<%if(isCsv){%>row<%=cid %>[i]<%}else{%>fid_<%=cid %>.get(i)<%}%>.replaceAll("[ .-]+", "_"));
+							}
+							dynamicMetadata_<%=cid%>.setDbName(dynamicMetadata_<%=cid%>.getName());
+							dynamicMetadata_<%=cid%>.setType("id_String");
+							dynamicMetadata_<%=cid%>.setDbType("VARCHAR");
+							dynamicMetadata_<%=cid%>.setLength(<%=dynamicColumnlength%>);
+							dynamicMetadata_<%=cid%>.setPrecision(0);
+							dynamicMetadata_<%=cid%>.setNullable(true);
+							dynamicMetadata_<%=cid%>.setKey(false);
+							dynamicMetadata_<%=cid%>.setSourceType(routines.system.DynamicMetadata.sourceTypes.demilitedFile);
+							dynamicMetadata_<%=cid%>.setColumnPosition(i);
+							dynamic_<%=cid%>.metadatas.add(dynamicMetadata_<%=cid%>);
+						}
+						
+						isFirstCheckDyn_<%=cid %> = false;
+						continue;
 				<%
 				}
 				%>
-    			for (int i = <%=dynamic_index-1%>; i < colsLen_<%=cid %>-<%=colLen-dynamic_index%>; i++) {
-			    	routines.system.DynamicMetadata dynamicMetadata_<%=cid%> = new routines.system.DynamicMetadata();
-			    	dynamicMetadata_<%=cid%>.setName(<%if(isCsv){%>row<%=cid %>[i]<%}else{%>fid_<%=cid %>.get(i)<%}%>.replaceAll("[ .-]+", "_"));
-			    	dynamicMetadata_<%=cid%>.setDbName(dynamicMetadata_<%=cid%>.getName());
-			    	dynamicMetadata_<%=cid%>.setType("id_String");
-			    	dynamicMetadata_<%=cid%>.setDbType("VARCHAR");
-			    	dynamicMetadata_<%=cid%>.setLength(<%=dynamicColumnlength%>);
-			    	dynamicMetadata_<%=cid%>.setPrecision(0);
-			    	dynamicMetadata_<%=cid%>.setNullable(true);
-			    	dynamicMetadata_<%=cid%>.setKey(false);
-			    	dynamicMetadata_<%=cid%>.setSourceType(routines.system.DynamicMetadata.sourceTypes.demilitedFile);
-			    	dynamicMetadata_<%=cid%>.setColumnPosition(i);
-			    	dynamic_<%=cid%>.metadatas.add(dynamicMetadata_<%=cid%>);
-			    }
-    			isFirstCheckDyn_<%=cid %> = false;
-    			continue;
 			}
 		<%
 		}
@@ -236,7 +254,9 @@
 						
 						int fieldCount = <%=sourceValueName%>.getColumnsCountOfCurrentRow();
 						dynamic_column_count_<%=cid%> = <%=dynamicName%>.getColumnCount();
-						for (int i = 0; i < dynamic_column_count_<%=cid%> ; i++) {
+						
+						<%if(!useExistingDynamic){%>
+						for (int i = 0; i < dynamic_column_count_<%=cid%>; i++) {
 							if ((<%=dynamic_index%>+i) < fieldCount){
 								<%=targetConnName %>.<%=column.getLabel() %>.addColumnValue(<%=sourceValueName%>.get(<%=dynamic_index%>+i)<%=(isTrimAll || (!trimSelects.isEmpty() && ("true").equals(trimSelects.get(valueN).get("TRIM"))))?".trim()":"" %>);
 							}
@@ -244,6 +264,20 @@
 								<%=targetConnName %>.<%=column.getLabel() %>.addColumnValue("");
 							}
 						}
+						<%} else {%>
+						int maxColumnNumberInDynamicColumn_<%=cid%> = fieldCount - <%=sizeListColumns - 1%>;
+						for (int i = 0; i < dynamic_column_count_<%=cid%>; i++) {
+							Object v_<%=cid%> = null;
+							final routines.system.DynamicMetadata dynamicMetadata_<%=cid%> = <%=dynamicName%>.getColumnMetadata(i);
+							if ((<%=dynamic_index%>+i) < fieldCount && i < maxColumnNumberInDynamicColumn_<%=cid%>){<%//B1 start%>
+								final String tempValue_<%=cid%> = <%=sourceValueName%>.get(<%=dynamic_index%>+i)<%=(isTrimAll || (!trimSelects.isEmpty() && ("true").equals(trimSelects.get(valueN).get("TRIM"))))?".trim()":"" %>;
+								final String separator_<%=cid%> = <%= fieldSeparator %>;
+								
+								<%@ include file="./use_existing_schema.javajet"%>
+						}
+
+						dynamic_column_count_<%=cid%> = maxColumnNumberInDynamicColumn_<%=cid%>;
+						<%}%>
 					<%
 					}else{
 						
@@ -498,8 +532,8 @@ globalMap.put("<%=cid%>_ERROR_MESSAGE",e.getMessage());
 								continue;
 							}
 							try {
-								fid_<%=cid %> = new org.talend.fileprocess.FileInputDelimited(zis_<%=cid %>, <%=encoding %>,<%=fieldSeparator %>,<%=rowSeparator %>,<%=removeEmptyRowFlag %>,<%=header %><%=hasDynamic?"-1":""%>,<%=footer %>,
-								<%if(hasDynamic){%>
+								fid_<%=cid %> = new org.talend.fileprocess.FileInputDelimited(zis_<%=cid %>, <%=encoding %>,<%=fieldSeparator %>,<%=rowSeparator %>,<%=removeEmptyRowFlag %>,<%=header %><%=(hasDynamic&&!useExistingDynamic)?"-1":""%>,<%=footer %>,
+								<%if(hasDynamic&&!useExistingDynamic){%>
 									(limit_<%=cid%> > 0) ? limit_<%=cid%>+1 : limit_<%=cid%>
 								<%} else {%>
 									limit_<%=cid%>
@@ -525,7 +559,7 @@ globalMap.put("<%=cid%>_ERROR_MESSAGE",e.getMessage());
 							%>
 						}
 						try {
-							fid_<%=cid %> = new org.talend.fileprocess.FileInputDelimited(<%=filename %>, <%=encoding %>,<%=fieldSeparator %>,<%=rowSeparator %>,<%=removeEmptyRowFlag %>,<%=header %><%=hasDynamic?"-1":""%>,<%=footer %>,<%if(hasDynamic){%>
+							fid_<%=cid %> = new org.talend.fileprocess.FileInputDelimited(<%=filename %>, <%=encoding %>,<%=fieldSeparator %>,<%=rowSeparator %>,<%=removeEmptyRowFlag %>,<%=header %><%=(hasDynamic&&!useExistingDynamic)?"-1":""%>,<%=footer %>,<%if(hasDynamic&&!useExistingDynamic){%>
 									(limit_<%=cid%> > 0) ? limit_<%=cid%>+1 : limit_<%=cid%>
 								<%} else {%>
 									limit_<%=cid%>
@@ -884,6 +918,8 @@ globalMap.put("<%=cid%>_ERROR_MESSAGE",ex_<%=cid%>.getMessage());
 										<%=targetConnName %>.<%=column.getLabel() %> = <%=dynamicName%>.copyMetadata();
 									}
 									int fieldCount = <%=sourceValueName%>.length;
+									
+									<%if(!useExistingDynamic){%>
 									for (int i = 0; i < dynamic_column_count_<%=cid%>; i++) {
 										if ((<%=dynamic_index%>+i) < fieldCount) {
 											<%=targetConnName %>.<%=column.getLabel() %>.addColumnValue(<%=sourceValueName%>[<%=dynamic_index%>+i]);
@@ -891,6 +927,21 @@ globalMap.put("<%=cid%>_ERROR_MESSAGE",ex_<%=cid%>.getMessage());
 											<%=targetConnName %>.<%=column.getLabel() %>.addColumnValue("");
 										}
 									}
+									<%} else {%>
+									int maxColumnNumberInDynamicColumn_<%=cid%> = fieldCount - <%=columnSize - 1%>;
+									for (int i = 0; i < dynamic_column_count_<%=cid%>; i++) {
+										Object v_<%=cid%> = null;
+										final routines.system.DynamicMetadata dynamicMetadata_<%=cid%> = <%=dynamicName%>.getColumnMetadata(i);
+										if ((<%=dynamic_index%>+i) < fieldCount && i < maxColumnNumberInDynamicColumn_<%=cid%>){<%//B1 start%>
+											final String tempValue_<%=cid%> = <%=sourceValueName%>[<%=dynamic_index%>+i];
+											final String separator_<%=cid%> = String.valueOf(fieldSeparator_<%=cid %>_ListType[0]);
+											
+											<%@ include file="./use_existing_schema.javajet"%>
+									}
+			
+									dynamic_column_count_<%=cid%> = maxColumnNumberInDynamicColumn_<%=cid%>;
+									<%}%>
+									
 								<%
 								}
 							}
@@ -1285,7 +1336,7 @@ globalMap.put("<%=cid%>_ERROR_MESSAGE",e.getMessage());
 	        		}
 	        
 			        if(limit<%=cid%> != 0){
-			        	for(currentLine<%=cid %>=0;currentLine<%=cid %> < <%= header %><%=hasDynamic?"-1":""%>;currentLine<%=cid %>++){
+			        	for(currentLine<%=cid %>=0;currentLine<%=cid %> < <%= header %><%=(hasDynamic&&!useExistingDynamic)?"-1":""%>;currentLine<%=cid %>++){
 			        		csvReader<%=cid %>.readNext();
 			        	}
 			        }
