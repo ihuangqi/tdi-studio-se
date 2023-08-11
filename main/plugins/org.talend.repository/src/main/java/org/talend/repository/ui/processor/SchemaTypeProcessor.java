@@ -76,6 +76,7 @@ public class SchemaTypeProcessor extends MultiTypesProcessor {
             list.add(ERepositoryObjectType.METADATA_WSDL_SCHEMA);
             list.add(ERepositoryObjectType.METADATA_SALESFORCE_SCHEMA);
             list.add(ERepositoryObjectType.METADATA_SAPCONNECTIONS);
+            list.add(ERepositoryObjectType.METADATA_BIGQUERYCONNECTIONS);
             list.add(ERepositoryObjectType.METADATA_RULES_MANAGEMENT);
             list.add(ERepositoryObjectType.METADATA_MDMCONNECTION);
             list.add(ERepositoryObjectType.METADATA_EDIFACT);

@@ -110,6 +110,9 @@ public class RepositoryTypeProcessor extends SingleTypeProcessor {
         if (repositoryType.startsWith(ERepositoryCategoryType.SAP.getName())) {
             return ERepositoryObjectType.METADATA_SAPCONNECTIONS;
         }
+        if (repositoryType.startsWith(ERepositoryCategoryType.BIGQUERY.getName())) {
+            return ERepositoryObjectType.METADATA_BIGQUERYCONNECTIONS;
+        }
         if (repositoryType.startsWith(ERepositoryCategoryType.HEADERFOOTER.getName())) {
             return ERepositoryObjectType.METADATA_HEADER_FOOTER;
         }
