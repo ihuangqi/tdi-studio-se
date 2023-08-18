@@ -25,7 +25,6 @@ if(!("true").equals(useExistingConn))
 {
 	%>
 	if(conn_<%=cid%> != null && !conn_<%=cid%>.isClosed()) {
-		<%log4jCodeGenerateUtil.commit(node);%>
 		<%log4jCodeGenerateUtil.close(node);%>
 	}
 	<%
