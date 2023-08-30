@@ -10,17 +10,21 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.designer.core.ui.editor.jobletcontainer;
+package org.talend.designer.core.ui.editor.subjobcontainer;
 
-import java.util.List;
+import java.util.Map;
 
-import org.talend.designer.core.ui.editor.nodecontainer.ICrossPlatformNodeContainerPart;
+import org.talend.designer.core.ui.editor.ICrossPlatformPartFactory;
 
-public interface ICrossPlatformJobletContainerPart extends ICrossPlatformNodeContainerPart {
+public interface ICrossPlatformRootEditPart extends ICrossPlatformEditPart {
 
-    @Override
-    default public List getCrossPlatformModelChildren() {
-        return ((JobletContainer) this.getCrossPlatformModel()).getElements();
+    ICrossPlatformEditPart getCrossPlatformContents();
+
+    ICrossPlatformPartFactory getCrossPlatformPartFactory();
+
+    Map getCrossPlatformEditPartRegistry();
+
+    default void addToBeUpdated(ICrossPlatformEditPart part) {
     }
 
 }

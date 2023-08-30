@@ -72,7 +72,12 @@ public class ProcessPart extends AbstractSwtGraphicalEditPart
      */
     @Override
     public List getModelChildren() {
-        return ((Process) this.getModel()).getElements();
+        return getCrossPlatformModelChildren();
+    }
+
+    @Override
+    public List getCrossPlatformModelChildren() {
+        return ICrossPlatformProcessPart.super.getCrossPlatformModelChildren();
     }
 
     @Override
@@ -298,6 +303,26 @@ public class ProcessPart extends AbstractSwtGraphicalEditPart
             }
         }
 
+    }
+
+    @Override
+    public void crossPlatformActivate() {
+        activate();
+    }
+
+    @Override
+    public void crossPlatformDeactivate() {
+        deactivate();
+    }
+
+    @Override
+    public void refreshCrossPlatformVisuals() {
+        refreshVisuals();
+    }
+
+    @Override
+    public void crossPlatformRefresh() {
+        refresh();
     }
 
 }

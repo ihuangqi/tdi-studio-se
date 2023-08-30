@@ -36,6 +36,7 @@ public class ConnectionEditPart extends BaseConnectionEditPart {
         return connection;
     }
 
+    @Override
     public void updateForegroundColor(boolean selected) {
         if (selected) {
             getFigure().setForegroundColor(ColorInfo.COLOR_SELECTED_ZONE_TO_ZONE_LINK());

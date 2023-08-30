@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.subjobcontainer;
 
+import java.util.List;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
@@ -20,6 +21,16 @@ public class CrossPlatformSubjobContainerPart extends AbsCrossPlatformEditPart i
 
     public CrossPlatformSubjobContainerPart(Object model) {
         super(model);
+    }
+
+    @Override
+    public List getCrossPlatformModelChildren() {
+        return ICrossPlatformSubjobContainerPart.super.getCrossPlatformModelChildren();
+    }
+
+    @Override
+    public List getCrossPlatformModelSourceConnections() {
+        return ICrossPlatformSubjobContainerPart.super.getCrossPlatformModelSourceConnections();
     }
 
 }

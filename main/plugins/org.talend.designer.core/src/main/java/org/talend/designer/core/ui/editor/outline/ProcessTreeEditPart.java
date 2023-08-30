@@ -158,6 +158,11 @@ public class ProcessTreeEditPart extends AbstractSwtTreeEditPart implements Prop
         return ((Process) getModel()).getGraphicalNodes();
     }
 
+    @Override
+    public List getCrossPlatformModelChildren() {
+        return getModelChildren();
+    }
+
     /*
      * (non-Javadoc)
      *

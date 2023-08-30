@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.nodecontainer;
 
+import java.util.List;
+
 import org.talend.designer.core.ui.editor.nodes.ICrossPlatformNodePart;
 import org.talend.designer.core.ui.editor.subjobcontainer.AbsCrossPlatformEditPart;
 
@@ -29,6 +31,11 @@ public class CrossPlatformNodeContainerPart extends AbsCrossPlatformEditPart imp
             return (ICrossPlatformNodePart) o;
         }
         return null;
+    }
+
+    @Override
+    public List getCrossPlatformModelChildren() {
+        return ICrossPlatformNodeContainerPart.super.getCrossPlatformModelChildren();
     }
 
 }

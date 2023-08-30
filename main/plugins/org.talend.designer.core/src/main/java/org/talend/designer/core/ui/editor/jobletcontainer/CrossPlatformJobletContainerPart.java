@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.jobletcontainer;
 
+import java.util.List;
+
 import org.talend.designer.core.ui.editor.nodecontainer.CrossPlatformNodeContainerPart;
 
 
@@ -19,6 +21,11 @@ public class CrossPlatformJobletContainerPart extends CrossPlatformNodeContainer
 
     public CrossPlatformJobletContainerPart(Object model) {
         super(model);
+    }
+
+    @Override
+    public List getCrossPlatformModelChildren() {
+        return ICrossPlatformJobletContainerPart.super.getCrossPlatformModelChildren();
     }
 
 }

@@ -108,7 +108,12 @@ public class JobletContainerPart extends NodeContainerPart implements ICrossPlat
 
     @Override
     protected List getModelChildren() {
-        return ((JobletContainer) this.getModel()).getElements();
+        return getCrossPlatformModelChildren();
+    }
+
+    @Override
+    public List getCrossPlatformModelChildren() {
+        return ICrossPlatformJobletContainerPart.super.getCrossPlatformModelChildren();
     }
 
     /*

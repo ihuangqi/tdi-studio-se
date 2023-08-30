@@ -14,6 +14,7 @@ package org.talend.designer.core.ui.editor.connections;
 
 import java.util.List;
 
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editparts.AbstractConnectionEditPart;
@@ -21,14 +22,16 @@ import org.talend.designer.core.ui.editor.nodes.CrossPlatformSwtEditPartViewer;
 import org.talend.designer.core.ui.editor.nodes.CrossPlatformSwtFigureProxy;
 import org.talend.designer.core.ui.editor.nodes.ICrossPlatformEditPartViewer;
 import org.talend.designer.core.ui.editor.nodes.ICrossPlatformFigure;
+import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformConnectionEditPart;
 import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformEditPart;
 import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformRequest;
 import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformRequestProxy;
+import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformRootEditPart;
 import org.talend.designer.core.ui.editor.subjobcontainer.SwtRequestProxyFactory;
 
 
 public abstract class AbstractSwtConnectionEditPart extends AbstractConnectionEditPart
-        implements ICrossPlatformEditPart {
+        implements ICrossPlatformConnectionEditPart {
 
     private CrossPlatformSwtEditPartViewer crossPlatformViewer;
 
@@ -49,13 +52,48 @@ public abstract class AbstractSwtConnectionEditPart extends AbstractConnectionEd
     }
 
     @Override
+    public ICrossPlatformRootEditPart getCrossPlatformRoot() {
+        return (ICrossPlatformRootEditPart) getRoot();
+    }
+
+    @Override
     public ICrossPlatformEditPart getCrossPlatformParentPart() {
         return (ICrossPlatformEditPart) getParent();
     }
 
     @Override
+    public void setCrossPlatformParentPart(ICrossPlatformEditPart part) {
+        setParent((EditPart) part);
+    }
+
+    @Override
     public List getCrossPlatformChildren() {
         return getChildren();
+    }
+
+    @Override
+    public List getCrossPlatformModelChildren() {
+        return this.getModelChildren();
+    }
+
+    @Override
+    public ICrossPlatformEditPart getCrossPlatformSource() {
+        return (ICrossPlatformEditPart) getSource();
+    }
+
+    @Override
+    public void setCrossPlatformSource(ICrossPlatformEditPart editPart) {
+        setSource((EditPart) editPart);
+    }
+
+    @Override
+    public ICrossPlatformEditPart getCrossPlatformTarget() {
+        return (ICrossPlatformEditPart) getTarget();
+    }
+
+    @Override
+    public void setCrossPlatformTarget(ICrossPlatformEditPart editPart) {
+        setTarget((EditPart) editPart);
     }
 
     @Override
@@ -81,6 +119,31 @@ public abstract class AbstractSwtConnectionEditPart extends AbstractConnectionEd
         }
         Request swtRequest = SwtRequestProxyFactory.get().convert(request);
         return super.getCommand(swtRequest);
+    }
+
+    @Override
+    public boolean isCrossPlatformActive() {
+        return this.isActive();
+    }
+
+    @Override
+    public void crossPlatformActivate() {
+        activate();
+    }
+
+    @Override
+    public void crossPlatformDeactivate() {
+        deactivate();
+    }
+
+    @Override
+    public void refreshCrossPlatformVisuals() {
+        refreshVisuals();
+    }
+
+    @Override
+    public void crossPlatformRefresh() {
+        refresh();
     }
 
 }

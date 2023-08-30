@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.subjobcontainer;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.gef.commands.Command;
@@ -27,7 +28,31 @@ public interface ICrossPlatformEditPart {
 
     void setCrossPlatformModel(Object model);
 
+    ICrossPlatformRootEditPart getCrossPlatformRoot();
+
     ICrossPlatformEditPart getCrossPlatformParentPart();
+
+    void setCrossPlatformParentPart(ICrossPlatformEditPart part);
+
+    default List getCrossPlatformModelChildren() {
+        return Collections.EMPTY_LIST;
+    }
+
+    default List getCrossPlatformModelSourceConnections() {
+        return Collections.EMPTY_LIST;
+    }
+
+    default List getCrossPlatformModelTargetConnections() {
+        return Collections.EMPTY_LIST;
+    }
+
+    default List getCrossPlatformSourceConnections() {
+        return Collections.EMPTY_LIST;
+    }
+
+    default List getCrossPlatformTargetConnections() {
+        return Collections.EMPTY_LIST;
+    }
 
     List getCrossPlatformChildren();
 
@@ -36,5 +61,24 @@ public interface ICrossPlatformEditPart {
     Command getCommand(ICrossPlatformRequest request);
 
     ICrossPlatformFigure getCrossPlatformFigure();
+
+    default void addCrossPlatformNotify() {
+    }
+
+    default void removeCrossPlatformNotify() {
+    }
+
+    boolean isCrossPlatformActive();
+
+    void crossPlatformActivate();
+
+    void crossPlatformDeactivate();
+
+    void refreshCrossPlatformVisuals();
+
+    void crossPlatformRefresh();
+
+    default void crossPlatformDispose() {
+    }
 
 }

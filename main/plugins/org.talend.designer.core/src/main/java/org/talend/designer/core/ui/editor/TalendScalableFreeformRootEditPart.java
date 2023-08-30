@@ -12,6 +12,9 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor;
 
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.draw2d.ConnectionLayer;
 import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.FreeformLayeredPane;
@@ -21,13 +24,25 @@ import org.eclipse.draw2d.ScalableFreeformLayeredPane;
 import org.eclipse.draw2d.Viewport;
 import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.gef.AutoexposeHelper;
+import org.eclipse.gef.EditPart;
+import org.eclipse.gef.Request;
+import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editparts.GridLayer;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.editparts.ViewportAutoexposeHelper;
 import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.ui.IEditorInput;
 import org.talend.commons.ui.gmf.draw2d.AnimatableZoomManager;
+import org.talend.designer.core.ui.editor.nodes.CrossPlatformSwtEditPartViewer;
+import org.talend.designer.core.ui.editor.nodes.CrossPlatformSwtFigureProxy;
+import org.talend.designer.core.ui.editor.nodes.ICrossPlatformEditPartViewer;
+import org.talend.designer.core.ui.editor.nodes.ICrossPlatformFigure;
 import org.talend.designer.core.ui.editor.nodes.SelectionFeedbackEditPolicy;
+import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformEditPart;
+import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformRequest;
+import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformRequestProxy;
+import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformRootEditPart;
+import org.talend.designer.core.ui.editor.subjobcontainer.SwtRequestProxyFactory;
 
 /**
  * Modification of the default RootEditPart to add the possibility to change the color of the background and change the
@@ -36,7 +51,7 @@ import org.talend.designer.core.ui.editor.nodes.SelectionFeedbackEditPolicy;
  * $Id: TalendScalableFreeformRootEditPart.java 7038 2007-11-15 14:05:48Z plegall $
  *
  */
-public class TalendScalableFreeformRootEditPart extends ScalableFreeformRootEditPart {
+public class TalendScalableFreeformRootEditPart extends ScalableFreeformRootEditPart implements ICrossPlatformRootEditPart {
 
     public static final String PROCESS_BACKGROUND_LAYER = "processBackgroundLayer"; //$NON-NLS-1$
 
@@ -53,6 +68,12 @@ public class TalendScalableFreeformRootEditPart extends ScalableFreeformRootEdit
     private GridLayer gridLayer;
 
     private FeedbackLayer feedbackLayer;
+
+    private CrossPlatformSwtEditPartViewer crossPlatformViewer;
+
+    private CrossPlatformSwtFigureProxy crossPlatformFigure;
+
+    private ICrossPlatformPartFactory crossPlatformPartFactory;
 
     /*
      * (non-Javadoc)
@@ -146,4 +167,108 @@ public class TalendScalableFreeformRootEditPart extends ScalableFreeformRootEdit
         feedbackLayer = null;
         gridLayer = null;
     }
+
+    @Override
+    public Object getCrossPlatformModel() {
+        return getModel();
+    }
+
+    @Override
+    public void setCrossPlatformModel(Object model) {
+        setModel(model);
+    }
+
+    @Override
+    public ICrossPlatformRootEditPart getCrossPlatformRoot() {
+        return (ICrossPlatformRootEditPart) getRoot();
+    }
+
+    @Override
+    public ICrossPlatformEditPart getCrossPlatformParentPart() {
+        return (ICrossPlatformEditPart) getParent();
+    }
+
+    @Override
+    public void setCrossPlatformParentPart(ICrossPlatformEditPart part) {
+        setParent((EditPart) part);
+    }
+
+    @Override
+    public List getCrossPlatformChildren() {
+        return getChildren();
+    }
+
+    @Override
+    public List getModelChildren() {
+        return super.getModelChildren();
+    }
+
+    @Override
+    public ICrossPlatformEditPartViewer getCrossPlatformViewer() {
+        if (crossPlatformViewer == null) {
+            crossPlatformViewer = new CrossPlatformSwtEditPartViewer(getViewer());
+        }
+        return crossPlatformViewer;
+    }
+
+    @Override
+    public ICrossPlatformFigure getCrossPlatformFigure() {
+        if (crossPlatformFigure == null) {
+            crossPlatformFigure = new CrossPlatformSwtFigureProxy(getFigure());
+        }
+        return crossPlatformFigure;
+    }
+
+    @Override
+    public Command getCommand(ICrossPlatformRequest request) {
+        if (request instanceof ICrossPlatformRequestProxy) {
+            return super.getCommand(((ICrossPlatformRequestProxy) request).getHost());
+        }
+        Request swtRequest = SwtRequestProxyFactory.get().convert(request);
+        return super.getCommand(swtRequest);
+    }
+
+    @Override
+    public ICrossPlatformEditPart getCrossPlatformContents() {
+        return (ICrossPlatformEditPart) getContents();
+    }
+
+    @Override
+    public ICrossPlatformPartFactory getCrossPlatformPartFactory() {
+        if (crossPlatformPartFactory == null) {
+            crossPlatformPartFactory = new CrossPlatformPartFactory();
+        }
+        return crossPlatformPartFactory;
+    }
+
+    @Override
+    public Map getCrossPlatformEditPartRegistry() {
+        return getViewer().getEditPartRegistry();
+    }
+
+    @Override
+    public boolean isCrossPlatformActive() {
+        return isActive();
+    }
+
+    @Override
+    public void crossPlatformActivate() {
+        activate();
+    }
+
+    @Override
+    public void crossPlatformDeactivate() {
+        deactivate();
+    }
+
+    @Override
+    public void refreshCrossPlatformVisuals() {
+        refreshVisuals();
+    }
+
+    @Override
+    public void crossPlatformRefresh() {
+        refresh();
+    }
+
 }

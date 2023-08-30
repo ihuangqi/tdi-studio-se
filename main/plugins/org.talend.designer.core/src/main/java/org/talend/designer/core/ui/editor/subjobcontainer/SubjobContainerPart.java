@@ -15,8 +15,6 @@ package org.talend.designer.core.ui.editor.subjobcontainer;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -55,8 +53,6 @@ import org.talend.core.model.process.Problem.ProblemStatus;
 import org.talend.core.model.properties.JobletProcessItem;
 import org.talend.designer.core.ui.dialog.mergeorder.ErrorMessageDialog;
 import org.talend.designer.core.ui.editor.AbstractSwtGraphicalEditPart;
-import org.talend.designer.core.ui.editor.jobletcontainer.AbstractJobletContainer;
-import org.talend.designer.core.ui.editor.jobletcontainer.JobletContainer;
 import org.talend.designer.core.ui.editor.nodecontainer.NodeContainer;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.process.NodeSnapToGeometry;
@@ -227,51 +223,12 @@ public class SubjobContainerPart extends AbstractSwtGraphicalEditPart
      */
     @Override
     protected List getModelChildren() {
-        List<NodeContainer> nodeContainers = new ArrayList<NodeContainer>(((SubjobContainer) getModel()).getNodeContainers());
-        Collections.sort(nodeContainers, new Comparator<NodeContainer>() {
+        return getCrossPlatformModelChildren();
+    }
 
-            @Override
-            public int compare(NodeContainer nc1, NodeContainer nc2) {
-                if (nc1.getNode().isJoblet() || nc2.getNode().isJoblet()) {
-                    return 0;
-                }
-                if (!(nc1 instanceof AbstractJobletContainer) && !(nc2 instanceof AbstractJobletContainer)) {
-                    return 0;
-                } else if (nc1 instanceof AbstractJobletContainer && !(nc2 instanceof AbstractJobletContainer)) {
-                    return -1;
-                } else if (!(nc1 instanceof AbstractJobletContainer) && nc2 instanceof AbstractJobletContainer) {
-                    return 1;
-                } else if (nc1 instanceof JobletContainer && nc2 instanceof JobletContainer) {
-                    if (((JobletContainer) nc1).getMrStartContainer() == nc1
-                            && ((JobletContainer) nc2).getMrStartContainer() == nc2) {
-                        return 0;
-                    } else if (((JobletContainer) nc1).getMrStartContainer() != nc1
-                            && ((JobletContainer) nc2).getMrStartContainer() == nc2) {
-                        return 1;
-                    } else if (((JobletContainer) nc1).getMrStartContainer() == nc1
-                            && ((JobletContainer) nc2).getMrStartContainer() != nc2) {
-                        return -1;
-                    } else if (((JobletContainer) nc1).getMrStartContainer() != nc1
-                            && ((JobletContainer) nc2).getMrStartContainer() != nc2) {
-                        return 0;
-                    }
-                }
-                return 0;
-            }
-        });
-        // List<Element> children = new ArrayList<Element>();
-        // children.addAll(nodeContainers);
-        // if (GlobalServiceRegister.getDefault().isServiceRegistered(ITestContainerGEFService.class)) {
-        // ITestContainerGEFService testContainerService = (ITestContainerGEFService) GlobalServiceRegister.getDefault()
-        // .getService(ITestContainerGEFService.class);
-        // if (testContainerService != null) {
-        // Element model = testContainerService.getJunitContainer(((SubjobContainer) getModel()).getProcess());
-        // if (model != null) {
-        // children.add(model);
-        // }
-        // }
-        // }
-        return nodeContainers;
+    @Override
+    public List getCrossPlatformModelChildren() {
+        return ICrossPlatformSubjobContainerPart.super.getCrossPlatformModelChildren();
     }
 
     /*
@@ -373,7 +330,12 @@ public class SubjobContainerPart extends AbstractSwtGraphicalEditPart
      */
     @Override
     protected List getModelSourceConnections() {
-        return ((SubjobContainer) this.getModel()).getOutgoingConnections();
+        return getCrossPlatformModelSourceConnections();
+    }
+
+    @Override
+    public List getCrossPlatformModelSourceConnections() {
+        return ICrossPlatformSubjobContainerPart.super.getCrossPlatformModelSourceConnections();
     }
 
     @Override
@@ -441,6 +403,26 @@ public class SubjobContainerPart extends AbstractSwtGraphicalEditPart
         } catch (PartInitException e) {
             ExceptionHandler.process(e);
         }
+    }
+
+    @Override
+    public void crossPlatformActivate() {
+        activate();
+    }
+
+    @Override
+    public void crossPlatformDeactivate() {
+        deactivate();
+    }
+
+    @Override
+    public void refreshCrossPlatformVisuals() {
+        refreshVisuals();
+    }
+
+    @Override
+    public void crossPlatformRefresh() {
+        refresh();
     }
 
 }

@@ -18,31 +18,15 @@ import java.util.List;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.commands.Command;
 import org.talend.designer.core.ui.editor.cmd.ConnectionDeleteCommand;
-import org.talend.designer.core.ui.editor.subjobcontainer.AbsCrossPlatformEditPart;
+import org.talend.designer.core.ui.editor.subjobcontainer.AbsCrossPlatformConnectionEditPart;
 import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformEditPart;
 import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformGroupRequest;
 
 
-public class CrossPlatformConnectionPart extends AbsCrossPlatformEditPart implements ICrossPlatformConnectionPart {
-
-    private ICrossPlatformEditPart source;
-
-    private ICrossPlatformEditPart target;
+public class CrossPlatformConnectionPart extends AbsCrossPlatformConnectionEditPart implements ICrossPlatformConnectionPart {
 
     public CrossPlatformConnectionPart(Object model, ICrossPlatformEditPart source, ICrossPlatformEditPart target) {
-        super(model);
-        this.source = source;
-        this.target = target;
-    }
-
-    @Override
-    public ICrossPlatformEditPart getCrossPlatformSource() {
-        return source;
-    }
-
-    @Override
-    public ICrossPlatformEditPart getCrossPlatformTarget() {
-        return target;
+        super(model, source, target);
     }
 
     @Override
@@ -66,6 +50,11 @@ public class CrossPlatformConnectionPart extends AbsCrossPlatformEditPart implem
                 return new ConnectionDeleteCommand(connectionList);
             }
         });
+    }
+
+    @Override
+    public List getCrossPlatformModelChildren() {
+        return ICrossPlatformConnectionPart.super.getCrossPlatformModelChildren();
     }
 
 }

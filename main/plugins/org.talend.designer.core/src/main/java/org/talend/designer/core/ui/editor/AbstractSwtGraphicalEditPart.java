@@ -14,6 +14,7 @@ package org.talend.designer.core.ui.editor;
 
 import java.util.List;
 
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
@@ -24,6 +25,7 @@ import org.talend.designer.core.ui.editor.nodes.ICrossPlatformFigure;
 import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformEditPart;
 import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformRequest;
 import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformRequestProxy;
+import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformRootEditPart;
 import org.talend.designer.core.ui.editor.subjobcontainer.SwtRequestProxyFactory;
 
 
@@ -49,13 +51,28 @@ public abstract class AbstractSwtGraphicalEditPart extends AbstractGraphicalEdit
     }
 
     @Override
+    public ICrossPlatformRootEditPart getCrossPlatformRoot() {
+        return (ICrossPlatformRootEditPart) getRoot();
+    }
+
+    @Override
     public ICrossPlatformEditPart getCrossPlatformParentPart() {
         return (ICrossPlatformEditPart) getParent();
     }
 
     @Override
+    public void setCrossPlatformParentPart(ICrossPlatformEditPart part) {
+        setParent((EditPart) part);
+    }
+
+    @Override
     public List getCrossPlatformChildren() {
         return getChildren();
+    }
+
+    @Override
+    public List getCrossPlatformModelChildren() {
+        return getModelChildren();
     }
 
     @Override
@@ -81,6 +98,31 @@ public abstract class AbstractSwtGraphicalEditPart extends AbstractGraphicalEdit
         }
         Request swtRequest = SwtRequestProxyFactory.get().convert(request);
         return super.getCommand(swtRequest);
+    }
+
+    @Override
+    public boolean isCrossPlatformActive() {
+        return this.isActive();
+    }
+
+    @Override
+    public void crossPlatformActivate() {
+        activate();
+    }
+
+    @Override
+    public void crossPlatformDeactivate() {
+        deactivate();
+    }
+
+    @Override
+    public void refreshCrossPlatformVisuals() {
+        refreshVisuals();
+    }
+
+    @Override
+    public void crossPlatformRefresh() {
+        refresh();
     }
 
 }

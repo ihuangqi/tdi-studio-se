@@ -48,6 +48,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 import org.talend.commons.exception.SystemException;
 import org.talend.commons.ui.gmf.util.DisplayUtils;
+import org.talend.commons.ui.runtime.TalendUI;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.PluginChecker;
@@ -223,6 +224,9 @@ public class CodeView extends ViewPart {
     }
 
     public static void refreshCodeView(final IElement element) {
+        if (!TalendUI.get().isStudio()) {
+            return;
+        }
         DisplayUtils.getDisplay().syncExec(new Runnable() {
 
             @Override

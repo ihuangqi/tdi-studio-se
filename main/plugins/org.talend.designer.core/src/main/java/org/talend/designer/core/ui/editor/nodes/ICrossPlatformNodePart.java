@@ -12,8 +12,21 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.nodes;
 
+import java.util.List;
+
+import org.talend.core.model.process.INode;
 import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformEditPart;
 
 public interface ICrossPlatformNodePart extends ICrossPlatformEditPart {
+
+    @Override
+    default List getCrossPlatformModelSourceConnections() {
+        return ((INode) this.getCrossPlatformModel()).getOutgoingConnections();
+    }
+
+    @Override
+    default List getCrossPlatformModelTargetConnections() {
+        return ((INode) this.getCrossPlatformModel()).getIncomingConnections();
+    }
 
 }

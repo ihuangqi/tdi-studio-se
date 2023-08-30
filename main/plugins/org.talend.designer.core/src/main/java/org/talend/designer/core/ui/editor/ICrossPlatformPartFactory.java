@@ -10,34 +10,12 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.designer.core.ui.editor.nodes;
+package org.talend.designer.core.ui.editor;
 
-import org.eclipse.gef.RequestConstants;
 import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformEditPart;
 
-public abstract class AbsCrossPlatformEditPolicy implements ICrossPlatformEditPolicy, RequestConstants {
+public interface ICrossPlatformPartFactory {
 
-    private ICrossPlatformEditPart host;
-
-    public AbsCrossPlatformEditPolicy() {
-    }
-
-    @Override
-    public ICrossPlatformEditPart getHost() {
-        return host;
-    }
-
-    @Override
-    public void setHost(ICrossPlatformEditPart host) {
-        this.host = host;
-    }
-
-    @Override
-    public void cpActivate() {
-    }
-
-    @Override
-    public void cpDeactivate() {
-    }
+    ICrossPlatformEditPart createEditPart(ICrossPlatformEditPart context, Object model);
 
 }

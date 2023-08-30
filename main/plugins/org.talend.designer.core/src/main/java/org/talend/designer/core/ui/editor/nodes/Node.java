@@ -46,6 +46,7 @@ import org.talend.commons.CommonsPlugin;
 import org.talend.commons.exception.CommonExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.gmf.util.DisplayUtils;
+import org.talend.commons.ui.runtime.TalendUI;
 import org.talend.commons.ui.runtime.custom.ICommonUIHandler;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.utils.OsgiServices;
@@ -1091,8 +1092,9 @@ public class Node extends Element implements IGraphicalNode {
             return;
         }
         param.setValue(new Boolean(start));
+        boolean oldStart = this.start;
         this.start = start;
-        firePropertyChange(EParameterName.START.getName(), null, null);
+        firePropertyChange(EParameterName.START.getName(), oldStart, this.start);
 
     }
 
@@ -2057,7 +2059,11 @@ public class Node extends Element implements IGraphicalNode {
             }
         }
 
+        Object oldValue = parameter.getValue();
         parameter.setValue(value);
+        if (!TalendUI.get().isStudio()) {
+            firePropertyChange(TalendUI.Events.EVENT_UPDATE, oldValue, value);
+        }
 
         if (id.equals(EParameterName.INFORMATION.getName())) {
             firePropertyChange(UPDATE_STATUS, null, new Integer(this.currentStatus));

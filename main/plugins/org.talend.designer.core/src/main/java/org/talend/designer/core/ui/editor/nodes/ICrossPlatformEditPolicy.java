@@ -24,4 +24,8 @@ public interface ICrossPlatformEditPolicy {
 
     void setHost(ICrossPlatformEditPart editpart);
 
+    void cpActivate();
+
+    void cpDeactivate();
+
 }

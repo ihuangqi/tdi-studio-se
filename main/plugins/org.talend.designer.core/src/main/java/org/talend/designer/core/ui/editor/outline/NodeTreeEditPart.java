@@ -77,6 +77,11 @@ public class NodeTreeEditPart extends AbstractSwtTreeEditPart implements Propert
         return ((Node) getModel()).getReturns(); // Collections.EMPTY_LIST;
     }
 
+    @Override
+    public List getCrossPlatformModelChildren() {
+        return getModelChildren();
+    }
+
     /*
      * (non-Javadoc)
      *

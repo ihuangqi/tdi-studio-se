@@ -47,12 +47,13 @@ import org.talend.designer.core.ui.editor.subjobcontainer.CrossPlatformSubjobCon
 import org.talend.designer.core.ui.editor.subjobcontainer.ICrossPlatformEditPart;
 import org.talend.designer.core.ui.editor.subjobcontainer.SubjobContainer;
 
-public class CrossPlatformPartFactory {
+public class CrossPlatformPartFactory implements ICrossPlatformPartFactory {
 
     public CrossPlatformPartFactory() {
         // TODO Auto-generated constructor stub
     }
 
+    @Override
     public ICrossPlatformEditPart createEditPart(ICrossPlatformEditPart context, Object model) {
         ICrossPlatformEditPart part = null;
 
@@ -63,8 +64,7 @@ public class CrossPlatformPartFactory {
         } else if (model instanceof Node) {
             part = new CrossPlatformNodePart(model);
         } else if (model instanceof Connection) {
-            part = new CrossPlatformConnectionPart(model, createEditPart(null, ((Connection) model).getSource()),
-                    createEditPart(null, ((Connection) model).getTarget()));
+            part = new CrossPlatformConnectionPart(model, null, null);
         } else if (model instanceof ConnectionLabel) {
             part = new CrossPlatformConnLabelEditPart(model);
         } else if (model instanceof MonitorConnectionLabel) {

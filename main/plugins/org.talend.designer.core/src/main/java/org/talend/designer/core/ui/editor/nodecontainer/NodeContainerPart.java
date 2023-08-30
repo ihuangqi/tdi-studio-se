@@ -139,7 +139,12 @@ public class NodeContainerPart extends AbstractSwtGraphicalEditPart
 
     @Override
     protected List getModelChildren() {
-        return ((NodeContainer) this.getModel()).getElements();
+        return getCrossPlatformChildren();
+    }
+
+    @Override
+    public List getCrossPlatformChildren() {
+        return ICrossPlatformNodeContainerPart.super.getCrossPlatformModelChildren();
     }
 
     /*

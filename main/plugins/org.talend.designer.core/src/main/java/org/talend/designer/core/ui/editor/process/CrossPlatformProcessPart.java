@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.designer.core.ui.editor.process;
 
+import java.util.List;
+
 import org.eclipse.gef.EditPolicy;
 import org.talend.designer.core.ui.editor.subjobcontainer.AbsCrossPlatformEditPart;
 
@@ -29,6 +31,11 @@ public class CrossPlatformProcessPart extends AbsCrossPlatformEditPart implement
     public void createEditPolicies() {
         super.createEditPolicies();
         installEditPolicy(EditPolicy.LAYOUT_ROLE, new CrossPlatformProcessLayoutEditPolicy());
+    }
+
+    @Override
+    public List getCrossPlatformModelChildren() {
+        return ICrossPlatformProcessPart.super.getCrossPlatformModelChildren();
     }
 
 }

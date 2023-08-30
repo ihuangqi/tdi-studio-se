@@ -246,7 +246,12 @@ public class NodePart extends AbstractSwtGraphicalEditPart
      */
     @Override
     protected List getModelSourceConnections() {
-        return ((INode) this.getModel()).getOutgoingConnections();
+        return getCrossPlatformModelSourceConnections();
+    }
+
+    @Override
+    public List getCrossPlatformModelSourceConnections() {
+        return ICrossPlatformNodePart.super.getCrossPlatformModelSourceConnections();
     }
 
     /*
@@ -256,7 +261,12 @@ public class NodePart extends AbstractSwtGraphicalEditPart
      */
     @Override
     protected List getModelTargetConnections() {
-        return ((INode) this.getModel()).getIncomingConnections();
+        return getCrossPlatformModelTargetConnections();
+    }
+
+    @Override
+    public List getCrossPlatformModelTargetConnections() {
+        return ICrossPlatformNodePart.super.getCrossPlatformModelTargetConnections();
     }
 
     /*

@@ -34,7 +34,7 @@ import org.talend.core.ui.IJobletProviderService;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.designer.core.i18n.Messages;
 import org.talend.designer.core.model.process.AbstractProcessProvider;
-import org.talend.designer.core.ui.editor.CrossPlatformPartFactory;
+import org.talend.designer.core.ui.editor.ICrossPlatformPartFactory;
 import org.talend.designer.core.ui.editor.connections.Connection;
 import org.talend.designer.core.ui.editor.connections.ConnectionLabel;
 import org.talend.designer.core.ui.editor.connections.ICrossPlatformConnLabelEditPart;
@@ -180,10 +180,10 @@ public class CrossPlatformProcessNodeDeleteAction extends AbsCrossPlatformProces
                 }
                 if (copyJobletNode) {
                     objectsToDelete.removeAll(list);
-                    CrossPlatformPartFactory factory = new CrossPlatformPartFactory();
+                    ICrossPlatformPartFactory factory = jobletContainer.getCrossPlatformRoot().getCrossPlatformPartFactory();
                     CrossPlatformNodePart createEditPart = (CrossPlatformNodePart) factory.createEditPart(jobletContainer,
                             ((NodeContainer) jobletContainer.getCrossPlatformModel()).getNode());
-                    createEditPart.setParentPart(jobletContainer);
+                    createEditPart.setCrossPlatformParentPart(jobletContainer);
                     createEditPart.installEditPolicy(EditPolicy.COMPONENT_ROLE, new CrossPlatformNodeEditPolicy());
                     objectsToDelete.add(createEditPart);
                 } else {
