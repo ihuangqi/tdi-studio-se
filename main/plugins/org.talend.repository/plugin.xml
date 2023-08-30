@@ -3881,6 +3881,16 @@
               name="ReplaceSQSCheckBoxWithDropDownListMigrationTask"
               version="8.0.1">
         </projecttask>
+        
+        <projecttask
+              beforeLogon="false"
+              breaks="7.3.1"
+              class="org.talend.repository.model.migration.UpdateDynamicSettingsForEsbComponents"
+              description="Update dynamic settings for tRESTClient and tESBConsumer"
+              id="org.talend.repository.model.migration.UpdateDynamicSettingsForEsbComponents"
+              name="UpdateDynamicSettingsForEsbComponents"
+              version="8.0.1">
+        </projecttask>
    </extension>
 
    <extension
