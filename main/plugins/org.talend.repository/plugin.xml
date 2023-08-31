@@ -3881,7 +3881,7 @@
               name="ReplaceSQSCheckBoxWithDropDownListMigrationTask"
               version="8.0.1">
         </projecttask>
-        
+
         <projecttask
               beforeLogon="false"
               breaks="7.3.1"
@@ -3891,6 +3891,15 @@
               name="UpdateDynamicSettingsForEsbComponents"
               version="8.0.1">
         </projecttask>
+       <projecttask
+               beforeLogon="false"
+               breaks="8.0.1"
+               class="org.talend.repository.model.migration.ChangeDefaultValueLocalFileCopyInPostgresql"
+               description="Change local file for copy checkbox in Postgresql bulk components"
+               id="org.talend.repository.model.migration.ChangeDefaultValueLocalFileCopyInPostgresql"
+               name="ChangeDefaultValueLocalFileCopyInPostgresql"
+               version="8.0.1">
+       </projecttask>
    </extension>
 
    <extension
