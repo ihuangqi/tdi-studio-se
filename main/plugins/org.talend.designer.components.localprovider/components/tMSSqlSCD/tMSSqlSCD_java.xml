@@ -534,7 +534,7 @@
         <IMPORT NAME="content-type" MODULE="content-type-2.1.jar" MVN="mvn:com.nimbusds/content-type/2.1"  REQUIRED_IF="(ACTIVE_DIR_AUTH == 'true') AND (DRIVER=='MSSQL_PROP') AND (USE_EXISTING_CONNECTION == 'false')" />
         <IMPORT NAME="lang-tag" MODULE="lang-tag-1.5.jar" MVN="mvn:com.nimbusds/lang-tag/1.5"  REQUIRED_IF="(ACTIVE_DIR_AUTH == 'true') AND (DRIVER=='MSSQL_PROP') AND (USE_EXISTING_CONNECTION == 'false')" />
 
-        <IMPORT NAME="nimbus-jose-jwt" MODULE="nimbus-jose-jwt-9.22.jar" MVN="mvn:com.nimbusds/nimbus-jose-jwt/9.22"  REQUIRED_IF="(ACTIVE_DIR_AUTH == 'true') AND (DRIVER=='MSSQL_PROP') AND (USE_EXISTING_CONNECTION == 'false')" />
+        <IMPORT NAME="nimbus-jose-jwt" MODULE="nimbus-jose-jwt-9.30.2.jar" MVN="mvn:com.nimbusds/nimbus-jose-jwt/9.30.2"  REQUIRED_IF="(ACTIVE_DIR_AUTH == 'true') AND (DRIVER=='MSSQL_PROP') AND (USE_EXISTING_CONNECTION == 'false')" />
     </IMPORTS>
   </CODEGENERATION>
 
