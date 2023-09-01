@@ -273,7 +273,7 @@ public class NodeContainerFigure extends Figure {
             String text = "<b>" + nodeContainer.getNode().getUniqueName() + "</b><br><br>"; //$NON-NLS-1$ //$NON-NLS-2$
 
             if ((status & Process.WARNING_STATUS) != 0) {
-                text += "<i>Warnings:</i><br>"; //$NON-NLS-1$
+                text += "<i>Warning:</i><br>"; //$NON-NLS-1$
 
                 problemsList = Problems.getStatusList(ProblemStatus.WARNING, nodeContainer.getNode());
                 for (String str : problemsList) {
@@ -281,8 +281,14 @@ public class NodeContainerFigure extends Figure {
                 }
             }
             if ((status & Process.ERROR_STATUS) != 0) {
-                text += "<i>Errors:</i><br>"; //$NON-NLS-1$
                 problemsList = Problems.getStatusList(ProblemStatus.ERROR, nodeContainer.getNode());
+                String errLabel = null;
+                if (problemsList != null && 1 < problemsList.size()) {
+                    errLabel = "Errors";
+                } else {
+                    errLabel = "Error";
+                }
+                text += "<i>" + errLabel + ":</i><br>"; //$NON-NLS-1$
                 for (String str : problemsList) {
                     text += "\t- " + str + "<br>"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
