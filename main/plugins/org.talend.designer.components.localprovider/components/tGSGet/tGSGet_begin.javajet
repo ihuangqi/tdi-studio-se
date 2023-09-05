@@ -420,7 +420,11 @@ globalMap.put("<%=cid%>_ERROR_MESSAGE",e_<%=cid%>.getMessage());
 				if(!parentDir_<%=cid%>.exists()){
 					boolean isFolderCreated_<%=cid%> = parentDir_<%=cid%>.mkdirs();
 					if(!isFolderCreated_<%=cid%>){
+		<%
+		if(isLog4jEnabled){
+		%>
 						log.error("<%=cid%> - Can't create directory in '" + parentDir_<%=cid%> + "'");
+						<%}%>
 					}
 				}
 
