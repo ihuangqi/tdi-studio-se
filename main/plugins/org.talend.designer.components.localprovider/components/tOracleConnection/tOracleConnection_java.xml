@@ -190,7 +190,7 @@
       NUM_ROW="43"
       REQUIRED="true"
       REPOSITORY_VALUE="USE_SSL"
-      SHOW_IF="(CONNECTION_TYPE == 'ORACLE_RAC') AND (DB_VERSION=='ORACLE_12' OR DB_VERSION=='ORACLE_18')"
+      SHOW_IF="(CONNECTION_TYPE == 'ORACLE_RAC') AND (DB_VERSION=='ORACLE_12')"
       GROUP="SSL_CONFIG"
     >
         <DEFAULT>false</DEFAULT>
@@ -255,7 +255,7 @@
       FIELD="CHECK"
       NUM_ROW="49"
       REPOSITORY_VALUE="DISABLE_CBC_PROTECTION"
-      SHOW_IF="isShow[USE_SSL] AND (USE_SSL == 'true') AND (DB_VERSION == 'ORACLE_12')"
+      SHOW_IF="isShow[USE_SSL] AND (USE_SSL == 'true')"
       GROUP="SSL_CONFIG"
     >
         <DEFAULT>true</DEFAULT>
@@ -371,9 +371,6 @@
        <IMPORT NAME="ORACLEPKI" MODULE="oraclepki-12.2.0.1.jar" MVN="mvn:com.oracle.jdbc/oraclepki/12.2.0.1"  REQUIRED_IF="(CONNECTION_TYPE == 'ORACLE_RAC') AND (DB_VERSION=='ORACLE_12') AND (USE_SSL == 'true')" />
        <IMPORT NAME="OSDT_CERT" MODULE="osdt_cert-12.2.0.1.jar" MVN="mvn:com.oracle.jdbc/osdt_cert/12.2.0.1"  REQUIRED_IF="(CONNECTION_TYPE == 'ORACLE_RAC') AND (DB_VERSION=='ORACLE_12') AND (USE_SSL == 'true')" />
        <IMPORT NAME="OSDT_CORE" MODULE="osdt_core-12.2.0.1.jar" MVN="mvn:com.oracle.jdbc/osdt_core/12.2.0.1"  REQUIRED_IF="(CONNECTION_TYPE == 'ORACLE_RAC') AND (DB_VERSION=='ORACLE_12') AND (USE_SSL == 'true')" />
-       <IMPORT NAME="ORACLEPKI_19" MODULE="oraclepki-19.19.0.0.jar" MVN="mvn:com.oracle.database.security/oraclepki/19.19.0.0"  REQUIRED_IF="(CONNECTION_TYPE == 'ORACLE_RAC') AND (DB_VERSION=='ORACLE_18') AND (USE_SSL == 'true')" />
-       <IMPORT NAME="OSDT_CERT_19" MODULE="osdt_cert-19.19.0.0.jar" MVN="mvn:com.oracle.database.security/osdt_cert/19.19.0.0"  REQUIRED_IF="(CONNECTION_TYPE == 'ORACLE_RAC') AND (DB_VERSION=='ORACLE_18') AND (USE_SSL == 'true')" />
-       <IMPORT NAME="OSDT_CORE_19" MODULE="osdt_core-19.19.0.0.jar" MVN="mvn:com.com.oracle.database.security/osdt_core/19.19.0.0"  REQUIRED_IF="(CONNECTION_TYPE == 'ORACLE_RAC') AND (DB_VERSION=='ORACLE_18') AND (USE_SSL == 'true')" />
        <IMPORT NAME="slf4j-api-1.7.34.jar" MODULE="slf4j-api-1.7.34.jar" MVN="mvn:org.slf4j/slf4j-api/1.7.34" REQUIRED_IF="(USE_SHARED_CONNECTION == 'true' AND SPECIFY_DATASOURCE_ALIAS=='false')" />
        <IMPORT NAME="slf4j-reload4j-1.7.34.jar" MODULE="slf4j-reload4j-1.7.34.jar" MVN="mvn:org.slf4j/slf4j-reload4j/1.7.34" REQUIRED_IF="(USE_SHARED_CONNECTION == 'true' AND SPECIFY_DATASOURCE_ALIAS=='false')" />
     </IMPORTS>
