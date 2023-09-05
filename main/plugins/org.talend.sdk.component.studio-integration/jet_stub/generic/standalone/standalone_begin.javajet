@@ -55,7 +55,7 @@ final org.talend.sdk.component.runtime.standalone.DriverRunner standalone_<%=cid
 org.talend.sdk.component.runtime.di.studio.RuntimeContextInjector.injectLifecycle(standalone_<%=cid%>, new org.talend.sdk.component.api.context.RuntimeContextHolder("<%=cid%>", globalMap));
 
 <%
-boolean useExistedConnection = "true".equals(ElementParameterParser.getValue(node,"__USE_EXISTING_CONNECTION__"));
+boolean useExistedConnection = "Commit".equals(originalName) || "Rollback".equals(originalName) || "true".equals(ElementParameterParser.getValue(node,"__USE_EXISTING_CONNECTION__"));
 String connection = ElementParameterParser.getValue(node,"__CONNECTION__");
 if(useExistedConnection) {
 //standalone_cid is instance of DriverRunnerImpl class extending LifecycleImpl. LifecycleImpl has a delegate field
