@@ -38,6 +38,7 @@ import org.talend.core.IESBService;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.process.JobInfo;
 import org.talend.core.model.process.ProcessUtils;
+import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
@@ -290,6 +291,79 @@ public class MavenJavaProcessor extends JavaProcessor {
             ExceptionHandler.process(e);
         }
     }
+    
+    protected IMavenPomCreator createMavenPomCreator(Property parentItemProperty) {
+        final Property itemProperty = this.getProperty();
+        String buildTypeName = null;
+        
+        Object exportType = getArguments() == null ? null : getArguments().get(TalendProcessArgumentConstant.ARG_BUILD_TYPE);
+
+        if (exportType == null && !ERepositoryObjectType.getType(itemProperty).equals(ERepositoryObjectType.PROCESS) ) {
+            exportType = parentItemProperty.getAdditionalProperties().get(TalendProcessArgumentConstant.ARG_BUILD_TYPE);
+        }
+
+        buildTypeName = exportType != null ? exportType.toString() : null;
+
+        if (StringUtils.isBlank(buildTypeName) && GlobalServiceRegister.getDefault().isServiceRegistered(IESBService.class)) {
+            List<IRepositoryViewObject> serviceRepoList = null;
+
+            IESBService service = GlobalServiceRegister.getDefault().getService(IESBService.class);
+
+            try {
+                IProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
+                serviceRepoList = factory.getAll(ERepositoryObjectType.valueOf(ERepositoryObjectType.class, "SERVICES"));
+
+                for (IRepositoryViewObject serviceItem : serviceRepoList) {
+                    if (service != null) {
+                        List<String> jobIds = service.getSerivceRelatedJobIds(serviceItem.getProperty().getItem());
+                        if (jobIds.contains(itemProperty.getId())) {
+                            buildTypeName = "OSGI";
+                            break;
+                        }
+                    }
+                }
+
+            } catch (PersistenceException e) {
+                ExceptionHandler.process(e);
+            }
+        }
+
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put(IBuildParametes.ITEM, itemProperty.getItem());
+        parameters.put(IBuildPomCreatorParameters.PROCESSOR, this);
+        parameters.put(IBuildPomCreatorParameters.FILE_POM, getPomFile());
+        parameters.put(IBuildPomCreatorParameters.FILE_ASSEMBLY, getAssemblyFile());
+        parameters.put(IBuildPomCreatorParameters.CP_LINUX, this.unixClasspath);
+        parameters.put(IBuildPomCreatorParameters.CP_WIN, this.windowsClasspath);
+        parameters.put(IBuildPomCreatorParameters.ARGUMENTS_MAP, getArguments());
+        parameters.put(IBuildPomCreatorParameters.OVERWRITE_POM, Boolean.TRUE);
+
+        AbstractBuildProvider foundBuildProvider = BuildExportManager.getInstance().getBuildProvider(buildTypeName, parameters);
+        if (foundBuildProvider != null) {
+            final IMavenPomCreator creator = foundBuildProvider.createPomCreator(parameters);
+            if (creator != null) {
+                return creator;
+            }
+        }
+
+        // normally, won't be here, should return creator in font.
+        CreateMavenJobPom createTemplatePom = new CreateMavenJobPom(this, getPomFile());
+
+        createTemplatePom.setUnixClasspath(this.unixClasspath);
+        createTemplatePom.setWindowsClasspath(this.windowsClasspath);
+
+        createTemplatePom.setAssemblyFile(getAssemblyFile());
+
+        IPath itemLocationPath = ItemResourceUtil.getItemLocationPath(this.getProperty());
+        IFolder objectTypeFolder = ItemResourceUtil.getObjectTypeFolder(this.getProperty());
+        if (itemLocationPath != null && objectTypeFolder != null) {
+            IPath itemRelativePath = itemLocationPath.removeLastSegments(1).makeRelativeTo(objectTypeFolder.getLocation());
+            createTemplatePom.setObjectTypeFolder(objectTypeFolder);
+            createTemplatePom.setItemRelativePath(itemRelativePath);
+        }
+
+        return createTemplatePom;
+    }
 
     protected IMavenPomCreator createMavenPomCreator() {
         final Property itemProperty = this.getProperty();
@@ -342,6 +416,10 @@ public class MavenJavaProcessor extends JavaProcessor {
         parameters.put(IBuildPomCreatorParameters.CP_WIN, this.windowsClasspath);
         parameters.put(IBuildPomCreatorParameters.ARGUMENTS_MAP, getArguments());
         parameters.put(IBuildPomCreatorParameters.OVERWRITE_POM, Boolean.TRUE);
+        
+        if (itemProperty.getParentItem() !=null) {
+        	parameters.put(IBuildParametes.PARENT_ITEM, itemProperty.getParentItem());
+        }
 
         AbstractBuildProvider foundBuildProvider = BuildExportManager.getInstance().getBuildProvider(buildTypeName, parameters);
         if (foundBuildProvider != null) {
