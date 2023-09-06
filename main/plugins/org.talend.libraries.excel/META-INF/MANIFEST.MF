@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.talend.libraries.excel
 Bundle-Version: 8.0.1.qualifier
 Bundle-ClassPath: .,
  lib/commons-collections4-4.1.jar,
- lib/simpleexcel-2.8-20230707.jar,
+ lib/simpleexcel-2.9-20230830.jar,
  lib/poi-4.1.2-20200903124306_modified_talend.jar,
  lib/poi-ooxml-4.1.2-20200903124306_modified_talend.jar,
  lib/poi-ooxml-schemas-4.1.2-20200903124306_modified_talend.jar,
