@@ -62,7 +62,6 @@ import org.talend.core.repository.model.RepositoryFactoryProvider;
 import org.talend.core.service.IExchangeService;
 import org.talend.core.services.ICoreTisService;
 import org.talend.core.ui.branding.IBrandingService;
-import org.talend.registration.wizards.register.TalendForgeDialog;
 import org.talend.repository.i18n.Messages;
 import org.talend.repository.ui.login.connections.ConnectionUserPerReader;
 
@@ -292,54 +291,6 @@ public class LoginDialog extends TrayDialog {
         PreferenceManipulator prefManipulator = new PreferenceManipulator(CorePlugin.getDefault().getPreferenceStore());
         prefManipulator.setLastProject(project.getTechnicalLabel());
         saveLastConnBean(connBean);
-        // check for Talendforge
-        if (PluginChecker.isExchangeSystemLoaded() && !TalendPropertiesUtil.isHideExchange()) {
-            IPreferenceStore prefStore = PlatformUI.getPreferenceStore();
-            boolean checkTisVersion = prefStore.getBoolean(ITalendCorePrefConstants.EXCHANGE_CHECK_TIS_VERSION);
-            IBrandingService brandingService = (IBrandingService) GlobalServiceRegister.getDefault().getService(
-                    IBrandingService.class);
-            if (!checkTisVersion && brandingService.isPoweredbyTalend()) {
-                int count = prefStore.getInt(TalendForgeDialog.LOGINCOUNT);
-                if (count < 0) {
-                    count = 1;
-                }
-                ExchangeUser exchangeUser = project.getExchangeUser();
-                boolean isExchangeLogon = exchangeUser.getLogin() != null && !exchangeUser.getLogin().equals("");
-                boolean isUserPassRight = true;
-                if (isExchangeLogon) {
-                    IExchangeService service = (IExchangeService) GlobalServiceRegister.getDefault().getService(
-                            IExchangeService.class);
-                    if (service.checkUserAndPass(exchangeUser.getUsername(), exchangeUser.getPassword()) != null) {
-                        isUserPassRight = false;
-                    }
-                }
-
-                if (!isExchangeLogon || !isUserPassRight) {
-                    if ((count + 1) % 4 == 0) {
-                        // if (Platform.getOS().equals(Platform.OS_LINUX)) {
-                        // TalendForgeDialog tfDialog = new TalendForgeDialog(this.getShell(), project);
-                        // tfDialog.open();
-                        // } else {
-                        Display.getDefault().asyncExec(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                String userEmail = null;
-                                if (project.getAuthor() != null) {
-                                    userEmail = project.getAuthor().getLogin();
-                                }
-                                TalendForgeDialog tfDialog = new TalendForgeDialog(getShell(), userEmail);
-                                tfDialog.setBlockOnOpen(true);
-                                tfDialog.open();
-                            }
-
-                        });
-                    }
-
-                    prefStore.setValue(TalendForgeDialog.LOGINCOUNT, count + 1);
-                }
-            }
-        }
 
         try {
             if (GlobalServiceRegister.getDefault().isServiceRegistered(ICoreTisService.class)) {

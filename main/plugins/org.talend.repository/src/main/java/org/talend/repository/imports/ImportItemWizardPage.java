@@ -127,8 +127,6 @@ class ImportItemWizardPage extends WizardPage {
 
     private Button browseArchivesButton;
 
-    private Button selectExchangeButton;
-
     private String previouslyBrowsedDirectory = ""; //$NON-NLS-1$
 
     private Object lastPath;
@@ -526,12 +524,7 @@ class ImportItemWizardPage extends WizardPage {
         // browseArchivesButton.setText(DataTransferMessages.DataTransfer_browse);
         browseArchivesButton.setText(Messages.getString("DataTransferMessages.DataTransfer_browse")); //$NON-NLS-1$
         setButtonLayoutData(browseArchivesButton);
-        if (PluginChecker.isExchangeSystemLoaded() && !TalendPropertiesUtil.isHideExchange()) {
-            selectExchangeButton = new Button(projectGroup, SWT.PUSH);
-            selectExchangeButton.setText(Messages.getString("ImportItemWizardPage.browseTalend")); //$NON-NLS-1$
-            setButtonLayoutData(selectExchangeButton);
-            selectExchangeButton.setEnabled(false);
-        }
+      
         itemFromDirectoryRadio.setSelection(true);
         archivePathField.setEnabled(false);
         browseArchivesButton.setEnabled(false);
@@ -551,27 +544,7 @@ class ImportItemWizardPage extends WizardPage {
                 handleLocationArchiveButtonPressed();
             }
         });
-        if (selectExchangeButton != null) {
-            selectExchangeButton.addSelectionListener(new SelectionAdapter() {
-
-                @Override
-                public void widgetSelected(SelectionEvent e) {
-
-                    archivePathField.setEditable(false);
-
-                    IExchangeService service = GlobalServiceRegister.getDefault().getService(
-                            IExchangeService.class);
-
-                    selectedArchive = service.openExchangeDialog();
-                    if (selectedArchive != null) {
-                        previouslyBrowsedArchive = selectedArchive;
-                        archivePathField.setText(previouslyBrowsedArchive);
-                        updateItemsList(selectedArchive, false);
-                    }
-
-                }
-            });
-        }
+        
         directoryPathField.addTraverseListener(new TraverseListener() {
 
             @Override
@@ -635,9 +608,6 @@ class ImportItemWizardPage extends WizardPage {
             browseDirectoriesButton.setEnabled(false);
             archivePathField.setEnabled(true);
             browseArchivesButton.setEnabled(true);
-            if (selectExchangeButton != null) {
-                selectExchangeButton.setEnabled(true);
-            }
             updateItemsList(archivePathField.getText(), false);
             archivePathField.setFocus();
         }
@@ -712,9 +682,6 @@ class ImportItemWizardPage extends WizardPage {
             browseDirectoriesButton.setEnabled(true);
             archivePathField.setEnabled(false);
             browseArchivesButton.setEnabled(false);
-            if (selectExchangeButton != null) {
-                selectExchangeButton.setEnabled(false);
-            }
             updateItemsList(directoryPathField.getText(), false);
             directoryPathField.setFocus();
         }

@@ -4277,12 +4277,6 @@
       </ExtraBuildChecker>
    </extension>
    <extension
-         point="org.talend.core.repository.login.task">
-      <loginTask
-            class="org.talend.repository.ui.login.ExchangeLoginTask">
-      </loginTask>
-   </extension>
-   <extension
          point="org.eclipse.ui.preferencePages">
       <page
             category="org.talend.core.prefs"
