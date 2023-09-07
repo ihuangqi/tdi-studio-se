@@ -442,7 +442,7 @@
       
       <!-- JBOSS -->
       <IMPORT NAME="JAVA_SSIST" MODULE="javassist.jar" MVN="mvn:org.talend.libraries/javassist/6.0.0"  REQUIRED_IF="(USE_CONNECTION=='false' AND SERVER == 'JBOSS')" />
-      <IMPORT NAME="TROVE" MODULE="trove.jar" MVN="mvn:org.talend.libraries/trove/6.0.0"  REQUIRED_IF="(USE_CONNECTION=='false' AND SERVER == 'JBOSS')" />
+      <IMPORT NAME="TROVE" MODULE="trove-1.0.2.jar" MVN="mvn:trove/trove/1.0.2"  REQUIRED_IF="(USE_CONNECTION=='false' AND SERVER == 'JBOSS')" />
       <IMPORT NAME="JBOSS MDR" MODULE="jboss-mdr.jar" MVN="mvn:org.talend.libraries/jboss-mdr/6.0.0"  UrlPath="platform:/plugin/org.talend.libraries.jboss/lib/jboss-mdr.jar" REQUIRED_IF="(USE_CONNECTION=='false' AND SERVER == 'JBOSS')" />
       <IMPORT NAME="JNP-CLIENT" MODULE="jnp-client.jar" MVN="mvn:org.talend.libraries/jnp-client/6.0.0"  REQUIRED_IF="(USE_CONNECTION=='false' AND SERVER == 'JBOSS')" />
       <IMPORT NAME="JBOSS COMMON" MODULE="jboss-common-core.jar" MVN="mvn:org.talend.libraries/jboss-common-core/6.0.0"  UrlPath="platform:/plugin/org.talend.libraries.jboss/lib/jboss-common-core.jar" REQUIRED_IF="(USE_CONNECTION=='false' AND SERVER == 'JBOSS')" />
