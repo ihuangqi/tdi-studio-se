@@ -414,6 +414,16 @@ public class FileinToDelimitedProcess<K extends FileInputNode> extends Repositor
             // Read-only
         }
 
+        @Override
+        public boolean isHide() {
+            return false;
+        }
+
+        @Override
+        public void setHide(boolean hide) {
+
+        }
+
         /*
          * (non-Javadoc)
          *

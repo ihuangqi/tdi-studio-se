@@ -149,6 +149,14 @@ public class RowGenContextManager implements IContextManager, Cloneable {
             // Read-only
         }
 
+        public boolean isHide() {
+            return false;
+        }
+
+        public void setHide(boolean hide) {
+
+        }
+
         /*
          * (non-Java)
          *

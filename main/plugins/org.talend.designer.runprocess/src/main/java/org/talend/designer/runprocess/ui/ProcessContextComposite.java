@@ -343,13 +343,14 @@ public class ProcessContextComposite extends Composite {
         }
         // Prompt for context values ?
         for (IContextParameter parameter : context.getContextParameterList()) {
-            if (parameter.isPromptNeeded()) {
+            if (parameter.isPromptNeeded() || (process != null && process.getContextManager() != null
+                    && ContextUtils.isPromptNeeded(process.getContextManager().getListContext(), parameter.getName()))) {
                 nbValues++;
             }
         }
         if (nbValues > 0) {
             IContext contextCopy = context.clone();
-            PromptDialog promptDialog = new PromptDialog(shell, contextCopy);
+            PromptDialog promptDialog = new PromptDialog(shell, contextCopy, process);
             if (promptDialog.open() == PromptDialog.OK) {
                 for (IContextParameter param : context.getContextParameterList()) {
                     boolean found = false;

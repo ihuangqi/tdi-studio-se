@@ -41,8 +41,10 @@ import org.talend.commons.ui.runtime.swt.tableviewer.celleditor.DateDialog;
 import org.talend.commons.ui.utils.PathUtils;
 import org.talend.core.language.ECodeLanguage;
 import org.talend.core.language.LanguageManager;
+import org.talend.core.model.context.ContextUtils;
 import org.talend.core.model.process.IContext;
 import org.talend.core.model.process.IContextParameter;
+import org.talend.core.model.process.IProcess;
 import org.talend.core.ui.context.DefaultCellEditorFactory;
 import org.talend.designer.runprocess.i18n.Messages;
 
@@ -91,14 +93,17 @@ public class PromptDialog extends Dialog {
 
     IContext context;
 
+    private IProcess process;
+
     /**
      * DOC nrousseau PromptDialog constructor comment.
      *
      * @param parentShell
      */
-    protected PromptDialog(Shell parentShell, IContext context) {
+    protected PromptDialog(Shell parentShell, IContext context, IProcess process) {
         super(parentShell);
         this.context = context;
+        this.process = process;
     }
 
     @Override
@@ -113,7 +118,15 @@ public class PromptDialog extends Dialog {
 
         // Prompt for context values ?
         for (final IContextParameter parameter : context.getContextParameterList()) {
+            boolean isPromptNeeded = false;
             if (parameter.isPromptNeeded()) {
+                isPromptNeeded = true;
+            } else if (process != null && process.getContextManager() != null
+                    && ContextUtils.isPromptNeeded(process.getContextManager().getListContext(), parameter.getName())) {
+                parameter.setPromptNeeded(true);
+                isPromptNeeded = true;
+            }
+            if (isPromptNeeded) {
                 if (DefaultCellEditorFactory.isBoolean(parameter.getType())) {
                     final Composite composite2 = new Composite(child, SWT.NONE);
                     final GridLayout gridLayout = new GridLayout(2, false);
@@ -371,6 +384,10 @@ public class PromptDialog extends Dialog {
         int nbParams = 0;
         for (IContextParameter parameter : context.getContextParameterList()) {
             if (parameter.isPromptNeeded()) {
+                nbParams++;
+            } else if (process != null && process.getContextManager() != null
+                    && ContextUtils.isPromptNeeded(process.getContextManager().getListContext(), parameter.getName())) {
+                parameter.setPromptNeeded(true);
                 nbParams++;
             }
         }

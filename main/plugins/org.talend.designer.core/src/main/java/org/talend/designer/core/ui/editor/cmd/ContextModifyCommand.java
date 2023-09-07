@@ -104,6 +104,7 @@ public class ContextModifyCommand extends Command {
         tmpContext = currentContext.clone();
         currentContext.setName(oldContext.getName());
         currentContext.setConfirmationNeeded(oldContext.isConfirmationNeeded());
+        currentContext.setHide(oldContext.isHide());
 
         List<IContextParameter> oldListContextParam = oldContext.getContextParameterList();
         List<IContextParameter> curListContextParam = currentContext.getContextParameterList();
@@ -147,6 +148,7 @@ public class ContextModifyCommand extends Command {
         tmpContext = currentContext.clone();
         currentContext.setName(oldContext.getName());
         currentContext.setConfirmationNeeded(oldContext.isConfirmationNeeded());
+        currentContext.setHide(oldContext.isHide());
 
         List<IContextParameter> oldListContextParam = oldContext.getContextParameterList();
         List<IContextParameter> curListContextParam = currentContext.getContextParameterList();
@@ -204,7 +206,7 @@ public class ContextModifyCommand extends Command {
                 .append(JavaUtils.JAVA_CONTEXTS_DIRECTORY).append(context.getName() + JavaUtils.JAVA_CONTEXT_EXTENSION);
 
         if (GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
-            IRunProcessService service = (IRunProcessService) GlobalServiceRegister.getDefault().getService(
+            IRunProcessService service = GlobalServiceRegister.getDefault().getService(
                     IRunProcessService.class);
             ITalendProcessJavaProject talendProcessJavaProject = service.getTalendJobJavaProject(process.getProperty());
             if (talendProcessJavaProject != null) {

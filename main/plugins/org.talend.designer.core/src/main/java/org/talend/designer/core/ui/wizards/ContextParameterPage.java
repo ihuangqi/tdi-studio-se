@@ -30,11 +30,8 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -63,12 +60,6 @@ public class ContextParameterPage extends WizardPage {
 
     /** Name. */
     private Text nameText;
-
-    /** Should Prompt. */
-    private Button promptBtn;
-
-    /** Prompt text. */
-    private Text promptText;
 
     /** Type. */
     private ComboViewer typeViewer;
@@ -149,19 +140,6 @@ public class ContextParameterPage extends WizardPage {
         typeViewer.setInput(MetadataTalendType.getCxtParameterTalendTypesLabels());
         typeViewer.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        // Prompt
-        Label promptLabel = new Label(container, SWT.NONE);
-        promptLabel.setText(Messages.getString("ContextParameterPage.prompt")); //$NON-NLS-1$
-
-        promptText = new Text(container, SWT.BORDER);
-        promptText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-        // Prompt
-        new Label(container, SWT.NONE);
-
-        promptBtn = new Button(container, SWT.CHECK);
-        promptBtn.setText(Messages.getString("ContextParameterPage.shouldPrompt")); //$NON-NLS-1$
-
         // Default
         Label defaultLabel = new Label(container, SWT.NONE);
         defaultLabel.setText(Messages.getString("ContextParameterPage.defaultValue")); //$NON-NLS-1$
@@ -233,10 +211,6 @@ public class ContextParameterPage extends WizardPage {
             }
         });
 
-        PromptListener promptListener = new PromptListener();
-        promptText.addModifyListener(promptListener);
-        promptBtn.addSelectionListener(promptListener);
-
         defaultText.addModifyListener(new ModifyListener() {
 
             public void modifyText(ModifyEvent e) {
@@ -283,8 +257,6 @@ public class ContextParameterPage extends WizardPage {
         commentText.setText(StringUtils.trimToEmpty(parameter.getComment()));
         typeViewer.setSelection(parameter.getType() != null ? new StructuredSelection(parameter.getType())
                 : StructuredSelection.EMPTY, true);
-        promptText.setText(StringUtils.trimToEmpty(parameter.getPrompt()));
-        promptBtn.setSelection(parameter.isPromptNeeded());
         defaultText.setText(StringUtils.trimToEmpty(parameter.getValue()));
     }
 
@@ -331,33 +303,4 @@ public class ContextParameterPage extends WizardPage {
         return new Status(IStatus.OK, DesignerPlugin.ID, IStatus.OK, "", null); //$NON-NLS-1$
     }
 
-    /**
-     * Listener on prompt changes. <br/>
-     *
-     * $Id$
-     *
-     */
-    private class PromptListener extends SelectionAdapter implements ModifyListener {
-
-        public void modifyText(ModifyEvent e) {
-            updateStatus();
-        }
-
-        @Override
-        public void widgetSelected(SelectionEvent e) {
-            updateStatus();
-        }
-
-        private void updateStatus() {
-            if (promptText.getText().length() == 0 && promptBtn.getSelection()) {
-                promptStatus = new Status(IStatus.ERROR, DesignerPlugin.ID, IStatus.OK,
-                        Messages.getString("ContextParameterPage.promptEmpty"), null); //$NON-NLS-1$
-            } else {
-                promptStatus = createOkStatus();
-            }
-            parameter.setPrompt(StringUtils.trimToEmpty(promptText.getText()));
-            parameter.setPromptNeeded(promptBtn.getSelection());
-            updatePageStatus();
-        }
-    }
 }
