@@ -50,7 +50,7 @@
         <IMPORT NAME="ApacheCommonsCollection32" MODULE="commons-collections-3.2.2.jar" MVN="mvn:commons-collections/commons-collections/3.2.2" UrlPath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-collections-3.2.2.jar" REQUIRED="true" BundleID=""/>
         <IMPORT NAME="Jboss_Marshalling" MODULE="jboss-marshalling-2.0.12.Final.jar" MVN="mvn:org.jboss.marshalling/jboss-marshalling/2.0.12.Final" REQUIRED="true"/>
         <IMPORT NAME="Jboss_River" MODULE="jboss-marshalling-river-2.0.12.Final.jar" MVN="mvn:org.jboss.marshalling/jboss-marshalling-river/2.0.12.Final" REQUIRED="true"/>
-        <IMPORT NAME="Trove" MODULE="trove.jar" MVN="mvn:org.talend.libraries/trove/6.0.0" REQUIRED="true"/>
+        <IMPORT NAME="Trove" MODULE="trove-1.0.2.jar" MVN="mvn:trove/trove/1.0.2" REQUIRED="true"/>
         <IMPORT NAME="reload4j-1.2.22" MODULE="reload4j-1.2.22.jar" MVN="mvn:ch.qos.reload4j/reload4j/1.2.22" REQUIRED="true" BundleID=""/>
     </IMPORTS>
 </CODEGENERATION>

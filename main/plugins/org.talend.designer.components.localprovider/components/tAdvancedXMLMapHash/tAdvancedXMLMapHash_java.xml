@@ -59,7 +59,7 @@
       />
       <IMPORT
         NAME="Trove"
-        MODULE="trove.jar" MVN="mvn:org.talend.libraries/trove/6.0.0" 
+        MODULE="trove-1.0.2.jar" MVN="mvn:trove/trove/1.0.2"
         REQUIRED="true"
       />
       <IMPORT
