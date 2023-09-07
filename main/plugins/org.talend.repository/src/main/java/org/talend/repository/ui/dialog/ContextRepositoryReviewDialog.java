@@ -113,13 +113,13 @@ public class ContextRepositoryReviewDialog extends RepositoryReviewDialog {
         bg.setLayout(layout);
 
         Label label = new Label(bg, SWT.NONE);
-        label.setText(Messages.getString("BuiltinToContext.newContextName")); //$NON-NLS-1$
+        label.setText(Messages.getString("BuiltinToContext.aNewContextName")); //$NON-NLS-1$
         contextNameText = new Text(bg, SWT.BORDER);
         contextNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         contextNameText.setEnabled(false);
 
         createNewButton = new Button(bg, SWT.CHECK);
-        createNewButton.setText(Messages.getString("BuiltinToContext.createNewContext")); //$NON-NLS-1$
+        createNewButton.setText(Messages.getString("BuiltinToContext.createANewContext")); //$NON-NLS-1$
         createNewButton.addSelectionListener(new SelectionAdapter() {
 
             @Override
@@ -177,7 +177,7 @@ public class ContextRepositoryReviewDialog extends RepositoryReviewDialog {
                     }
                     item.setDefaultContext(contextManager.getDefaultContext().getName());
                     item.getProperty().setLabel(contextNameText.getText().trim());
-                    IRepositoryService service = (IRepositoryService) GlobalServiceRegister.getDefault().getService(
+                    IRepositoryService service = GlobalServiceRegister.getDefault().getService(
                             IRepositoryService.class);
                     IProxyRepositoryFactory repositoryFactory = service.getProxyRepositoryFactory();
                     try {

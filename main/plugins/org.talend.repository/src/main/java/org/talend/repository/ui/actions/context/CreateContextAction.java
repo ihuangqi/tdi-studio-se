@@ -38,7 +38,7 @@ import org.talend.repository.model.RepositoryNode;
  */
 public class CreateContextAction extends AbstractConextAction {
 
-    private static final String CREATE_LABEL = Messages.getString("CreateContextAction.createContext"); //$NON-NLS-1$
+    private static final String CREATE_LABEL = Messages.getString("CreateContextAction.createContextTitle"); //$NON-NLS-1$
 
     /**
      * DOC nrousseau CreateContextAction constructor comment.

@@ -33,7 +33,7 @@ import org.talend.repository.model.RepositoryNode;
  */
 public class ReadContextAction extends AbstractConextAction {
 
-    private static final String LABEL = Messages.getString("EditContextAction.readContext"); //$NON-NLS-1$
+    private static final String LABEL = Messages.getString("EditContextAction.readContextTitle"); //$NON-NLS-1$
 
     /**
      * DOC nrousseau EditContextAction constructor comment.

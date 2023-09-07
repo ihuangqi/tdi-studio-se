@@ -199,7 +199,7 @@
                         class="org.talend.designer.core.ui.views.contexts.ContextsView"
                         icon="platform:/plugin/org.talend.common.ui.runtime/icons1/context_icon.png"
                         id="org.talend.designer.core.ui.views.ContextsView"
-                        name="%contexts"/>
+                        name="%context"/>
                   <view
                         allowMultiple="false"
                         category="org.talend.core.root"

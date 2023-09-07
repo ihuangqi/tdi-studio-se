@@ -71,6 +71,14 @@ public class EmptyContext implements IContext, Cloneable {
         // Read-only
     }
 
+    public boolean isHide() {
+        return false;
+    }
+
+    public void setHide(boolean hide) {
+
+    }
+
     /*
      * (non-Javadoc)
      *

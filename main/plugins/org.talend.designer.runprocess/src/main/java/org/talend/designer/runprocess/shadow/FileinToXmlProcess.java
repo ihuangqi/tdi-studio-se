@@ -381,6 +381,16 @@ public class FileinToXmlProcess<K extends FileInputNode> extends RepositoryObjec
             // Read-only
         }
 
+        @Override
+        public boolean isHide() {
+            return false;
+        }
+
+        @Override
+        public void setHide(boolean hide) {
+
+        }
+
         /*
          * (non-Javadoc)
          *

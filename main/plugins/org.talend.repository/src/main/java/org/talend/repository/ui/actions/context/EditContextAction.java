@@ -36,7 +36,7 @@ import org.talend.repository.model.RepositoryNode;
  */
 public class EditContextAction extends AbstractConextAction {
 
-    private static final String EDIT_LABEL = Messages.getString("EditContextAction.editContext"); //$NON-NLS-1$
+    private static final String EDIT_LABEL = Messages.getString("EditContextAction.editContextTitle"); //$NON-NLS-1$
 
     private RepositoryNode node = null;
 
