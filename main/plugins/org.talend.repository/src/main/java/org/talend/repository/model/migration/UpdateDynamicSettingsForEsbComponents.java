@@ -48,18 +48,19 @@ public class UpdateDynamicSettingsForEsbComponents extends AbstractJobMigrationT
 
         };
 
+        boolean modified = false;
         for (String name : compNames) {
             IComponentFilter filter = new NameComponentFilter(name);
 
             try {
-                ModifyComponentsAction.searchAndModify(item, processType, filter, Arrays.<IComponentConversion> asList(action));
+                modified |= ModifyComponentsAction.searchAndModify(item, processType, filter, Arrays.<IComponentConversion> asList(action));
             } catch (PersistenceException e) {
                 ExceptionHandler.process(e);
                 return ExecutionResult.FAILURE;
             }
         }
 
-        return ExecutionResult.SUCCESS_NO_ALERT;
+        return modified ? ExecutionResult.SUCCESS_NO_ALERT : ExecutionResult.NOTHING_TO_DO;
     }
 
 }
