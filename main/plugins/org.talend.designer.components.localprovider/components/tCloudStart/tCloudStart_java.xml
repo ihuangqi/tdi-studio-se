@@ -168,7 +168,7 @@ COMPATIBILITY="ALL"
       <IMPORT NAME="sts" MODULE="sts-2.5.0.jar" MVN="mvn:org.apache.jclouds.api/sts/2.5.0"  REQUIRED_IF="PROVIDER=='AWS_EC2'"/>
       <IMPORT NAME="jclouds-core" MODULE="jclouds-core-2.5.0.jar" MVN="mvn:org.apache.jclouds/jclouds-core/2.5.0"  REQUIRED_IF="PROVIDER=='AWS_EC2'"/>
       <IMPORT NAME="gson" MODULE="gson-2.8.9.jar" MVN="mvn:com.google.code.gson/gson/2.8.9"  REQUIRED_IF="PROVIDER=='AWS_EC2'"/>
-      <IMPORT NAME="guava" MODULE="guava-30.0-jre.jar" MVN="mvn:com.google.guava/guava/30.0-jre"  REQUIRED_IF="PROVIDER=='AWS_EC2'"/>
+      <IMPORT NAME="guava" MODULE="guava-32.1.2-jre.jar" MVN="mvn:com.google.guava/guava/32.1.2-jre"  REQUIRED_IF="PROVIDER=='AWS_EC2'"/>
       <IMPORT NAME="failureaccess" MODULE="failureaccess-1.0.1.jar" MVN="mvn:com.google.guava/failureaccess/1.0.1"  REQUIRED_IF="PROVIDER=='AWS_EC2'"/>
       <IMPORT NAME="listenablefuture" MODULE="listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar" MVN="mvn:com.google.guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava"  REQUIRED_IF="PROVIDER=='AWS_EC2'"/>
       <IMPORT NAME="jsr305" MODULE="jsr305-3.0.2.jar" MVN="mvn:com.google.code.findbugs/jsr305/3.0.2"  REQUIRED_IF="PROVIDER=='AWS_EC2'"/>
