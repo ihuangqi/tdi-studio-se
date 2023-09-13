@@ -222,6 +222,8 @@ public class JobJavaScriptOSGIForESBManager extends JobJavaScriptsManager {
                 complianceLevel = "1.7";
             } else if (javaVersion.startsWith("1.8")) {
                 complianceLevel = "1.8";
+            } else if (javaVersion.startsWith("17.")) {
+                complianceLevel = "16";
             } else {
                 Matcher m = Pattern.compile("([0-9]+).*").matcher(javaVersion);
                 if (m.find()) {
