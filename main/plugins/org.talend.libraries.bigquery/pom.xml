@@ -163,7 +163,7 @@
                                 <artifactItem>
                                     <groupId>com.google.guava</groupId>
                                     <artifactId>guava</artifactId>
-                                    <version>30.0-jre</version>
+                                    <version>32.1.2-jre</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.basedir}/lib</outputDirectory>
