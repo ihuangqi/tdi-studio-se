@@ -332,7 +332,23 @@
 												<%
 												}
 												%>
-												<%=firstConnName %>.<%=column.getLabel() %>.addColumnValue(currentColumnValue_<%=cid%>);
+												if("id_Date".equals(dynamicMetadataColumn_<%=cid%>.getType())) {
+								 					Date currentColumnValueDate_<%=cid%> = null;
+													<%
+													if(checkDate) {
+													%>
+														currentColumnValueDate_<%=cid%> = ParserUtils.parseTo_Date(currentColumnValue_<%=cid%>, dynamicMetadataColumn_<%=cid%>.getFormat()==null ? <%= patternValue %> : dynamicMetadataColumn_<%=cid%>.getFormat(), false);
+													<%
+													} else {
+													%>
+														currentColumnValueDate_<%=cid%> = ParserUtils.parseTo_Date(currentColumnValue_<%=cid%>, dynamicMetadataColumn_<%=cid%>.getFormat()==null ? <%= patternValue %> : dynamicMetadataColumn_<%=cid%>.getFormat());
+													<%
+													}
+													%>
+													<%=firstConnName %>.<%=column.getLabel() %>.addColumnValue(currentColumnValueDate_<%=cid%>);
+												} else {
+													<%=firstConnName %>.<%=column.getLabel() %>.addColumnValue(currentColumnValue_<%=cid%>);
+												}
 												substringBegin<%=cid %> = substringEnd<%=cid %>; 
 											}
 										<%
