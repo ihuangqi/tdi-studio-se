@@ -786,7 +786,7 @@
                 //print info and job continue to run, for case: context_param is not empty.
                 System.err.println("Could not find the context " + contextStr);
             }
-
+            
             if(!context_param.isEmpty()) {
                 context.putAll(context_param);
 				//set types for params from parentJobs
@@ -1869,6 +1869,31 @@ if (execStat) {
                 } else { // the subjob won't escape the especial chars
                     context_param.put(keyValue.substring(0, index), keyValue.substring(index + 1) );
                 }
+            }
+        } else if (arg.startsWith("--context_file")) {
+        	String keyValue = arg.substring(15);
+        	String filePath = new String(java.util.Base64.getDecoder().decode(keyValue));
+        	java.nio.file.Path contextFile = java.nio.file.Paths.get(filePath);
+            try (java.io.BufferedReader reader = java.nio.file.Files.newBufferedReader(contextFile)) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    int index = -1;
+                    if ( (index = line.indexOf('=')) > -1) {
+							if (line.startsWith("--context_param")) {
+								if ("id_Password".equals(context_param.getContextType(line.substring(16, index)))) {
+									context_param.put(line.substring(16, index), routines.system.PasswordEncryptUtil.decryptPassword(
+											line.substring(index + 1)));
+								} else {
+									context_param.put(line.substring(16, index), line.substring(index + 1));
+								}
+							}else {//--context_type
+								context_param.setContextType(line.substring(15, index), line.substring(index + 1));
+							}
+                    }
+                }
+            } catch (java.io.IOException e) {
+            	System.err.println("Could not load the context file: " + filePath);
+                e.printStackTrace();
             }
         } else if (arg.startsWith("--log4jLevel=")) {
             log4jLevel = arg.substring(13);

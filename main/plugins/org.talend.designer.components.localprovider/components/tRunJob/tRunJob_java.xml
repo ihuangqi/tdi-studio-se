@@ -140,10 +140,18 @@
 		<PARAMETER NAME="EXTRA_CLASSPATH" FIELD="TEXT" NUM_ROW="90" SHOW_IF="(isShow[USE_EXTRA_CLASSPATH]) AND (USE_EXTRA_CLASSPATH == 'true')">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
+		
+		<PARAMETER NAME="LOAD_CONTEXT_FROM_FILE" FIELD="CHECK" NUM_ROW="100" SHOW_IF="(USE_DYNAMIC_JOB == 'true') OR (USE_INDEPENDENT_PROCESS == 'true')">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
 	
    </ADVANCED_PARAMETERS>
 
    <CODEGENERATION>
+      <IMPORTS>
+   		 <IMPORT NAME="apache-commons-io" MODULE="commons-io-2.8.0.jar" MVN="mvn:commons-io/commons-io/2.8.0" REQUIRED_IF="((USE_DYNAMIC_JOB == 'true') OR (USE_INDEPENDENT_PROCESS == 'true')) AND (LOAD_CONTEXT_FROM_FILE == 'true')" />
+   		 <IMPORT NAME="talend-context-load" MODULE="talend-context-load-1.0.jar" MVN="mvn:org.talend.components.lib/talend-context-load/1.0" REQUIRED_IF="((USE_DYNAMIC_JOB == 'true') OR (USE_INDEPENDENT_PROCESS == 'true')) AND (LOAD_CONTEXT_FROM_FILE == 'true')" />
+      </IMPORTS>
    </CODEGENERATION>
    
   <RETURNS>
