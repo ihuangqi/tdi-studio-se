@@ -43,7 +43,6 @@ boolean dieOnError = ("true").equals(ElementParameterParser.getValue(node, "__DI
 boolean isRunInMultiThread = codeGenArgument.getIsRunInMultiThread();  
 boolean transmitWholeContext = ("true").equals(ElementParameterParser.getValue(node, "__TRANSMIT_WHOLE_CONTEXT__"));  
 boolean printParameter = ("true").equals(ElementParameterParser.getValue(node, "__PRINT_PARAMETER__")); 
-
 boolean originalContext = ("true").equals(ElementParameterParser.getValue(node, "__TRANSMIT_ORIGINAL_CONTEXT__")); 
 
 IProcess currentProcess = node.getProcess();
@@ -65,6 +64,7 @@ boolean isPropagateChildResult = ("true").equals(ElementParameterParser.getValue
 boolean useDynamicJob = ("true").equals(ElementParameterParser.getValue(node, "__USE_DYNAMIC_JOB__"));
 String dynamicJobName = ElementParameterParser.getValue(node,"__CONTEXT_JOB__");
 boolean isLog4jEnabled = ("true").equals(ElementParameterParser.getValue(node.getProcess(), "__LOG4J_ACTIVATE__"));
+boolean loadContextFile = ("true").equals(ElementParameterParser.getValue(node, "__LOAD_CONTEXT_FROM_FILE__")) && (useDynamicContext || useIndependentProcess); 
 boolean propagateData = false;
 Set<String> inputCols = new HashSet<String>();
 String inputConnName = null;
@@ -417,7 +417,7 @@ String inputConnName = null;
 	for (IConnection iterateConn : iterateConnSet) {
 		parallelIterate = "true".equals(ElementParameterParser.getValue(iterateConn, "__ENABLE_PARALLEL__"));
 	}
-	if(printParameter) {
+	if(printParameter || loadContextFile) {
 	%> 
 	java.util.List<String> paraListForLog_<%=cid %> = new java.util.ArrayList<String>();
 	paraListForLog_<%=cid %>.addAll(paraList_<%=cid %>);
@@ -492,7 +492,13 @@ String inputConnName = null;
 			String key_<%=cid %> = (String) propertyNames_<%=cid %>.nextElement();
 			Object value_<%=cid %> = (Object) <%=localContext%>.get(key_<%=cid %>);
 			if(value_<%=cid %>!=null) {  
-				paraList_<%=cid %>.add("--context_param " + key_<%=cid %> + "=" + value_<%=cid %>);
+				<% if(loadContextFile) { %>
+				if( parametersToEncrypt_<%=cid %> .contains(key_<%=cid %>)) {
+					paraList_<%=cid %>.add("--context_param " + key_<%=cid %> + "=" + routines.system.PasswordEncryptUtil.encryptPassword(String.valueOf(value_<%=cid %>)));
+				}else {
+				<%}%>
+					paraList_<%=cid %>.add("--context_param " + key_<%=cid %> + "=" + value_<%=cid %>);
+					<% if(loadContextFile) { %> } <%}%>
 			} else {
 				paraList_<%=cid %>.add("--context_param " + key_<%=cid %> + "=" + NULL_VALUE_EXPRESSION_IN_COMMAND_STRING_FOR_CHILD_JOB_ONLY);
 			}
@@ -529,7 +535,14 @@ String inputConnName = null;
 			if (obj_<%=cid %>.getClass().getName().equals("java.util.Date")) {
 				paraList_<%=cid %>.add("--context_param <%=name %>=" + ((java.util.Date) obj_<%=cid %>).getTime());
 			} else {
-				paraList_<%=cid %>.add("--context_param <%=name %>=" + RuntimeUtils.tRunJobConvertContext(obj_<%=cid%>));
+				<% if(loadContextFile) { %>
+				if( parametersToEncrypt_<%=cid %> .contains("<%=name %>")) {
+					paraList_<%=cid %>.add("--context_param <%=name %>=" + routines.system.PasswordEncryptUtil.encryptPassword(String.valueOf(RuntimeUtils.tRunJobConvertContext(obj_<%=cid%>))));
+				}else {
+				<%}%>
+					paraList_<%=cid %>.add("--context_param <%=name %>=" + RuntimeUtils.tRunJobConvertContext(obj_<%=cid%>));
+					<% if(loadContextFile) { %> } <%}%>
+				
 			}
 		} else {
 			paraList_<%=cid %>.add("--context_param <%=name %>=" + NULL_VALUE_EXPRESSION_IN_COMMAND_STRING_FOR_CHILD_JOB_ONLY);
@@ -750,7 +763,12 @@ globalMap.put("<%=cid%>_ERROR_MESSAGE",ioe.getMessage());
 
 		Runtime runtime_<%=cid %> = Runtime.getRuntime();
 		Process ps_<%=cid %> = null;
-
+		<%if(loadContextFile) {%>
+		//Write contexts to tmp file
+		org.talend.components.lib.ContextWriter writer_<%=cid%> = new org.talend.components.lib.ContextWriter(pid);
+		writer_<%=cid%>.write2File(paraList_<%=cid %>);
+		resourceMap.put("context_writer_<%=cid%>",writer_<%=cid%>);
+        <%}%>
 		//0 indicates normal termination
         int result_<%=cid %>;
         StringBuffer errorMsg_<%=cid %> = new StringBuffer();
