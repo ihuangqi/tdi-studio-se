@@ -36,6 +36,7 @@ org.apache.http.client.CredentialsProvider <%=cid%>_credsProvider = new org.apac
 );
 org.apache.http.impl.client.CloseableHttpClient <%=cid%>_httpclient = org.apache.http.impl.client.HttpClients.custom()
 	.setDefaultCredentialsProvider(<%=cid%>_credsProvider)
+	.useSystemProperties() 
 	.build();
 
 try {//B

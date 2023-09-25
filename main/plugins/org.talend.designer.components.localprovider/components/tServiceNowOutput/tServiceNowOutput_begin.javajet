@@ -73,6 +73,7 @@ if (metadatas != null && metadatas.size() > 0) {
 				);
 			org.apache.http.impl.client.CloseableHttpClient <%=cid%>_httpclient = org.apache.http.impl.client.HttpClients.custom()
 			.setDefaultCredentialsProvider(<%=cid%>_credsProvider)
+			.useSystemProperties() 
 			.build();
 			resourceMap.put("<%=cid%>_httpclient", <%=cid%>_httpclient);
 //Set httpPut
