@@ -281,7 +281,7 @@ public class BuildJobHandlerTest {
             }
             if (jobItem == jobWithJobletItem) {
                 String dependencyFromJoblet = "commons-beanutils-1.9.4.jar";
-                String cryptoUtils = "crypto-utils-7.0.5.jar";
+                String cryptoUtils = "crypto-utils-7.1.16.jar";
                 ZipEntry dependencyEntry = zip.getEntry("lib/" + dependencyFromJoblet);
                 ZipEntry cryptoUtilsEntry = zip.getEntry("lib/" + cryptoUtils);
                 assertNotNull("No joblet dependency in lib folder", dependencyEntry);

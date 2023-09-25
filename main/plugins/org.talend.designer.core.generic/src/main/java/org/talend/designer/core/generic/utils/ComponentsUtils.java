@@ -372,7 +372,7 @@ public class ComponentsUtils {
                             param.setContext(connector.getName());
                             IElementParameterDefaultValue defaultValue = new ElementParameterDefaultValue();
                             Schema schema = ((SchemaProperty) widgetProperty).getValue();
-                            defaultValue.setDefaultValue(new Schema.Parser().parse(schema.toString()));
+                            defaultValue.setDefaultValue(new Schema.Parser().setValidateDefaults(false).parse(schema.toString()));
                             param.getDefaultValues().add(defaultValue);
                         }
                     }
@@ -395,7 +395,7 @@ public class ComponentsUtils {
                                 }
                                 IElementParameterDefaultValue defaultValue = new ElementParameterDefaultValue();
                                 Schema schema = ((SchemaProperty) widgetProperty).getValue();
-                                defaultValue.setDefaultValue(new Schema.Parser().parse(schema.toString()));
+                                defaultValue.setDefaultValue(new Schema.Parser().setValidateDefaults(false).parse(schema.toString()));
                                 param.getDefaultValues().add(defaultValue);
                             }
                         }

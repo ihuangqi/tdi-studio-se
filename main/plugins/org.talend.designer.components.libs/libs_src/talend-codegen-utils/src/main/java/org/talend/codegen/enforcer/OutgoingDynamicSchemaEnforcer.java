@@ -24,6 +24,7 @@ import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
 import org.apache.avro.generic.IndexedRecord;
 import org.talend.codegen.DiSchemaConstants;
+import org.talend.codegen.DynamicFieldUtils;
 import org.talend.daikon.avro.AvroUtils;
 
 /**
@@ -166,8 +167,7 @@ public class OutgoingDynamicSchemaEnforcer extends OutgoingSchemaEnforcer {
         // List<Integer> dynamicFieldsIndexes = indexMapper.computeDynamicFieldsIndexes();
         for (int index : dynamicFieldsIndexes) {
             Field dynamicField = runtimeFields.get(index);
-            Field dynamicFieldCopy = new Schema.Field(dynamicField.name(), dynamicField.schema(), dynamicField.doc(),
-                    dynamicField.defaultVal());
+            Field dynamicFieldCopy = DynamicFieldUtils.cloneAvroField(dynamicField);
             Map<String, Object> fieldProperties = dynamicField.getObjectProps();
             for (Map.Entry<String, Object> entry : fieldProperties.entrySet()) {
                 Object propValue = entry.getValue();
