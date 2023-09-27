@@ -60,6 +60,8 @@ public class TextController extends AbstractElementPropertySectionController {
     protected static int rowSize = 0;
 
     public static boolean dragAndDropAction = false;
+    
+    private static String EMPTY_DESCRIPTION_PREFIX = "!!!";
 
     /**
      * DOC yzhang TextController constructor comment.
@@ -147,6 +149,10 @@ public class TextController extends AbstractElementPropertySectionController {
         data.top = new FormAttachment(0, top);
         data.width = currentLabelWidth;
         labelLabel.setLayoutData(data);
+        
+        if (param.getDescription()!= null && !param.getDescription().startsWith(EMPTY_DESCRIPTION_PREFIX)) {
+        	labelLabel.setToolTipText(param.getDescription());
+        }
         // *********************
         data = new FormData();
 

@@ -156,6 +156,8 @@ public class ElementParameter implements IElementParameter {
     private Map<String, Object> taggedValues = new HashMap<>();
 
     protected boolean isSerialized = false;
+    
+    private String description;
 
     public ElementParameter(final IElement element) {
         this.element = element;
@@ -1064,6 +1066,7 @@ public class ElementParameter implements IElementParameter {
         clone.setOrignEncryptedValue(getOrignEncryptedValue());
         // clone.setValueToDefault(null)
         clone.setNoContextAssist(isNoContextAssist());
+        clone.setDescription(getDescription());
         if (this.getChildParameters().size() > 0) {
             for (String name : this.getChildParameters().keySet()) {
                 IElementParameter childParamClone = this.getChildParameters().get(name).getClone();
@@ -1317,5 +1320,15 @@ public class ElementParameter implements IElementParameter {
         this.originEncryptedValue = value;
         
     }
+
+	@Override
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	@Override
+	public String getDescription() {
+		return this.description;
+	}
 
 }

@@ -236,6 +236,9 @@ public class ColumnListController extends AbstractElementPropertySectionControll
         }
 
         CLabel labelLabel = getWidgetFactory().createCLabel(subComposite, param.getDisplayName());
+        if (param.getDescription()!= null && !param.getDescription().startsWith(EMPTY_DESCRIPTION_PREFIX)) {
+        	labelLabel.setToolTipText(param.getDescription());
+        }
         data = new FormData();
         if (lastControl != null) {
             data.left = new FormAttachment(lastControl, 0);
