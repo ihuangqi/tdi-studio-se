@@ -126,10 +126,19 @@ public class DataSourceConfig {
 
                 boolean useDS = false;
                 String value = null;
+                boolean activeNode = false;
 
                 for (Iterator<?> iterator = node.getElementParameter().iterator(); iterator.hasNext();) {
                     ElementParameterType elementParameter = (ElementParameterType) iterator.next();
 
+                    if (StringUtils.equals(elementParameter.getName(), "ACTIVATE")) {
+                        if (BooleanUtils.toBoolean(elementParameter.getValue())) {
+                            activeNode = true;
+                        } else {
+                            break; // will not check/set dataSource if component is not active
+                        }
+                    }
+                    
                     if (StringUtils.equals(elementParameter.getName(), "PROPERTIES") && isJson(elementParameter.getValue())) {
                         JSONObject val = null;
                         try {
@@ -165,7 +174,7 @@ public class DataSourceConfig {
                         value = TalendQuoteUtils.removeQuotes(result.trim());
                     }
 
-                    if (useDS && isNotEmptyDataSourceValue(value)) {
+                    if (activeNode && useDS && isNotEmptyDataSourceValue(value)) {
                         ds.add(value);
                         break;
                     }
