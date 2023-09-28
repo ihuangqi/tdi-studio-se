@@ -123,7 +123,7 @@ public class GenericDragAndDropHandler extends AbstractDragAndDropServiceHandler
                         Object paramValue = property.getStoredValue();
                         if (GenericTypeUtils.isStringType(property) || GenericTypeUtils.isObjectType(property)) {
                             if (paramValue != null) {
-                                if (property.getName().equals("password")) {
+                                if (property.isFlag(Property.Flags.ENCRYPT)) {
                                     return getPassword(connection, paramValue.toString());
                                 } else if (EConnectionParameterName.GENERIC_MAPPING_FILE.getDisplayName()
                                         .equals(property.getName())) {
