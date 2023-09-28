@@ -188,6 +188,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
+			    <attach>false</attach>
                             <descriptors>
                                 <descriptor>${basedir}/src/main/assemblies/assembly.xml</descriptor>
                             </descriptors>
@@ -221,6 +222,7 @@
                                     <goal>single</goal>
                                 </goals>
                                 <configuration>
+				    <attach>false</attach>
                                     <descriptors>
                                         <descriptor>${basedir}/src/main/assemblies/assembly.xml</descriptor>
                                     </descriptors>
