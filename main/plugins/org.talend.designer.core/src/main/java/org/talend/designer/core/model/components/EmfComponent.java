@@ -1979,6 +1979,8 @@ public class EmfComponent extends AbstractBasicComponent {
             param = new ElementParameter(node);
             param.setName(xmlParam.getNAME());
             param.setDisplayName(getTranslatedValue(xmlParam.getNAME() + "." + PROP_NAME)); //$NON-NLS-1$
+            param.setDescription(getTranslatedValue(xmlParam.getNAME() + "." + PROP_DESCRIPTION)); //$NON-NLS-1$
+            
             if (xmlParam.getGROUP() != null) {
                 param.setGroupDisplayName(getTranslatedValue(xmlParam.getGROUP() + "." + PROP_NAME));//$NON-NLS-1$
             }

@@ -230,6 +230,8 @@ public abstract class AbstractElementPropertySectionController implements Proper
 
     protected Map<String, String> promptParameterMap = new HashMap<String, String>();
 
+    protected static String EMPTY_DESCRIPTION_PREFIX = "!!!";
+
     static {
         connKeyMap.put("SERVER_NAME", "HOST"); //$NON-NLS-1$ //$NON-NLS-2$
         connKeyMap.put("PORT", "PORT"); //$NON-NLS-1$ //$NON-NLS-2$

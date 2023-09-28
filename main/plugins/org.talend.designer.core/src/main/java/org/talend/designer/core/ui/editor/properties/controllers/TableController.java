@@ -204,6 +204,9 @@ public class TableController extends AbstractTableController {
         final Composite mainComposite = tableEditorView.getMainComposite();
 
         CLabel labelLabel2 = getWidgetFactory().createCLabel(container, param.getDisplayName());
+        if (param.getDescription()!= null && !param.getDescription().startsWith(EMPTY_DESCRIPTION_PREFIX)) {
+        	labelLabel2.setToolTipText(param.getDescription());
+        }
         FormData formData = new FormData();
         if (lastControlPrm != null) {
             formData.left = new FormAttachment(lastControlPrm, 0);
