@@ -81,18 +81,6 @@ public abstract class BigDataJavaProcessor extends MavenJavaProcessor implements
     public BigDataJavaProcessor(IProcess process, Property property, boolean filenameFromLabel) {
         super(process, property, filenameFromLabel);
         this.process = process;
-        BigDataJobUtil bdUtil = new BigDataJobUtil(process);
-        if (bdUtil.isSparkWithHDInsight() || bdUtil.isSparkWithSynapse()) {
-            Element e = (Element) process;
-            IElementParameter paramActivate = e.getElementParameter(EParameterName.LOG4J_ACTIVATE.getName());
-            if (paramActivate != null) {
-                paramActivate.setValue(false);
-            }
-            IElementParameter paramRunActivate = e.getElementParameter(EParameterName.LOG4J_RUN_ACTIVATE.getName());
-            if (paramRunActivate != null) {
-                paramRunActivate.setValue(false);
-            }
-        }
     }
 
     protected abstract JobScriptsManager createJobScriptsManager(ProcessItem processItem,
