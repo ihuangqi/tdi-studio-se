@@ -14,8 +14,11 @@ package org.talend.designer.dbmap.ui.dnd;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.graphics.Point;
@@ -39,6 +42,7 @@ import org.talend.designer.abstractmap.ui.listener.DefaultDropTargetListener;
 import org.talend.designer.dbmap.language.IDbLanguage;
 import org.talend.designer.dbmap.managers.MapperManager;
 import org.talend.designer.dbmap.managers.UIManager;
+import org.talend.designer.dbmap.model.table.InputTable;
 import org.talend.designer.dbmap.model.tableentry.InputColumnTableEntry;
 import org.talend.designer.dbmap.model.tableentry.TableEntryLocation;
 import org.talend.designer.dbmap.model.tableentry.VarTableEntry;
@@ -358,12 +362,23 @@ public class CompleteDropTargetListener extends DefaultDropTargetListener {
         boolean insertionEntryMode = analyzer.isInsertionEntryMode();
         boolean mapEachSourceToNextTargets = analyzer.isMapOneToOneMode();
 
+        List<String> expressionAdded = new ArrayList<String>();
         TableViewerCreator tableViewerCreatorTarget = null;
         if (targetTableIsFiltersTable) {
             if (analyzer.targetTableIsWhereFiltersTable()) {
                 tableViewerCreatorTarget = dataMapTableViewTarget.getTableViewerCreatorForWhereFilters();
             } else {
                 tableViewerCreatorTarget = dataMapTableViewTarget.getTableViewerCreatorForOtherFilters();
+                String expression = currentEntryTarget.getExpression();
+                if (StringUtils.isNotBlank(expression)) {
+                    String[] words = StringUtils.stripEnd(expression, " ").split(" ");
+                    String lastWord = words[words.length - 1];
+                    // digit or function
+                    if (NumberUtils.isDigits(lastWord) || Pattern.compile("^\\w+\\(.*\\)$").matcher(lastWord).matches()
+                            || ifExpressionIsColumn(lastWord)) {
+                        expressionAdded.add(lastWord);
+                    }
+                }
             }
         } else {
             tableViewerCreatorTarget = dataMapTableViewTarget.getTableViewerCreatorForColumns();
@@ -389,7 +404,7 @@ public class CompleteDropTargetListener extends DefaultDropTargetListener {
             } else if (currentEntryTarget != null && !insertionEntryMode) {
 
                 modifyExistingEntry(uiManager, analyzer, currentLanguage, currentEntryTarget, columnIndicesToSelect,
-                        tableViewerCreatorTarget, lastEntryTarget, tableEntrySource, zoneSourceEntry);
+                        tableViewerCreatorTarget, lastEntryTarget, tableEntrySource, zoneSourceEntry, expressionAdded);
 
             } else {
                 String columnName = transferableEntry.getTableEntrySource().getName();
@@ -470,6 +485,23 @@ public class CompleteDropTargetListener extends DefaultDropTargetListener {
         uiManager.setDragging(false);
     }
 
+    private boolean ifExpressionIsColumn(String expression) {
+        MapperManager manager = getMapperManager();
+        IDbLanguage currentLanguage = manager.getCurrentLanguage();
+        for (InputTable inputTable : manager.getInputTables()) {
+            String tableName = inputTable.getName();
+            for (IColumnEntry columnEntry : inputTable.getColumnEntries()) {
+                if (StringUtils.isNotBlank(columnEntry.getName())) {
+                    String location = currentLanguage.getLocation(tableName, columnEntry.getName());
+                    if (expression.equals(location)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * DOC amaumont Comment method "modifyExistingEntry".
      *
@@ -486,9 +518,10 @@ public class CompleteDropTargetListener extends DefaultDropTargetListener {
     private void modifyExistingEntry(UIManager uiManager, DropContextAnalyzer analyzer, IDbLanguage currentLanguage,
             ITableEntry currentEntryTarget, ArrayList<Integer> columnIndicesToSelect,
             TableViewerCreator tableViewerCreatorTarget, ITableEntry lastEntryTarget, ITableEntry tableEntrySource,
-            Zone zoneSourceEntry) {
+            Zone zoneSourceEntry, List<String> expressionAdded) {
         boolean overwrite = (lastEntryTarget != currentEntryTarget && analyzer.isOverwriteExpression());
-        modifyExistingExpression(currentLanguage, currentEntryTarget, tableEntrySource, overwrite, zoneSourceEntry);
+        modifyExistingExpression(currentLanguage, currentEntryTarget, tableEntrySource, overwrite, zoneSourceEntry,
+                analyzer, expressionAdded);
         uiManager.parseExpression(currentEntryTarget.getExpression(), currentEntryTarget, false, true, true);
 
         if (currentEntryTarget instanceof InputColumnTableEntry) {
@@ -622,7 +655,7 @@ public class CompleteDropTargetListener extends DefaultDropTargetListener {
     }
 
     private void modifyExistingExpression(IDbLanguage currentLanguage, ITableEntry entryTarget, ITableEntry tableEntrySource,
-            boolean overwriteExpression, Zone zoneSourceEntry) {
+            boolean overwriteExpression, Zone zoneSourceEntry,DropContextAnalyzer analyzer, List<String> expressionAdded) {
         String expression = null;
         if (zoneSourceEntry == Zone.OUTPUTS) {
             expression = tableEntrySource.getExpression();
@@ -649,7 +682,13 @@ public class CompleteDropTargetListener extends DefaultDropTargetListener {
             } else if (!isEmpty) {
                 space = "  "; //$NON-NLS-1$
             }
+            if (!expressionAdded.isEmpty() && !StringUtils.stripEnd(currentTargetExpression, " ").endsWith(",")) {
+                space = ", ";
+            }
             expressionToWrite = currentTargetExpression + space + expression + " "; //$NON-NLS-1$
+            if (analyzer.targetTableIsOtherFiltersTable()) {
+                expressionAdded.add(expression);
+            }
         }
         entryTarget.setExpression(expressionToWrite);
 
