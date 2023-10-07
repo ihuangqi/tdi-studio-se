@@ -462,6 +462,7 @@ public class OutputDataMapTableView extends DataMapTableView {
 
             Table _tableForConstraints = _tableViewerCreatorForFilters.getTable();
             GridData _tableForConstraintsGridData = new GridData(GridData.FILL_HORIZONTAL);
+            _tableForConstraintsGridData.horizontalSpan = 3;
             _tableForConstraints.setLayoutData(_tableForConstraintsGridData);
 
             boolean tableConstraintsVisible = 0 < getTableConstraintSize();
