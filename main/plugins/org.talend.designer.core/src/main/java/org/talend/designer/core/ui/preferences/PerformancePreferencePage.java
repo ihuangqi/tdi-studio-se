@@ -49,7 +49,7 @@ public class PerformancePreferencePage extends FieldEditorPreferencePage impleme
      */
     @Override
     protected void createFieldEditors() {
-        IBrandingService breaningService = (IBrandingService) GlobalServiceRegister.getDefault()
+        IBrandingService breaningService = GlobalServiceRegister.getDefault()
                 .getService(IBrandingService.class);
         if (breaningService.isPoweredOnlyCamel()) {
             addField(new BooleanFieldEditor(ITalendCorePrefConstants.DEACTIVE_REPOSITORY_UPDATE,
@@ -62,7 +62,7 @@ public class PerformancePreferencePage extends FieldEditorPreferencePage impleme
                     Messages.getString("PerformancePreferencePage.checkVersion"), //$NON-NLS-1$
                     getFieldEditorParent()));
             addField(new BooleanFieldEditor(TalendDesignerPrefConstants.PROPAGATE_CONTEXT,
-                    Messages.getString("PerformancePreferencePage.propagateContext"), //$NON-NLS-1$
+                    Messages.getString("PerformancePreferencePage.propagateContexts"), //$NON-NLS-1$
                     getFieldEditorParent()));
             addField(new BooleanFieldEditor(TalendDesignerPrefConstants.PROPAGATE_CONTEXT_VARIABLE,
                     Messages.getString("PerformancePreferencePage.addOrDeleteVariable"), //$NON-NLS-1$
@@ -98,7 +98,7 @@ public class PerformancePreferencePage extends FieldEditorPreferencePage impleme
                     Messages.getString("PerformancePreferencePage.checkVersion"), //$NON-NLS-1$
                     getFieldEditorParent()));
             addField(new BooleanFieldEditor(TalendDesignerPrefConstants.PROPAGATE_CONTEXT,
-                    Messages.getString("PerformancePreferencePage.propagateContext"), //$NON-NLS-1$
+                    Messages.getString("PerformancePreferencePage.propagateContexts"), //$NON-NLS-1$
                     getFieldEditorParent()));
             addField(new BooleanFieldEditor(TalendDesignerPrefConstants.PROPAGATE_CONTEXT_VARIABLE,
                     Messages.getString("PerformancePreferencePage.addOrDeleteVariable"), //$NON-NLS-1$
