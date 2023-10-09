@@ -51,31 +51,9 @@ public class BigDataJobUtil {
         if (isBDJobWithFramework(ERepositoryObjectType.PROCESS_STORM, HadoopConstants.FRAMEWORK_STORM)) {
             return true;
         }
-        return isSparkWithHDInsight();
+        return isMRWithHDInsight();
     }
 
-    /**
-     * DOC nrousseau Comment method "isSparkWithHDInsight".
-     *
-     * @param isSparkWithHDInsight
-     * @return
-     */
-    public boolean isSparkWithHDInsight() {
-        boolean isSparkWithHDInsight = false;
-        if (isBDJobWithFramework(ERepositoryObjectType.PROCESS_MR, HadoopConstants.FRAMEWORK_SPARK)
-                || isBDJobWithFramework(ERepositoryObjectType.PROCESS_STORM, HadoopConstants.FRAMEWORK_SPARKSTREAMING)) {
-            List<? extends IElementParameter> parameters = process.getElementParametersWithChildrens();
-            for (IElementParameter pt : parameters) {
-                boolean isHDISparkMode = HadoopConstants.SPARK_MODE.equals(pt.getName()) && HadoopConstants.SPARK_MODE_HDI.equals(pt.getValue());
-                boolean isHDIDistribution = pt.getName().equals("DISTRIBUTION") && EHadoopDistributions.MICROSOFT_HD_INSIGHT.getName().equals(pt.getValue());
-                if (isHDISparkMode || isHDIDistribution) {
-                    isSparkWithHDInsight = true;
-                }
-            }
-        }
-        return isSparkWithHDInsight;
-    }
-    
     public boolean isSparkWithSynapse() {
         boolean isSparkWithSynapse = false;
         if (isBDJobWithFramework(ERepositoryObjectType.PROCESS_MR, HadoopConstants.FRAMEWORK_SPARK)
@@ -85,7 +63,7 @@ public class BigDataJobUtil {
             	boolean isSynapseSparkMode = HadoopConstants.SPARK_MODE_SYNAPSE.equals(pt.getName()) && ESparkMode.SYNAPSE.getValue().equals(pt.getValue());
 		boolean isSynapseDistribution = pt.getName().equals("DISTRIBUTION") && EHadoopDistributions.AZURE_SYNAPSE.getName().equals(pt.getValue());
                 if (isSynapseSparkMode || isSynapseDistribution) {
-                    isSparkWithSynapse = true;
+                   isSparkWithSynapse = true;
                 }
             }
         }
@@ -163,7 +141,7 @@ public class BigDataJobUtil {
     }
 
     public void setExcludedModules(Collection<ModuleNeeded> modulesNeeded) {
-        if (isMRWithHDInsight() || isSparkWithHDInsight()) {
+        if (isMRWithHDInsight()) {
             // we need to exclude every non-MR Required jars.
             for (ModuleNeeded currentModule : modulesNeeded) {
                 if (currentModule.isMrRequired()) {
@@ -191,7 +169,7 @@ public class BigDataJobUtil {
      */
     public Set<ModuleNeeded> getShadedModulesExclude(Set<ModuleNeeded> modulesNeeded) {
         Set<ModuleNeeded> excludedModules = new HashSet<>();
-        if (isMRWithHDInsight() || isSparkWithHDInsight()) {
+        if (isMRWithHDInsight()) {
             // we need to exclude every non-MR Required jars.
             for (ModuleNeeded currentModule : modulesNeeded) {
                 if (!currentModule.isMrRequired()) {
