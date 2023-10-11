@@ -1072,4 +1072,10 @@ public class RepositoryService implements IRepositoryService, IRepositoryContext
         return "Standard";
     }
 
+    @Override
+    public void openProjectSettingsDialog(String pageId) {
+        ProjectSettingDialog dialog = new ProjectSettingDialog();
+        dialog.open(pageId);
+    }
+
 }

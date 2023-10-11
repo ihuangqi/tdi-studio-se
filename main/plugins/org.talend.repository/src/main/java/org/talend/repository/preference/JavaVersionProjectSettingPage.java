@@ -14,6 +14,7 @@ package org.talend.repository.preference;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,17 +23,21 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.EImage;
@@ -42,16 +47,21 @@ import org.talend.core.runtime.CoreRuntimePlugin;
 import org.talend.core.runtime.projectsetting.AbstractProjectSettingPage;
 import org.talend.core.runtime.util.ModuleAccessHelper;
 import org.talend.repository.i18n.Messages;
+import org.talend.repository.ui.ERepositoryImages;
 
 public class JavaVersionProjectSettingPage extends AbstractProjectSettingPage {
+
+    private static final String LINK_FIX = "https://document-link.us.cloud.talend.com/ig_compatible_java_environments?version=80&lang=en&env=prd";
+
+    private static final Color COLOR_LIGHT_SALMON = new Color(253, 229, 217);
+
+    private static final Image IMG_WARN = ImageProvider.getImage(EImage.WARNING_SMALL);
 
     private Combo javaVersionCombo;
 
     private String javaVersion;
 
     private Button accessCheckbox;
-
-    private CLabel accessWarnLabel;
 
     private Label accessConfigLabel;
 
@@ -101,22 +111,44 @@ public class JavaVersionProjectSettingPage extends AbstractProjectSettingPage {
         accessCheckbox.setSelection(selected);
         GridData checkboxData = new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 2, 1);
         accessCheckbox.setLayoutData(checkboxData);
-        accessCheckbox.addSelectionListener(new SelectionAdapter() {
+        accessCheckbox.addSelectionListener(SelectionListener.widgetSelectedAdapter((e) -> {
+            boolean selection = accessCheckbox.getSelection();
+            accessConfigLabel.setVisible(selection);
+            tabFolder.setVisible(accessCheckbox.getSelection());
+        }));
 
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                boolean selection = accessCheckbox.getSelection();
-                accessWarnLabel.setVisible(selection);
-                accessConfigLabel.setVisible(selection);
-                tabFolder.setVisible(accessCheckbox.getSelection());
-            }
+        Composite warnComp = new Composite(parent, SWT.NONE);
+        warnComp.setLayout(new GridLayout(2, false));
+        warnComp.setBackground(COLOR_LIGHT_SALMON);
+        GridData warnCompositeData = new GridData(GridData.BEGINNING, GridData.CENTER, true, false, 2, 1);
+        warnComp.setLayoutData(warnCompositeData);
 
-        });
-
-        accessWarnLabel = new CLabel(parent, SWT.NONE);
+        CLabel accessWarnLabel = new CLabel(warnComp, SWT.NONE);
         accessWarnLabel.setText(Messages.getString("JavaVersionProjectSettingPage.internalAccessWarningLabel"));//$NON-NLS-1$
-        accessWarnLabel.setImage(ImageProvider.getImage(EImage.WARNING_ICON));
-        accessWarnLabel.setVisible(selected);
+        accessWarnLabel.setImage(IMG_WARN);
+        accessWarnLabel.setBackground(warnComp.getBackground());
+        GridData warnLabelData = new GridData(GridData.BEGINNING, GridData.CENTER, true, false, 2, 1);
+        accessWarnLabel.setLayoutData(warnLabelData);
+
+        Link accessWarnLink = new Link(warnComp, SWT.WRAP);
+        accessWarnLink.setText(Messages.getString("JavaVersionProjectSettingPage.internalAccessWarningLink"));//$NON-NLS-1$
+        accessWarnLink.setBackground(warnComp.getBackground());
+        GridData linkData = new GridData(GridData.BEGINNING, GridData.CENTER, false, false);
+        linkData.horizontalIndent = IMG_WARN.getBounds().width * 3 / 2;
+        accessWarnLink.setLayoutData(linkData);
+        accessWarnLink.addSelectionListener(SelectionListener.widgetSelectedAdapter((e) -> Program.launch(LINK_FIX)));
+
+        FontData[] fontData = accessWarnLink.getFont().getFontData();
+        Stream.of(fontData).forEach(data -> data.setStyle(SWT.BOLD));
+        Font boldFont = new Font(accessWarnLink.getDisplay(), fontData);
+        accessWarnLink.setFont(boldFont);
+        boldFont.dispose();
+
+        Label linkLabel = new Label(warnComp, SWT.NONE);
+        linkLabel.setImage(ImageProvider.getImage(ERepositoryImages.EXPORT_PROJECTS_ACTION));
+        linkLabel.setBackground(warnComp.getBackground());
+        GridData linkLabelData = new GridData(GridData.BEGINNING, GridData.CENTER, true, false);
+        linkLabel.setLayoutData(linkLabelData);
 
         accessConfigLabel = new Label(parent, SWT.NONE);
         accessConfigLabel.setText(Messages.getString("JavaVersionProjectSettingPage.accessSettingLabel")); //$NON-NLS-1$
