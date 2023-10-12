@@ -12,33 +12,30 @@
 // ============================================================================
 package org.talend.repository.ui.login;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.awt.Desktop;
+import java.net.URI;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Link;
 import org.talend.commons.exception.BusinessException;
 import org.talend.commons.exception.CommonExceptionHandler;
-import org.talend.commons.ui.gmf.util.DisplayUtils;
 import org.talend.commons.ui.swt.dialogs.ErrorDialogWidthDetailArea;
 import org.talend.registration.RegistrationPlugin;
 import org.talend.registration.license.LicenseManagement;
@@ -54,12 +51,15 @@ public class LoginAgreementPage extends AbstractLoginActionPage {
 
     protected static final String LICENSE_FILE_PATH_HTML = "/license.html"; //$NON-NLS-1$
 
-    /** CLUF field. */
-    private Text clufText;
-
-    private Browser clufBrowser;
-
     private Button acceptButton;
+
+    private Label licenseAgreementLabel;
+
+    private Button acceptCheckbox;
+
+    private Label iHaveReadLabel;
+
+    private Link agreementLink;
 
     public LoginAgreementPage(Composite parent, LoginDialogV2 dialog, int style) {
         super(parent, dialog, style);
@@ -69,117 +69,75 @@ public class LoginAgreementPage extends AbstractLoginActionPage {
     public void createControl(Composite parentCtrl) {
         Composite container = new Composite(parentCtrl, SWT.NONE);
         container.setLayout(new FormLayout());
-        Label titleLabel = new Label(container, SWT.WRAP);
-        titleLabel.setFont(LoginDialogV2.fixedFont);
-        titleLabel.setText(Messages.getString("LoginAgreementPage.title")); //$NON-NLS-1$
-        FormData titleLabelFormData = new FormData();
-        titleLabelFormData.left = new FormAttachment(0, 0);
-        titleLabelFormData.top = new FormAttachment(0, 0);
-        titleLabel.setLayoutData(titleLabelFormData);
+        // image
+        Label imageLabel = new Label(container, SWT.RIGHT);
+        ImageDescriptor imageDescriptor =
+                ImageDescriptor.createFromURL(this.getClass().getResource("/icons/License.png"));
+        Image image = imageDescriptor.createImage();
+        addResourceDisposeListener(imageLabel, image);
+        imageLabel.setImage(image);
+
+        FormData layoutData = new FormData();
+        layoutData.top = new FormAttachment(10);
+        layoutData.right = new FormAttachment(50, imageLabel.getImage().getBounds().width / 2);
+        imageLabel.setLayoutData(layoutData);
+
+        // License agreement
+        licenseAgreementLabel = new Label(container, SWT.CENTER);
+        licenseAgreementLabel.setText(Messages.getString("LoginAgreementPage.LicenseAgreement"));
+        Font font = new Font(container.getDisplay(), "Arial", 16, SWT.BOLD);
+        addResourceDisposeListener(licenseAgreementLabel, font);
+        licenseAgreementLabel.setFont(font);
+        int textHeight = licenseAgreementLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+        layoutData = new FormData();
+        layoutData.top = new FormAttachment(40);
+        layoutData.height = textHeight + 2;
+        layoutData.right = new FormAttachment(50, licenseAgreementLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).x / 2);
+        licenseAgreementLabel.setLayoutData(layoutData);
+
+        // accept checkbox
+        acceptCheckbox = new Button(container, SWT.CHECK);
+        layoutData = new FormData();
+        layoutData.top = new FormAttachment(60);
+        layoutData.right = new FormAttachment(10);
+        acceptCheckbox.setLayoutData(layoutData);
+
+        int offset = 0;
+        if (Platform.OS_WIN32.equals(Platform.getOS()) || Platform.OS_LINUX.equals(Platform.getOS())) {
+            offset = 6;
+        }
+
+        // I have Read
+        iHaveReadLabel = new Label(container, SWT.CENTER);
+        iHaveReadLabel.setText(Messages.getString("LoginAgreementPage.readAndAccept"));
+        layoutData = new FormData();
+        layoutData.top = new FormAttachment(60);
+        layoutData.left = new FormAttachment(acceptCheckbox, offset);
+        iHaveReadLabel.setLayoutData(layoutData);
+
+        // qlik link
+        agreementLink = new Link(container, SWT.NONE);
+        agreementLink
+                .setText("<a href=\"" + Messages.getString("LoginAgreementPage.QlikURL") + "\">" //$NON-NLS-1$
+                        + Messages.getString("LoginAgreementPage.QlikAgreement") + "</a>");//$NON-NLS-2$
+        layoutData = new FormData();
+        layoutData.top = new FormAttachment(60);
+        layoutData.left = new FormAttachment(iHaveReadLabel, offset);
+        agreementLink.setLayoutData(layoutData);
 
         acceptButton = new Button(container, SWT.CENTER);
         acceptButton.setBackground(backgroundBtnColor);
         acceptButton.setFont(LoginDialogV2.fixedFont);
-        acceptButton.setText(Messages.getString("LoginAgreementPage.accept")); //$NON-NLS-1$
-
+        acceptButton.setText(Messages.getString("LoginAgreementPage.Next")); //$NON-NLS-1$
+        acceptButton.setEnabled(false);
         FormData acceptButtonFormLayoutData = new FormData();
         acceptButtonFormLayoutData.bottom = new FormAttachment(100, 0);
         acceptButtonFormLayoutData.right = new FormAttachment(100, 0);
         acceptButtonFormLayoutData.left = new FormAttachment(100, -1 * LoginDialogV2.getNewButtonSize(acceptButton).x);
         acceptButton.setLayoutData(acceptButtonFormLayoutData);
 
-        boolean haveHtmlDesc = false;
-        FileInputStream licenseInputStream = null;
-        String licenseFileBasePath = Platform.getInstallLocation().getURL().getPath();
-        if (checkBrowserSupport()) {
-            File htmlFile = new File(licenseFileBasePath + LICENSE_FILE_PATH_HTML);
-            if (htmlFile.exists()) {
-                try {
-                    licenseInputStream = new FileInputStream(htmlFile);
-                    if (licenseInputStream != null) {
-                        haveHtmlDesc = true;
-                    }
-                } catch (FileNotFoundException e) {
-                    CommonExceptionHandler.process(e);
-                }
-            }
-        }
-        if (licenseInputStream == null) {
-            try {
-                licenseInputStream = new FileInputStream(licenseFileBasePath + LICENSE_FILE_PATH);
-            } catch (FileNotFoundException e) {
-                CommonExceptionHandler.process(e);
-            }
-        }
-
-        FormData clufLayoutData = new FormData();
-        clufLayoutData.top = new FormAttachment(titleLabel, LoginDialogV2.TAB_VERTICAL_PADDING_LEVEL_1, SWT.BOTTOM);
-        clufLayoutData.left = new FormAttachment(0, 0);
-        clufLayoutData.right = new FormAttachment(100, 0);
-        clufLayoutData.bottom = new FormAttachment(acceptButton, -1 * LoginDialogV2.TAB_VERTICAL_PADDING_LEVEL_1, SWT.TOP);
-
-        if (haveHtmlDesc) {
-            clufBrowser = new Browser(container, SWT.BORDER);
-            clufBrowser.setText(getLicense(licenseInputStream));
-            clufBrowser.setLayoutData(clufLayoutData);
-        } else {
-            clufText = new Text(container, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL | SWT.LEFT | SWT.BORDER);
-            clufText.setBackground(new Color(null, 255, 255, 255));
-            Font font = new Font(DisplayUtils.getDisplay(), "courier", 10, SWT.NONE); //$NON-NLS-1$
-            clufText.setFont(font);
-            clufText.setEditable(false);
-            clufText.setText(getLicense(licenseInputStream));
-            clufText.setLayoutData(clufLayoutData);
-        }
     }
 
-    /**
-     * @see org.talend.rcp.intro.Application#checkBrowserSupport DOC ggu Comment
-     *      method "checkForBrowser".
-     */
-    private boolean checkBrowserSupport() {
-        if (StringUtils.equals(Platform.OS_LINUX, Platform.getOS())
-                && StringUtils.equals(Platform.ARCH_AARCH64, Platform.getOSArch())) {
-            return false;
-        }
-        Shell shell = new Shell();
-        boolean isSupportBrowser = false;
-        try {
-            Browser browser = new Browser(shell, SWT.BORDER);
-            browser.dispose();
-            isSupportBrowser = true;
-        } catch (Throwable t) {
-            // nothing need to do
-        } finally {
-            shell.dispose();
-        }
-        return isSupportBrowser;
-    }
-    
-    private String getLicense(InputStream inputStream) {
-        String licenseNotFound = Messages.getString("LoginAgreementPage.agreementFileNotFound"); //$NON-NLS-1$
-        if (inputStream == null) {
-            return licenseNotFound;
-        }
-        String license = ""; //$NON-NLS-1$
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-
-            String licenseLine = ""; //$NON-NLS-1$
-            while ((licenseLine = in.readLine()) != null) {
-                license += licenseLine + "\n"; //$NON-NLS-1$
-            }
-
-        } catch (FileNotFoundException e) {
-            CommonExceptionHandler.process(e);
-        } catch (IOException e) {
-            CommonExceptionHandler.process(e);
-        }
-        if (license.isEmpty()) {
-            license = licenseNotFound;
-        }
-        return license;
-    }
 
     @Override
     public AbstractActionPage getNextPage() {
@@ -227,6 +185,52 @@ public class LoginAgreementPage extends AbstractLoginActionPage {
                 // nothing need to do
             }
         });
+
+        acceptCheckbox.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                acceptButton.setEnabled(acceptCheckbox.getSelection());
+            }
+        });
+
+        agreementLink.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                String href = e.text;
+                openBrowser(href);
+            }
+        });
+    }
+
+    private static void openBrowser(String url) {
+        if (Desktop.isDesktopSupported()) {
+            Desktop desktop = Desktop.getDesktop();
+            if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                try {
+                    URI uri = new URI(url);
+                    desktop.browse(uri);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void addResourceDisposeListener(final Control parent, final Resource res) {
+        if (parent != null) {
+            parent.addDisposeListener(new DisposeListener() {
+
+                public void widgetDisposed(DisposeEvent e) {
+                    if (res != null && !res.isDisposed()) {
+                        res.dispose();
+                    }
+                    parent.removeDisposeListener(this);
+                }
+            });
+        }
+
     }
 
     @Override
