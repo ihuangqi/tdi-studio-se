@@ -314,7 +314,7 @@
            name="UpdateEncryptTckMetadataMigrationTask"
            version="8.0.1">
      </projecttask>
-      <projecttask
+     <projecttask
           beforeLogon="false"
           breaks="8.0.1"
           class="org.talend.sdk.component.studio.metadata.migration.tcompv0.JiraTcompv0ToTCKMigrationTask"
@@ -322,7 +322,16 @@
           id="org.talend.sdk.component.studio.metadata.migration.tcompv0.JiraTcompv0ToTCKMigrationTask"
           name="JiraTcompv0ToTCKMigrationTask"
           version="8.0.1">
-      </projecttask>
+     </projecttask>
+     <projecttask
+          beforeLogon="false"
+          breaks="8.0.1"
+          class="org.talend.sdk.component.studio.metadata.migration.tcompv0.SplunkTcompv0ToTCKMigrationTask"
+          description="Migration task for splunk TCOMP to TCK"
+          id="org.talend.sdk.component.studio.metadata.migration.tcompv0.SplunkTcompv0ToTCKMigrationTask"
+          name="SplunkTcompv0ToTCKMigrationTask"
+          version="8.0.1">
+     </projecttask>
   </extension>
  <extension
        point="org.eclipse.ui.startup">
