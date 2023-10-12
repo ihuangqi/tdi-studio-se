@@ -656,6 +656,7 @@ public class SettingVisitor implements PropertyVisitor {
                     new ValidationListener(label, family, node.getProperty().getValidationName());
             target.registerListener("value", listener);
             final ValidationResolver resolver = new ValidationResolver(node, actions, listener, redrawParameter);
+            resolver.resolveParameters(settings);
             parameterResolvers.add(resolver);
         }
     }
