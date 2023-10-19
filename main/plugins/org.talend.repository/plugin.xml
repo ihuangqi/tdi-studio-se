@@ -3900,6 +3900,15 @@
                name="ChangeDefaultValueLocalFileCopyInPostgresql"
                version="8.0.1">
        </projecttask>
+        <projecttask
+               beforeLogon="false"
+               breaks="8.0.0"
+               class="org.talend.repository.model.migration.ReplaceBackSlashWithSlashInGSPut"
+               description="Replace backslash with slash in filename template in tGSPut"
+               id="org.talend.repository.model.migration.ReplaceBackSlashWithSlashInGSPut"
+               name="ReplaceBackSlashWithSlashInGSPut"
+               version="8.0.1">
+        </projecttask>
    </extension>
 
    <extension
