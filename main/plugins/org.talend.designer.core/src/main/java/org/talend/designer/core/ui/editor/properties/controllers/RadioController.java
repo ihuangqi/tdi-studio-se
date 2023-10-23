@@ -206,9 +206,9 @@ public class RadioController extends AbstractElementPropertySectionController {
             radioButton.setSelection((Boolean) value);
         }
 
-        if (param.isContextMode()) {
-            radioButton.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_YELLOW));
-            radioButton.setEnabled(false);
+        if (isTacokit(param) || param.isContextMode()) {
+            radioButton.setEnabled(isWidgetEnabled(param));
+            radioButton.setBackground(getWidgetBackground(param, null, Display.getDefault().getSystemColor(SWT.COLOR_YELLOW)));
         }
     }
 

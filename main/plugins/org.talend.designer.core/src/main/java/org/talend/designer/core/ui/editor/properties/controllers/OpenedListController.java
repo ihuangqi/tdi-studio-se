@@ -372,12 +372,10 @@ public class OpenedListController extends AbstractElementPropertySectionControll
             }
             combo.setVisible(true);
         }
-
-        if (param.isContextMode()) {
-            combo.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_YELLOW));
-            combo.setEnabled(false);
+        if (isTacokit(param) || param.isContextMode()) {
+            combo.setEnabled(isWidgetEnabled(param));
+            combo.setBackground(getWidgetBackground(param, null, Display.getDefault().getSystemColor(SWT.COLOR_YELLOW)));
         }
-
     }
 
     /**

@@ -134,4 +134,14 @@ public final class UpdateParameterUtils {
         }
     }
 
+    public static boolean isTacokit(IElementParameter curParameter) {
+        if (curParameter != null && curParameter instanceof ElementParameter) {
+            Object sourceName = ((ElementParameter) curParameter).getTaggedValue("org.talend.sdk.component.source");//$NON-NLS-1$
+            if ("tacokit".equalsIgnoreCase(String.valueOf(sourceName))) { //$NON-NLS-1$
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

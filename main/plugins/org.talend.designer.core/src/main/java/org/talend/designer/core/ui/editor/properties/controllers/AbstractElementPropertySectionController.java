@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.BidiMap;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.jface.dialogs.Dialog;
@@ -52,6 +53,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorPart;
@@ -61,6 +63,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.properties.PropertySheet;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.runtime.service.ITaCoKitService;
 import org.talend.commons.ui.gmf.util.DisplayUtils;
 import org.talend.commons.ui.runtime.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.utils.ControlUtils;
@@ -89,6 +92,7 @@ import org.talend.core.model.metadata.QueryUtil;
 import org.talend.core.model.metadata.builder.ConvertionHelper;
 import org.talend.core.model.metadata.builder.connection.Connection;
 import org.talend.core.model.metadata.builder.connection.DatabaseConnection;
+import org.talend.core.model.metadata.builder.connection.TacokitDatabaseConnection;
 import org.talend.core.model.metadata.builder.database.ExtractMetaDataUtils;
 import org.talend.core.model.metadata.builder.database.JavaSqlFactory;
 import org.talend.core.model.metadata.designerproperties.EParameterNameForComponent;
@@ -153,6 +157,7 @@ import org.talend.designer.core.ui.views.properties.ComponentSettingsView;
 import org.talend.designer.core.ui.views.properties.MultipleThreadDynamicComposite;
 import org.talend.designer.core.ui.views.properties.WidgetFactory;
 import org.talend.designer.core.ui.views.properties.composites.MissingSettingsMultiThreadDynamicComposite;
+import org.talend.designer.core.utils.ConnectionUtil;
 import org.talend.designer.core.utils.UpgradeParameterHelper;
 import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.hadoop.distribution.constants.HiveConstant;
@@ -173,6 +178,8 @@ import org.talend.repository.model.IProxyRepositoryFactory;
 
 public abstract class AbstractElementPropertySectionController implements PropertyChangeListener, ISWTBusinessControllerUI {
 
+    private static Logger LOGGER = Logger.getLogger(AbstractElementPropertySectionController.class);
+    
     protected static final String SQLEDITOR = "SQLEDITOR"; //$NON-NLS-1$
 
     private Map<String, Dialog> sqlbuilers = new HashMap<String, Dialog>();
@@ -362,11 +369,11 @@ public abstract class AbstractElementPropertySectionController implements Proper
                                     } else {
                                         value = value + ";" + valueMap.get("JAR_NAME");
                                     }
-                                }else if (valueMap.get("drivers") != null) {
+                                }else if (ConnectionUtil.extractDriverValueFromMap(valueMap) != null) {
                                     if (value.equals("")) {
-                                        value = value + valueMap.get("drivers");
+                                        value = value + ConnectionUtil.extractDriverValueFromMap(valueMap);
                                     } else {
-                                        value = value + ";" + valueMap.get("drivers");
+                                        value = value + ";" + ConnectionUtil.extractDriverValueFromMap(valueMap);
                                     }
                                 }
                             }
@@ -419,11 +426,11 @@ public abstract class AbstractElementPropertySectionController implements Proper
                                     } else {
                                         value = value + ";" + valueMap.get("JAR_NAME");
                                     }
-                                }else if (valueMap.get("drivers") != null) {
+                                }else if (ConnectionUtil.extractDriverValueFromMap(valueMap) != null) {
                                     if (value.equals("")) {
-                                        value = value + valueMap.get("drivers");
+                                        value = value + ConnectionUtil.extractDriverValueFromMap(valueMap);
                                     } else {
-                                        value = value + ";" + valueMap.get("drivers");
+                                        value = value + ";" + ConnectionUtil.extractDriverValueFromMap(valueMap);
                                     }
                                 }
                             }
@@ -469,11 +476,11 @@ public abstract class AbstractElementPropertySectionController implements Proper
                                         } else {
                                             value = value + ";" + valueMap.get("JAR_NAME");
                                         }
-                                    }else if (valueMap.get("drivers") != null) {
+                                    }else if (ConnectionUtil.extractDriverValueFromMap(valueMap) != null) {
                                         if (value.equals("")) {
-                                            value = value + valueMap.get("drivers");
+                                            value = value + ConnectionUtil.extractDriverValueFromMap(valueMap);
                                         } else {
-                                            value = value + ";" + valueMap.get("drivers");
+                                            value = value + ";" + ConnectionUtil.extractDriverValueFromMap(valueMap);
                                         }
                                     }
                                 }
@@ -1557,6 +1564,10 @@ public abstract class AbstractElementPropertySectionController implements Proper
             }
         }
 
+        if (isTacokit()) {
+            fillInTacokitConnectionParameter(element, null);
+        }
+
         String host = getValueFromRepositoryName(element, EConnectionParameterName.SERVER_NAME.getName(), basePropertyParameter);
         connParameters.setHost(host);
 
@@ -1679,6 +1690,47 @@ public abstract class AbstractElementPropertySectionController implements Proper
         }
         connParameters.setSchemaName(QueryUtil.getTableName(elem, connParameters.getMetadataTable(),
                 TalendTextUtils.removeQuotes(schema), type, realTableName));
+    }
+
+    private void fillInTacokitConnectionParameter(IElement element, IContext context) {
+        connParameters.setDbType(EDatabaseTypeName.GENERAL_JDBC.getDbType());
+        connParameters.setTacokitJDBC(true);
+        Object isUseExistingConnection = elem.getPropertyValue("USE_EXISTING_CONNECTION");
+        if (connectionNode != null && Boolean.valueOf(isUseExistingConnection.toString())) {
+            connParameters.setUserName(TalendQuoteUtils
+                    .removeQuotes(fetchElementParameterValue(element, context, TacokitDatabaseConnection.KEY_USER_ID)));
+            connParameters.setUrl(TalendQuoteUtils
+                    .removeQuotes(fetchElementParameterValue(element, context, TacokitDatabaseConnection.KEY_URL)));
+            connParameters.setDriverClass(TalendQuoteUtils
+                    .removeQuotes(fetchElementParameterValue(element, context, TacokitDatabaseConnection.KEY_DRIVER_CLASS)));
+            connParameters.setPassword(fetchElementParameterValue(element, context, TacokitDatabaseConnection.KEY_PASSWORD));
+            connParameters.setDriverJar(fetchElementParameterValue(element, context, TacokitDatabaseConnection.KEY_DRIVER));
+        } else {
+            connParameters.setUserName(TalendQuoteUtils
+                    .removeQuotes(fetchElementParameterValue(element, context, TacokitDatabaseConnection.KEY_DATASTORE_USER_ID)));
+            connParameters.setUrl(TalendQuoteUtils
+                    .removeQuotes(fetchElementParameterValue(element, context, TacokitDatabaseConnection.KEY_DATASTORE_URL)));
+            connParameters.setDriverClass(TalendQuoteUtils.removeQuotes(
+                    fetchElementParameterValue(element, context, TacokitDatabaseConnection.KEY_DATASTORE_DRIVER_CLASS)));
+            connParameters
+                    .setPassword(fetchElementParameterValue(element, context, TacokitDatabaseConnection.KEY_DATASTORE_PASSWORD));
+            connParameters
+                    .setDriverJar(fetchElementParameterValue(element, context, TacokitDatabaseConnection.KEY_DATASTORE_DRIVER));
+        }
+    }
+
+    private boolean isTacokit() {
+        return isTacokit(curParameter);
+    }
+
+    protected boolean isTacokit(IElementParameter param) {
+        if (param != null && param instanceof ElementParameter) {
+            Object sourceName = ((ElementParameter) param).getTaggedValue("org.talend.sdk.component.source");//$NON-NLS-1$
+            if ("tacokit".equalsIgnoreCase(String.valueOf(sourceName))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected void initAlternateSchema(IElement element, IContext context) {
@@ -1808,6 +1860,10 @@ public abstract class AbstractElementPropertySectionController implements Proper
             connParameters.setDriverJar(jar);
         }
 
+        if (isTacokit()) {
+            fillInTacokitConnectionParameter(element, context);
+        }
+
         connParameters.setPort(getParameterValueWithContext(element, EConnectionParameterName.PORT.getName(), context,
                 basePropertyParameter));
         connParameters.setSchema(getParameterValueWithContext(element, EConnectionParameterName.SCHEMA.getName(), context,
@@ -1886,6 +1942,9 @@ public abstract class AbstractElementPropertySectionController implements Proper
             Object value = elemParam.getValue();
 
             if (value instanceof String) {
+                if (context == null) {
+                    return (String) value;
+                }
                 return ContextParameterUtils.parseScriptContextCode((String) value, context);
             } else if (value instanceof List) {
                 // for jdbc parm driver jars
@@ -1900,14 +1959,36 @@ public abstract class AbstractElementPropertySectionController implements Proper
                             } else {
                                 jarValues = jarValues + ";" + valueMap.get("JAR_NAME");
                             }
-                        }else if (valueMap.get("drivers") != null) {
-                            if (jarValues.equals("")) {
-                                jarValues = jarValues + valueMap.get("drivers");
-                            } else {
-                                jarValues = jarValues + ";" + valueMap.get("drivers");
+                        }else if (ConnectionUtil.extractDriverValueFromMap(valueMap) != null) {
+                            boolean isContextValue = false;
+                            if (context != null) {
+                                for (Object obj : valueMap.keySet()) {
+                                    if (obj instanceof String && valueMap.get(obj) instanceof String) {
+                                        String contextValue = (String) valueMap.get(obj);
+                                        if (ContextParameterUtils.isContainContextParam(contextValue)) {
+                                            contextValue = ContextParameterUtils.parseScriptContextCode(contextValue, context);
+                                            isContextValue = true;
+                                            if (jarValues.equals("")) {
+                                                jarValues = jarValues + contextValue;
+                                            } else {
+                                                jarValues = jarValues + ";" + contextValue;
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                        }
+                            if (!isContextValue) {
+                                if (jarValues.equals("")) {
+                                    jarValues = jarValues + ConnectionUtil.extractDriverValueFromMap(valueMap);
+                                } else {
+                                    jarValues = jarValues + ";" + ConnectionUtil.extractDriverValueFromMap(valueMap);
+                                }  
+                            }
+                        } 
                     }
+                }
+                if (context == null) {
+                    return jarValues;
                 }
                 return ContextParameterUtils.parseScriptContextCode(jarValues, context);
             }
@@ -2928,6 +3009,23 @@ public abstract class AbstractElementPropertySectionController implements Proper
 
     public IElementParameter getCurParameter() {
         return curParameter;
+    }
+    
+    protected boolean isWidgetEnabled(IElementParameter param) {
+        if (param.isReadOnly() || param.isContextMode() || param.isRepositoryValueUsed()) {
+            return false;
+        }
+        return true;
+    }
+    
+    protected Color getWidgetBackground(IElementParameter param, Color normalColor, Color contextColor) {
+        if (param.isContextMode()) {
+            if (contextColor != null) {
+                return contextColor;
+            }
+            return Display.getDefault().getSystemColor(SWT.COLOR_YELLOW);
+        }
+        return normalColor;
     }
 
 }

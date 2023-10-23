@@ -12,7 +12,9 @@
  */
 package org.talend.sdk.component.studio.ui.wizard.page;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,13 +29,19 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.talend.commons.exception.ExceptionHandler;
+import org.talend.core.database.EDatabaseTypeName;
+import org.talend.core.model.metadata.Dbms;
+import org.talend.core.model.metadata.MetadataTalendType;
+import org.talend.core.model.metadata.builder.connection.TacokitDatabaseConnection;
 import org.talend.core.model.process.EComponentCategory;
 import org.talend.core.model.process.Element;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.designer.core.model.FakeElement;
 import org.talend.designer.core.model.components.DummyComponent;
 import org.talend.designer.core.model.components.ElementParameter;
+import org.talend.designer.core.model.components.UnifiedJDBCBean;
 import org.talend.designer.core.model.process.DataNode;
+import org.talend.designer.core.utils.UnifiedComponentUtil;
 import org.talend.sdk.component.server.front.model.ConfigTypeNode;
 import org.talend.sdk.component.studio.Lookups;
 import org.talend.sdk.component.studio.i18n.Messages;
@@ -48,6 +56,7 @@ import org.talend.sdk.component.studio.ui.composite.TaCoKitWizardComposite;
 import org.talend.sdk.component.studio.ui.composite.problemmanager.WizardProblemManager;
 import org.talend.sdk.component.studio.ui.composite.problemmanager.WizardProblemManager.IWizardHandler;
 import org.talend.sdk.component.studio.ui.wizard.TaCoKitConfigurationRuntimeData;
+import org.talend.sdk.component.studio.ui.wizard.TaCoKitConfigurationWizard;
 
 /**
  * DOC cmeng class global comment. Detailled comment
@@ -106,6 +115,41 @@ public class TaCoKitConfigurationWizardPage extends AbsTaCoKitWizardPage {
         final ElementParameter layoutParameter = createLayoutParameter(root, form, category, element);
         parameters.add(layoutParameter);
         element.setElementParameters(parameters);
+        if (isNew && runtimeData.getAdditionalJDBCType() != null) {
+            UnifiedJDBCBean bean = UnifiedComponentUtil.getAdditionalJDBC().get(runtimeData.getAdditionalJDBCType());
+            initComponentIfJDBC(bean);
+        }
+    }
+
+    private void initComponentIfJDBC(UnifiedJDBCBean bean) {
+        if (element.getElementParameter(TacokitDatabaseConnection.KEY_URL) != null) {
+            element.getElementParameter(TacokitDatabaseConnection.KEY_URL).setValue(bean.getUrl());
+        }
+        if (element.getElementParameter(TacokitDatabaseConnection.KEY_DRIVER) != null) {
+            List<Map<String, Object>> list = new ArrayList<>();
+            bean.getPaths().forEach(path -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put(TacokitDatabaseConnection.KEY_DRIVER_PATH, path);
+                list.add(map);
+            });
+            if (!list.isEmpty()) {
+                element.getElementParameter(TacokitDatabaseConnection.KEY_DRIVER).setValue(list);
+            }
+        }
+        if (element.getElementParameter(TacokitDatabaseConnection.KEY_DRIVER_CLASS) != null) {
+            element.getElementParameter(TacokitDatabaseConnection.KEY_DRIVER_CLASS).setValue(bean.getDriverClass());
+        }
+        if (element.getElementParameter(TacokitDatabaseConnection.KEY_DATABASE_MAPPING) != null) {
+            Dbms dbms = MetadataTalendType.getDefaultDbmsFromProduct(bean.getDatabaseId());
+            String dbmsId = null;
+            if (dbms != null && dbms.getProduct().equals(bean.getDatabaseId())) {
+                dbmsId = dbms.getId();
+            } else {
+                Dbms mysqlDbms = MetadataTalendType.getDefaultDbmsFromProduct(EDatabaseTypeName.MYSQL.getProduct().toUpperCase());
+                dbmsId = mysqlDbms.getId();
+            }
+            element.getElementParameter(TacokitDatabaseConnection.KEY_DATABASE_MAPPING).setValue(dbmsId);
+        }
     }
 
     @Override
@@ -114,13 +158,13 @@ public class TaCoKitConfigurationWizardPage extends AbsTaCoKitWizardPage {
             final Composite container = new Composite(parent, SWT.NONE);
             container.setLayoutData(new GridData(GridData.FILL_BOTH));
             container.setLayout(new FormLayout());
-            setControl(container);
-
             final TaCoKitConfigurationRuntimeData runtimeData = getTaCoKitConfigurationRuntimeData();
             configurationModel = getConfigurationItemModel();
             final ConfigTypeNode configTypeNode = runtimeData.getConfigTypeNode();
             final DummyComponent component = new DummyComponent(configTypeNode.getDisplayName());
             final DataNode node = new DataNode(component, component.getName());
+            boolean hasContextBtn = supportContextBtn(configTypeNode);
+            TaCokitForm taCokitForm = new TaCokitForm(container, runtimeData.getConnectionItem(), hasContextBtn, SWT.NONE);
 
             //add version params
             Map<String, ConfigTypeNode> nodes = Lookups.taCoKitCache().getConfigTypeNodeMap();
@@ -135,13 +179,24 @@ public class TaCoKitConfigurationWizardPage extends AbsTaCoKitWizardPage {
                                     .findFirst()
                                     .map(n -> String.valueOf(n.getVersion())).orElse("-1")))
                     .forEach(p -> configurationModel.setValue(p));
-
             tacokitComposite = new TaCoKitWizardComposite(container, SWT.H_SCROLL | SWT.V_SCROLL | SWT.NO_FOCUS, category,
-                    element, configurationModel, true, container.getBackground(), isNew, problemManager);
-            tacokitComposite.setLayoutData(createMainFormData(runtimeData.isAddContextFields()));
+                    element, configurationModel, true, container.getBackground(), isNew, problemManager, ((TaCoKitConfigurationWizard)this.getWizard()).getHelper());
+            tacokitComposite.setLayoutData(createMainFormData(true));
+            taCokitForm.setComposite(tacokitComposite);
+
+            setControl(container);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+    }
+    
+    private boolean supportContextBtn(ConfigTypeNode configTypeNode) {
+        boolean supportContext = EComponentCategory.BASIC == category
+                && "datastore".equalsIgnoreCase(configTypeNode.getConfigurationType());
+        if (supportContext && TacokitDatabaseConnection.KEY_JDBC_DATASTORE_NAME.equals(configTypeNode.getName())) {
+            return true;
+        }
+        return false;
     }
 
     private TaCoKitConfigurationModel getConfigurationItemModel() {
@@ -199,6 +254,7 @@ public class TaCoKitConfigurationWizardPage extends AbsTaCoKitWizardPage {
             tacokitComposite.setPropertyResized(true);
             tacokitComposite.addComponents(true);
             tacokitComposite.refresh();
+
         }
         return next;
     }

@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -249,6 +250,12 @@ public class GenericConnWizard extends CheckLastVersionRepositoryWizard {
         try {
             declaredField.set(objectClass, value);
         } catch (IllegalArgumentException | IllegalAccessException e) {
+        }
+    }
+
+    public void setPathToSave(IPath pathToSave) {
+        if (pathToSave != null) {
+            this.pathToSave = pathToSave;
         }
     }
 

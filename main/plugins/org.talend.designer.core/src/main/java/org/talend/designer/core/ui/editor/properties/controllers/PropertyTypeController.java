@@ -605,6 +605,13 @@ public class PropertyTypeController extends AbstractRepositoryController {
                         realNode = (RepositoryNode) repositoryService
                                 .getRootRepositoryNode(ERepositoryObjectType.METADATA_FILE_HL7);
                     }
+
+                    if (repositoryValue.contains("|") && ERepositoryObjectType.METADATA_TACOKIT_JDBC.getKey()
+                            .equals(repositoryValue.split("\\|")[1])) {
+                        realNode = (RepositoryNode) repositoryService
+                                .getRootRepositoryNode(ERepositoryObjectType.METADATA_TACOKIT_JDBC);
+                    }
+
                     // last resort we assume that the repository value was named after the root component type key
                     if (realNode == null) {
                         realNode = (RepositoryNode) repositoryService.getRootRepositoryNode(ERepositoryObjectType

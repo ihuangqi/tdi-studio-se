@@ -61,10 +61,9 @@ public class StatsAndLogsConstants {
 
     private static final String TERADATA = "TERADATA"; //$NON-NLS-1$
 
-    public static final String JDBC_OUTPUT = "tJDBCOutput";
-
     public static final String[] DB_OUTPUT_COMPONENTS = new String[] {
-            "tJDBCOutput", "tMysqlOutput", "tMSSqlOutput", ORACLE_WITH_SID_CONN_TYPE, ORACLE_WITH_SERVICE_CONN_TYPE, ORACLE_OCI,//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            JobSettingsConstants.JDBC_OUTPUT, "tMysqlOutput", "tMSSqlOutput", ORACLE_WITH_SID_CONN_TYPE, //$NON-NLS-1$ //$NON-NLS-2$
+            ORACLE_WITH_SERVICE_CONN_TYPE, ORACLE_OCI,
             "tPostgresPlusOutput", "tPostgresqlOutput", "tDB2Output", "tSybaseOutput", "tIngresOutput", "tInterbaseOutput", "tSQLiteOutput", "tFirebirdOutput", "tInformixOutput", "tAccessOutput", "tTeradataOutput" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 
 //    public static final String[] SUPPORT_PRODUCT_NAMES1 = new String[] { "MYSQL", "ORACLE", "POSTGRESPLUS", "POSTGRESQL",
@@ -91,7 +90,7 @@ public class StatsAndLogsConstants {
             "tPostgresPlusOutput", "tPostgresqlOutput", "tDB2Output", "tSybaseOutput", "tSQLiteOutput", "tFirebirdOutput" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 
     private static final String[] JAVA_DB_COMPONENTS = new String[] {
-            "tJDBCOutput", "tMysqlOutput", "tMSSqlOutput", ORACLE_SID_ALIAS, ORACLE_SN_ALIAS, ORACLE_OCI_ALIAS, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            JobSettingsConstants.JDBC_OUTPUT, "tMysqlOutput", "tMSSqlOutput", ORACLE_SID_ALIAS, ORACLE_SN_ALIAS, ORACLE_OCI_ALIAS, //$NON-NLS-1$ //$NON-NLS-2$
             "tPostgresPlusOutput", "tPostgresqlOutput", "tDB2Output", "tSybaseOutput", "tSQLiteOutput", "tFirebirdOutput", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
             "tInformixOutput", "tAccessOutput", "tTeradataOutput" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
@@ -114,7 +113,7 @@ public class StatsAndLogsConstants {
                                                                                          // //$NON-NLS};
 
     public static final String[] ORACLE_VERSION_CODE = new String[] {
-            "ORACLE_18", "ORACLE_12", "ORACLE_11" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            "ORACLE_18", "ORACLE_12", "ORACLE_11" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
     public static final String[] ORACLE_VERSION_DRIVER = new String[] {
             "ojdbc8-19.19.0.0.jar", "ojdbc7.jar", "ojdbc6.jar" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

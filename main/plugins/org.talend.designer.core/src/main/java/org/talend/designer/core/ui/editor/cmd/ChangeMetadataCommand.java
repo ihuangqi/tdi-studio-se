@@ -29,6 +29,7 @@ import org.talend.core.model.metadata.IMetadataColumn;
 import org.talend.core.model.metadata.IMetadataTable;
 import org.talend.core.model.metadata.MetadataTalendType;
 import org.talend.core.model.metadata.MetadataToolHelper;
+import org.talend.core.model.metadata.builder.connection.TacokitDatabaseConnection;
 import org.talend.core.model.metadata.designerproperties.RepositoryToComponentProperty;
 import org.talend.core.model.param.EConnectionParameterName;
 import org.talend.core.model.process.EConnectionType;
@@ -902,7 +903,11 @@ public class ChangeMetadataCommand extends AbstractCommand {
             }
             if(((Node) curNode).getComponent().getComponentType() == EComponentType.GENERIC){
                 dbTableElementField = curNode.getElementParameter(EConnectionParameterName.GENERIC_TABLENAME.getDisplayName());
+                if (dbTableElementField == null) {
+                    dbTableElementField = curNode.getElementParameter(TacokitDatabaseConnection.KEY_DATASET_TABLE_NAME);
+                }
             }
+            
             changeTableNameParameter(newdbTableName, olddbTableName, uniqueName, dbTableElementField);
             if (((Node) curNode).getComponent().getName().startsWith("tSAPADSO")) { //$NON-NLS-1$
                 IElementParameter serviceNameElementField = curNode.getElementParameter("SERVICE_NAME"); //$NON-NLS-1$

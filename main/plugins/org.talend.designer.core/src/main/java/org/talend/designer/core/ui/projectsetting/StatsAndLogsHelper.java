@@ -382,7 +382,7 @@ public class StatsAndLogsHelper extends Utils {
         if (type == null || "".equals(type.trim())) { //$NON-NLS-1$
             type = StatsAndLogsConstants.DB_COMPONENTS[languageType][0];
         }
-        param.setValue(type);
+        param.setValue("");
         param.setDisplayName(EParameterName.DB_TYPE.getDisplayName());
         param.setFieldType(EParameterFieldType.CLOSED_LIST);
         param.setCategory(EComponentCategory.STATSANDLOGS);

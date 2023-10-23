@@ -91,7 +91,9 @@ import org.talend.designer.core.model.components.EmfComponent;
 import org.talend.designer.core.ui.editor.cmd.ChangeMetadataCommand;
 import org.talend.designer.core.ui.editor.cmd.PropertyChangeCommand;
 import org.talend.designer.core.ui.editor.nodes.Node;
+import org.talend.designer.core.ui.editor.process.ProcessUpdateManager;
 import org.talend.designer.core.ui.editor.update.UpdateManagerUtils;
+import org.talend.designer.core.utils.ConnectionUtil;
 import org.talend.designer.core.utils.SAPParametersUtils;
 import org.talend.metadata.managment.ui.model.ProjectNodeHelper;
 import org.talend.metadata.managment.ui.utils.ConnectionContextHelper;
@@ -324,6 +326,9 @@ public class UpdateNodeParameterCommand extends Command {
                             }
                             if (param.getFieldType().equals(EParameterFieldType.FILE) && isXsdPath) {
                                 continue;
+                            }                           
+                            if (ProcessUpdateManager.isIgnoreJDBCRepositoryParameter(node, repositoryValue)) {
+                                continue;
                             }
                             IMetadataTable table = null;
                             if (!node.getMetadataList().isEmpty()) {
@@ -477,9 +482,8 @@ public class UpdateNodeParameterCommand extends Command {
                                             for (Object value : valueList) {
                                                 if (value instanceof Map) {
                                                     Map map = new HashMap();
-                                                    String driver = String.valueOf(((Map) value).get("drivers"));
-                                                    MavenArtifact artifact = MavenUrlHelper.parseMvnUrl(TalendTextUtils
-                                                            .removeQuotesIfExist(driver));
+                                                    String driver = ConnectionUtil.extractDriverValueFromMap((Map) value);
+                                                    MavenArtifact artifact = MavenUrlHelper.parseMvnUrl(driver);
                                                     if (artifact != null) {
                                                         driver = artifact.getFileName();
                                                     }
@@ -524,7 +528,8 @@ public class UpdateNodeParameterCommand extends Command {
                                 node.setPropertyValue(param.getName(), objectValue);
                             }
                             if (!("tMDMReceive".equals(node.getComponent().getName()) && "XPATH_PREFIX".equals(param //$NON-NLS-1$ //$NON-NLS-2$
-                                    .getRepositoryValue()))) {
+                                    .getRepositoryValue()))  && !ProcessUpdateManager.isIgnoreJDBCRepositoryParameter(node, repositoryValue)
+                                    && param.getFieldType() != EParameterFieldType.MEMO_SQL) {
                                 param.setRepositoryValueUsed(true);
                                 param.setReadOnly(true);
                                 update = true;

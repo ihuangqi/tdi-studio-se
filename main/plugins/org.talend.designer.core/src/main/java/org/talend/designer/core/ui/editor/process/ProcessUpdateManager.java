@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Display;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.runtime.model.components.IComponentConstants;
+import org.talend.commons.runtime.service.ITaCoKitService;
 import org.talend.commons.runtime.xml.XmlUtil;
 import org.talend.core.CorePlugin;
 import org.talend.core.GlobalServiceRegister;
@@ -66,6 +67,7 @@ import org.talend.core.model.metadata.builder.connection.SAPFunctionUnit;
 import org.talend.core.model.metadata.builder.connection.SAPIDocUnit;
 import org.talend.core.model.metadata.builder.connection.SalesforceModuleUnit;
 import org.talend.core.model.metadata.builder.connection.SalesforceSchemaConnection;
+import org.talend.core.model.metadata.builder.connection.TacokitDatabaseConnection;
 import org.talend.core.model.metadata.builder.connection.ValidationRulesConnection;
 import org.talend.core.model.metadata.builder.connection.XmlFileConnection;
 import org.talend.core.model.metadata.builder.connection.impl.XmlFileConnectionImpl;
@@ -113,6 +115,7 @@ import org.talend.core.runtime.util.ItemDateParser;
 import org.talend.core.service.IDesignerMapperService;
 import org.talend.core.service.IEBCDICProviderService;
 import org.talend.core.service.IMetadataManagmentService;
+import org.talend.core.service.ITaCoKitDependencyService;
 import org.talend.core.ui.ICDCProviderService;
 import org.talend.core.ui.IJobletProviderService;
 import org.talend.core.ui.component.ComponentsFactoryProvider;
@@ -131,6 +134,7 @@ import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.update.UpdateCheckResult;
 import org.talend.designer.core.ui.editor.update.UpdateManagerUtils;
 import org.talend.designer.core.ui.preferences.TalendDesignerPrefConstants;
+import org.talend.designer.core.utils.ConnectionUtil;
 import org.talend.designer.core.utils.SAPParametersUtils;
 import org.talend.metadata.managment.ui.utils.ConnectionContextHelper;
 import org.talend.repository.UpdateRepositoryUtils;
@@ -969,8 +973,10 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
                                         } else if ((param.getName().equals("DRIVER_JAR")
                                                 || param.getName().equals("DRIVER_JAR_IMPLICIT_CONTEXT"))
                                                 && param.getValue() != null) {
-                                            sameValues = isSameDriverList((List<Map<String, Object>>) param.getValue(),
-                                                    (List<Map<String, Object>>) repValue);
+                                            if (param.getValue() instanceof List && repValue instanceof List) {
+                                                sameValues = isSameDriverList((List<Map<String, Object>>) param.getValue(),
+                                                        (List<Map<String, Object>>) repValue);
+                                            }
 
                                         } else if (!param.getValue().equals(repValue)) {
                                             sameValues = false;
@@ -1042,7 +1048,7 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
                     boolean isDriverUri1 = false;
                     boolean isDriverUri2 = false;
                     for (Map<String, Object> driverItem1 : lst1) {
-                        Object driver1 = driverItem1.get("drivers");
+                        Object driver1 = ConnectionUtil.extractDriverValueFromMap(driverItem1);
                         if (driver1 != null) {
                             String val = TalendQuoteUtils.removeQuotes(String.valueOf(driver1));
                             driverSet1.add(val);
@@ -1052,7 +1058,7 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
                         }
                     }
                     for (Map<String, Object> driverItem2 : lst2) {
-                        Object driver2 = driverItem2.get("drivers");
+                        Object driver2 = ConnectionUtil.extractDriverValueFromMap(driverItem2);
                         if (driver2 != null) {
                             String val = TalendQuoteUtils.removeQuotes(String.valueOf(driver2));
                             driverSet2.add(val);
@@ -1505,7 +1511,7 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
                                 IMetadataTable table = null;
                                 IGenericWizardService wizardService = null;
                                 if (GlobalServiceRegister.getDefault().isServiceRegistered(IGenericWizardService.class)) {
-                                    wizardService = (IGenericWizardService) GlobalServiceRegister.getDefault()
+                                    wizardService = GlobalServiceRegister.getDefault()
                                             .getService(IGenericWizardService.class);
                                 }
                                 // Generic
@@ -1516,7 +1522,7 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
                                         if (metadataTable.getLabel().equals(schemaName)) {
                                             if (GlobalServiceRegister.getDefault()
                                                     .isServiceRegistered(IMetadataManagmentService.class)) {
-                                                IMetadataManagmentService mmService = (IMetadataManagmentService) GlobalServiceRegister
+                                                IMetadataManagmentService mmService = GlobalServiceRegister
                                                         .getDefault().getService(IMetadataManagmentService.class);
                                                 table = mmService.convertMetadataTable(metadataTable);
                                             }
@@ -1663,7 +1669,7 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
         IExternalData externalData = node.getExternalNode().getExternalData();
         List<UpdateResult> schemaResults = new ArrayList<UpdateResult>();
 
-        IDesignerMapperService service = (IDesignerMapperService) GlobalServiceRegister.getDefault()
+        IDesignerMapperService service = GlobalServiceRegister.getDefault()
                 .getService(IDesignerMapperService.class);
         if (service != null) {
             List<String> schemaIds = service.getRepositorySchemaIds(externalData);
@@ -1745,7 +1751,7 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
         List<UpdateResult> schemaResults = new ArrayList<UpdateResult>();
 
         if (PluginChecker.isEBCDICPluginLoaded()) {
-            IEBCDICProviderService service = (IEBCDICProviderService) GlobalServiceRegister.getDefault()
+            IEBCDICProviderService service = GlobalServiceRegister.getDefault()
                     .getService(IEBCDICProviderService.class);
             if (service != null) {
                 EbcdicConnectionItem repositoryItem = service.getRepositoryItem(node);
@@ -2005,7 +2011,11 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
                             if (param.getFieldType() == EParameterFieldType.SCHEMA_REFERENCE) {
                                 continue;
                             }
-                            String repositoryValue = getReposiotryValueForOldJDBC(node, repositoryConnection, param);
+                            
+                            String repositoryValue = getReposiotryValueForOldJDBC(node, repositoryConnection, param);                            
+                            if (isIgnoreJDBCRepositoryParameter (node, repositoryValue)) {
+                                continue;
+                            }
                             String relatedComponent = node.getComponent().getName();
                             if ((repositoryValue != null) && (param.isShow(node.getElementParameters())
                                     || useStrParam != null && ("PROPERTIES_STRING".equals(repositoryValue)
@@ -2029,7 +2039,7 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
                                         table, relatedComponent, contextData);
                                 if (objectValue == null || "".equals(objectValue)) {
                                     if (GlobalServiceRegister.getDefault().isServiceRegistered(IESBService.class)) {
-                                        IESBService service = (IESBService) GlobalServiceRegister.getDefault()
+                                        IESBService service = GlobalServiceRegister.getDefault()
                                                 .getService(IESBService.class);
                                         if (service != null) {
                                             Object objectValueFromESB = service.getValue(item, repositoryValue, node);
@@ -2043,7 +2053,7 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
                                 if (param.getName().equals(EParameterName.CDC_TYPE_MODE.getName())
                                         && item instanceof DatabaseConnectionItem) {
                                     if (PluginChecker.isCDCPluginLoaded()) {
-                                        ICDCProviderService service = (ICDCProviderService) GlobalServiceRegister.getDefault()
+                                        ICDCProviderService service = GlobalServiceRegister.getDefault()
                                                 .getService(ICDCProviderService.class);
                                         if (service != null) {
                                             try {
@@ -2201,7 +2211,21 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
                                                 if (!sameValues) {
                                                     break;
                                                 }
-                                            } else if ("ENTRY_PROPERTIES".equals(param.getName()) && oldList != null //$NON-NLS-1$
+                                            } else if (TacokitDatabaseConnection.KEY_DRIVER.equals(param.getName())) {
+                                                sameValues = compareMapList(objectValue, oldList,
+                                                        new String[] { TacokitDatabaseConnection.KEY_DRIVER_PATH,
+                                                                TacokitDatabaseConnection.KEY_DRIVER_NAME });
+                                            } else if (TacokitDatabaseConnection.KEY_DATASTORE_DRIVER.equals(param.getName())) {
+                                                sameValues = compareMapList(objectValue, oldList,
+                                                        new String[] { TacokitDatabaseConnection.KEY_DATASTORE_DRIVER_PATH,
+                                                                TacokitDatabaseConnection.KEY_DATASTORE_DRIVER_NAME });
+                                            } else if (TacokitDatabaseConnection.KEY_SP_DATASTORE_DRIVER
+                                                    .equals(param.getName())) {
+                                                sameValues = compareMapList(objectValue, oldList,
+                                                        new String[] { TacokitDatabaseConnection.KEY_SP_DATASTORE_DRIVER_PATH,
+                                                                TacokitDatabaseConnection.KEY_SP_DATASTORE_DRIVER_NAME });
+                                            }
+                                            if ("ENTRY_PROPERTIES".equals(param.getName()) && oldList != null //$NON-NLS-1$
                                                     && objectValue instanceof List) {
                                                 sameValues = compareMapList(objectValue, oldList,
                                                         new String[] { "KEY", "VALUE" });
@@ -2213,6 +2237,44 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
                                                     && objectValue instanceof List) {
                                                 sameValues = compareMapList(objectValue, oldList,
                                                         new String[] { "SCHEMA_COLUMN", "QUERY", "NODECHECK" });
+                                            } else {
+                                                boolean isTacokitComponent = false;
+                                                if (GlobalServiceRegister.getDefault()
+                                                        .isServiceRegistered(ITaCoKitDependencyService.class)) {
+                                                    ITaCoKitDependencyService tckService = (ITaCoKitDependencyService) GlobalServiceRegister
+                                                            .getDefault().getService(ITaCoKitDependencyService.class);
+                                                    if (tckService != null) {
+                                                        IComponent component = node.getComponent();
+                                                        List<IComponent> componentList = new ArrayList<IComponent>();
+                                                        componentList.add(component);
+                                                        if (tckService.hasTaCoKitComponents(componentList.stream())) {
+                                                            isTacokitComponent = true;
+                                                        }
+                                                    }
+                                                }
+                                                if (isTacokitComponent && ITaCoKitService.getInstance() != null
+                                                        && objectValue instanceof String) {
+                                                    List<Map<String, Object>> convertMapList = ITaCoKitService.getInstance()
+                                                            .convertToTable((String) objectValue);
+                                                    if (convertMapList.size() != oldList.size()) {
+                                                        sameValues = false;
+                                                    }
+                                                    for (int i = 0; i < convertMapList.size(); i++) {
+                                                        if (convertMapList.get(i).keySet().size() != oldList.get(i).keySet()
+                                                                .size()) {
+                                                            sameValues = false;
+                                                            break;
+                                                        }
+                                                        for (String key : convertMapList.get(i).keySet()) {
+                                                            if (!StringUtils.equals(
+                                                                    String.valueOf(convertMapList.get(i).get(key)),
+                                                                    String.valueOf(oldList.get(i).get(key)))) {
+                                                                sameValues = false;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                }
                                             }
                                         } else
                                         // check the value
@@ -2386,10 +2448,14 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
                                             && param.getName().equals(UpdatesConstants.MAPPING))
                                     && !("tFileInputEBCDIC".equals(node.getComponent().getName())
                                             && "DATA_FILE".equals(repositoryValue))
+                                    && !isIgnoreJDBCRepositoryParameter (node, repositoryValue)
                                     && param.isShow(node.getElementParameters())) {
                                 param.setRepositoryValueUsed(true);
                                 param.setReadOnly(true);
                             }
+                        }
+                        if (node instanceof INode) {
+                            contextData.put("NODE", (INode) node);
                         }
                         // for context mode(bug 5198)
                         List<UpdateResult> contextResults = checkParameterContextMode(node.getElementParameters(),
@@ -2406,7 +2472,7 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
                         // Added TDQ-11688, check pattern update
                         ITDQPatternService service = null;
                         if (GlobalServiceRegister.getDefault().isServiceRegistered(ITDQPatternService.class)) {
-                            service = (ITDQPatternService) GlobalServiceRegister.getDefault()
+                            service = GlobalServiceRegister.getDefault()
                                     .getService(ITDQPatternService.class);
                         }
                         // for single pattern component
@@ -2461,6 +2527,17 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
         }
 
         return propertiesResults;
+    }
+    
+    public static boolean isIgnoreJDBCRepositoryParameter(final Node node, String repositoryValue) {
+        if (node.getComponent().getName() != null && node.getComponent().getName().contains("JDBC")
+                && ((TacokitDatabaseConnection.KEY_USE_AUTO_COMMIT.equals(repositoryValue)
+                        || TacokitDatabaseConnection.KEY_AUTO_COMMIT.equals(repositoryValue)
+                        || TacokitDatabaseConnection.KEY_DATASET_TABLE_NAME.equals(repositoryValue)
+                        || TacokitDatabaseConnection.KEY_DATASET_SQL_QUERY.equals(repositoryValue)))) {
+            return true;
+        }
+        return false;
     }
 
     public boolean compareMapList(Object objectValue, List<Map<String, Object>> oldList, String[] keys) {
@@ -2523,7 +2600,7 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
                 Map<String, Object> oldMap = oldList.get(i);
                 Map<String, Object> objectMap = (Map<String, Object>) objectList.get(i);
                 String oldDriver = String.valueOf(oldMap.get(nodeParamDriverKey));
-                String driver = String.valueOf(objectMap.get("drivers"));
+                String driver = ConnectionUtil.extractDriverValueFromMap(objectMap);
                 sameValues = isSameDriver(oldDriver, driver);
                 if (!sameValues) {
                     break;
@@ -2557,7 +2634,7 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
     private void checkMultiPattern(final Node node, List<UpdateResult> propertiesResults, List<IProcess2> openedProcesses) {
         ITDQPatternService service = null;
         if (GlobalServiceRegister.getDefault().isServiceRegistered(ITDQPatternService.class)) {
-            service = (ITDQPatternService) GlobalServiceRegister.getDefault().getService(ITDQPatternService.class);
+            service = GlobalServiceRegister.getDefault().getService(ITDQPatternService.class);
         }
         if (service != null) {
             IElementParameter schemasTableParam = node.getElementParameter("SCHEMA_PATTERN_CHECK");
@@ -2923,7 +3000,7 @@ public class ProcessUpdateManager extends AbstractUpdateManager {
 
         List<INode> jobletNodes = new ArrayList<INode>();
         if (PluginChecker.isJobLetPluginLoaded()) {
-            IJobletProviderService service = (IJobletProviderService) GlobalServiceRegister.getDefault()
+            IJobletProviderService service = GlobalServiceRegister.getDefault()
                     .getService(IJobletProviderService.class);
             if (service != null) {
                 for (Node node : (List<Node>) process.getGraphicalNodes()) {

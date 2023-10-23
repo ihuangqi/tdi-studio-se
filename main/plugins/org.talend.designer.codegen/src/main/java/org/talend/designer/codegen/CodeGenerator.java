@@ -656,7 +656,8 @@ public class CodeGenerator implements ICodeGenerator {
     }
 
     private boolean isTacokitProcessor(final INode node) {
-        return "org.talend.sdk.component.studio.ComponentModel".equals(node.getComponent().getClass().getName())
+        final String componentModelClass = node.getComponent().getClass().getName();
+        return ("org.talend.sdk.component.studio.ComponentModel".equals(componentModelClass) || "org.talend.sdk.component.studio.AdditionalJDBCComponentModel".equals(componentModelClass))
                 && !NodeUtil.getIncomingConnections(node, IConnectionCategory.DATA).isEmpty(); //has input data
     }
 

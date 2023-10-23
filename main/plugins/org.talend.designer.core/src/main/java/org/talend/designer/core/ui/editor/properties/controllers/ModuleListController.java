@@ -363,11 +363,17 @@ public class ModuleListController extends AbstractElementPropertySectionControll
             text.setText(txt);
         }
 
-        if (param.isContextMode()) {
+        if (isTacokit(param) || param.isContextMode()) {
             Button buttonEdit = (Button) hashCurControls.get(param.getName() + BUTTON_EDIT);
-            text.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-            text.setEnabled(false);
-            buttonEdit.setEnabled(false);
+            text.setBackground(getWidgetBackground(param, null, Display.getDefault().getSystemColor(SWT.COLOR_RED)));
+            text.setEnabled(isWidgetEnabled(param));
+            buttonEdit.setEnabled(isWidgetEnabled(param));
+        }
+        if (isTacokit(param)) {
+            Button buttonEdit = (Button) hashCurControls.get(param.getName() + BUTTON_EDIT);
+            text.setBackground(getWidgetBackground(param, null, Display.getDefault().getSystemColor(SWT.COLOR_RED)));
+            text.setEnabled(isWidgetEnabled(param));
+            buttonEdit.setEnabled(isWidgetEnabled(param));
         }
     }
 

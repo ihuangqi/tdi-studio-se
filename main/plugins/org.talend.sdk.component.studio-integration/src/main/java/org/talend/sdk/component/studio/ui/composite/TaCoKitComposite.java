@@ -225,7 +225,8 @@ public class TaCoKitComposite extends MissingSettingsMultiThreadDynamicComposite
         final Composite schemaComposite = addSchemas(commonComposite, existConnectionComposite);
         final Composite statCatcherComposite = addStatCatcher(schemaComposite);
         final Composite paralelizeComposite = addParalelize(commonComposite, statCatcherComposite);
-        final Composite lastComposite = addParalelizeNum(commonComposite, paralelizeComposite);
+        final Composite queryTypeComposite = addQueryType(commonComposite, paralelizeComposite);
+        final Composite lastComposite = addParalelizeNum(commonComposite, queryTypeComposite);
         return lastComposite;
     }
 
@@ -309,6 +310,17 @@ public class TaCoKitComposite extends MissingSettingsMultiThreadDynamicComposite
             addSchemaWidget(schemaComposite, schema);
         }
         return previousComposite;
+    }
+
+    protected Composite addQueryType(final Composite parent, final Composite previous) {
+        final Composite composite = new Composite(parent, SWT.NONE);
+        composite.setBackground(parent.getBackground());
+        composite.setLayout(new FormLayout());
+        composite.setLayoutData(levelLayoutData(previous, 3));
+        final IElementParameter param = elem.getElementParameter("QUERYSTORE"); //$NON-NLS-1$
+        updateParameters(param);
+        addWidgetIfActive(composite, param);
+        return composite;
     }
 
     protected Composite addStatCatcher(final Composite parent) {
@@ -406,6 +418,19 @@ public class TaCoKitComposite extends MissingSettingsMultiThreadDynamicComposite
                     }
                     fillComposite(columnComposite, column, null);
                 }
+            }
+        }
+    }
+
+    private void updateParameters(IElementParameter param) {
+        if (param != null) {
+            IElementParameter queryParam = elem.getElementParameter("configuration.dataSet.sqlQuery"); //$NON-NLS-1$
+            if (queryParam != null) {
+                int rowNum = queryParam.getNumRow();
+                param.setShow(true);
+                param.setNumRow(rowNum);
+                param.getChildParameters().get(EParameterName.QUERYSTORE_TYPE.getName()).setNumRow(rowNum);
+                param.getChildParameters().get(EParameterName.REPOSITORY_QUERYSTORE_TYPE.getName()).setNumRow(rowNum);
             }
         }
     }

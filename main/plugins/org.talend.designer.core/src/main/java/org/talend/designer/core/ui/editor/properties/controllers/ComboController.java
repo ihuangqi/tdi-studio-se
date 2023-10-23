@@ -182,7 +182,7 @@ public class ComboController extends AbstractElementPropertySectionController {
         combo.setItems(getListToDisplay(param));
         combo.setEditable(false);
         cLayout.setBackground(subComposite.getBackground());
-        combo.setEnabled(!param.isReadOnly());
+        combo.setEnabled(isWidgetEnabled(param));
         combo.addSelectionListener(listenerSelection);
         combo.setData(PARAMETER_NAME, param.getName());
         int nbLines = param.getNbLines();
@@ -596,12 +596,10 @@ public class ComboController extends AbstractElementPropertySectionController {
 
             combo.setVisible(true);
         }
-
-        if (param.isContextMode()) {
-            combo.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_YELLOW));
-            combo.setEnabled(false);
+        if (isTacokit(param) || param.isContextMode()) {
+            combo.setEnabled(isWidgetEnabled(param));
+            combo.setBackground(getWidgetBackground(param, null, Display.getDefault().getSystemColor(SWT.COLOR_YELLOW)));
         }
-
     }
 
     private String[] getListToDisplay(IElementParameter param) {

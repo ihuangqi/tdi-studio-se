@@ -67,11 +67,11 @@ public final class ValueConverter {
                 } else {
                     keyValue = entry.split(":");
                 }
-                if (keyValue.length < 1) {
+                if (keyValue.length < 2) {
                     continue;
                 }
                 String key = keyValue[0];
-                String value = keyValue[1];
+                String value = "null".equals(keyValue[1]) ? null : keyValue[1];
                 element.put(key, value);
             }
             table.add(element);

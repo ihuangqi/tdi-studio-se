@@ -78,7 +78,6 @@ import org.talend.core.ui.services.ISQLBuilderService;
 import org.talend.core.utils.TalendQuoteUtils;
 import org.talend.designer.core.i18n.Messages;
 import org.talend.designer.core.model.components.EParameterName;
-import org.talend.designer.core.model.components.ElementParameter;
 import org.talend.designer.core.ui.editor.cmd.PropertyChangeCommand;
 import org.talend.designer.core.ui.editor.cmd.RepositoryChangeQueryCommand;
 import org.talend.designer.core.ui.editor.nodes.Node;
@@ -584,17 +583,6 @@ public class SqlMemoController extends AbstractElementPropertySectionController 
             String typeParamValue = String.valueOf(typeParam.getValue());
             if ("Hive".equalsIgnoreCase(typeParamValue) || "Impala".equalsIgnoreCase(typeParamValue)) { //$NON-NLS-1$//$NON-NLS-2$
                 return false;
-            }
-        }
-        if (curParameter != null) {
-            if (curParameter instanceof ElementParameter) {
-                Object sourceName = ((ElementParameter) curParameter).getTaggedValue("org.talend.sdk.component.source");//$NON-NLS-1$
-                if ("tacokit".equalsIgnoreCase(String.valueOf(sourceName))) {//$NON-NLS-1$
-                    Object familyValue = elem.getPropertyValue(EParameterName.FAMILY.getName());
-                    if (isInWizard() || "jdbc".equalsIgnoreCase(String.valueOf(familyValue))) { //$NON-NLS-1$
-                        return false;
-                    }
-                }
             }
         }
         return true;

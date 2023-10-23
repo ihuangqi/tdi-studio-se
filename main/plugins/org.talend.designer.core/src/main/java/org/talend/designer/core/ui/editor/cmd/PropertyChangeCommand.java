@@ -58,6 +58,7 @@ import org.talend.designer.core.model.components.Expression;
 import org.talend.designer.core.model.process.jobsettings.JobSettingsConstants;
 import org.talend.designer.core.ui.editor.connections.Connection;
 import org.talend.designer.core.ui.editor.nodes.Node;
+import org.talend.designer.core.ui.editor.process.ProcessUpdateManager;
 import org.talend.designer.core.ui.views.CodeView;
 import org.talend.designer.core.ui.views.jobsettings.JobSettings;
 import org.talend.designer.core.ui.views.properties.ComponentSettings;
@@ -365,7 +366,7 @@ public class PropertyChangeCommand extends Command {
                 String repositoryValue = param.getRepositoryValue();
                 if ((repositoryValue != null)
                         && (!param.getName().equals(EParameterName.PROPERTY_TYPE.getName()))
-                        && param.getFieldType() != EParameterFieldType.MEMO_SQL
+                        && param.getFieldType() != EParameterFieldType.MEMO_SQL && !ProcessUpdateManager.isIgnoreJDBCRepositoryParameter(node, param.getName())
                         && !("tMDMReceive".equals(node.getComponent().getName()) && "XPATH_PREFIX".equals(param //$NON-NLS-1$ //$NON-NLS-2$
                                 .getRepositoryValue()))
                         && !("tSAPOutput".equals(node.getComponent().getName()) && param.getName().equals(

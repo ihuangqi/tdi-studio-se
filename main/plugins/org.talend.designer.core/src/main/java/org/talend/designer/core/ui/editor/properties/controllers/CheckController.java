@@ -224,18 +224,18 @@ public class CheckController extends AbstractElementPropertySectionController {
         if (checkBtn == null || checkBtn.isDisposed()) {
             return;
         }
-        if (!param.isContextMode()) {
-            if (value == null) {
-                checkBtn.setSelection(false);
-            } else if (value instanceof String) {
-                checkBtn.setSelection(Boolean.valueOf((String) value));
-            } else {
-                checkBtn.setSelection((Boolean) value);
-            }
+        
+        if (value == null) {
+            checkBtn.setSelection(false);
+        } else if (value instanceof String) {
+            checkBtn.setSelection(Boolean.valueOf((String) value));
         } else {
-            checkBtn.setSelection(true);
-            checkBtn.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_YELLOW));
-            checkBtn.setEnabled(false);
+            checkBtn.setSelection((Boolean) value);
+        }
+        
+        if (isTacokit(param) || param.isContextMode()) {
+            checkBtn.setEnabled(isWidgetEnabled(param));
+            checkBtn.setBackground(getWidgetBackground(param, null, Display.getDefault().getSystemColor(SWT.COLOR_YELLOW)));
         }
     }
 }

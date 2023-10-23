@@ -55,14 +55,14 @@ public class GenericDragAndDropHandlerTest {
         Connection connection = mock(Connection.class);
         AbstractDragAndDropServiceHandler abstractDragAndDropServiceHandler = mock(AbstractDragAndDropServiceHandler.class);
         List<ComponentProperties> componentProsList = new ArrayList<>();
-        boolean isGenericRepositoryValue = abstractDragAndDropServiceHandler.isGenericRepositoryValue(componentProsList,
-                "paramName1");//$NON-NLS-1$
+        boolean isGenericRepositoryValue = abstractDragAndDropServiceHandler.isGenericRepositoryValue(connection,
+                componentProsList, "paramName1");//$NON-NLS-1$
         assertEquals(false, isGenericRepositoryValue);
 
         connection = mock(GenericConnection.class);
         GenericDragAndDropHandler genericDragAndDropHandler = mock(GenericDragAndDropHandler.class);
         when(genericDragAndDropHandler.canHandle(connection)).thenReturn(true);
-        isGenericRepositoryValue = genericDragAndDropHandler.isGenericRepositoryValue(null, "paramName2");//$NON-NLS-1$
+        isGenericRepositoryValue = genericDragAndDropHandler.isGenericRepositoryValue(connection, null, "paramName2");//$NON-NLS-1$
         assertEquals(false, isGenericRepositoryValue);
 
         // PowerMockito.mockStatic(ComponentsUtils.class);

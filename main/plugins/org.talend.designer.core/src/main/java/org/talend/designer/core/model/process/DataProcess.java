@@ -55,6 +55,7 @@ import org.talend.core.model.metadata.MetadataToolHelper;
 import org.talend.core.model.metadata.builder.connection.ConditionType;
 import org.talend.core.model.metadata.builder.connection.DatabaseConnection;
 import org.talend.core.model.metadata.builder.connection.RuleType;
+import org.talend.core.model.metadata.builder.connection.TacokitDatabaseConnection;
 import org.talend.core.model.metadata.builder.connection.ValidationRulesConnection;
 import org.talend.core.model.process.AbstractConnection;
 import org.talend.core.model.process.AbstractExternalNode;
@@ -1184,15 +1185,25 @@ public class DataProcess implements IGeneratingProcess {
                         }
                     }
                     if ((paramSource != null) && (paramTarget != null)) {
-                        paramTarget.setDefaultClosedListValue(paramSource.getDefaultClosedListValue());
-                        paramTarget.setListItemsDisplayCodeName(paramSource.getListItemsDisplayCodeName());
-                        paramTarget.setListItemsValue(paramSource.getListItemsValue());
+                        boolean isExtraDriverParam = TacokitDatabaseConnection.KEY_DATASTORE_DRIVER
+                                .equalsIgnoreCase(paramTarget.getName())
+                                && JobSettingsConstants.getExtraParameterName(EParameterName.DRIVER_JAR.getName())
+                                        .equalsIgnoreCase(paramSource.getName());
+                        if (!isExtraDriverParam) {
+                            paramTarget.setDefaultClosedListValue(paramSource.getDefaultClosedListValue());
+                            paramTarget.setListItemsDisplayCodeName(paramSource.getListItemsDisplayCodeName());
+                            paramTarget.setListItemsValue(paramSource.getListItemsValue());
+                        }
 
                         // adjust destination value based on the connector name.(only apply to multi-input virtual
                         // component)
                         if (multipleComponentManager.isSetConnector() && param.getSourceComponent().equals("self") //$NON-NLS-1$
                                 && param.getSourceValue().equals("UNIQUE_NAME") && param.getTargetValue().equals("DESTINATION")) { //$NON-NLS-1$ //$NON-NLS-2$
                             paramTarget.setValue(paramSource.getValue() + multipleComponentManager.getConnector());
+                        } else if (isExtraDriverParam) {
+                            Object value = paramSource.getValue();
+                            StatsAndLogsManager.getMVNDriverJar(paramTarget, value);
+                            paramTarget.setValue(value);
                         } else {
                             paramTarget.setValue(paramSource.getValue());
                         }
@@ -1471,7 +1482,7 @@ public class DataProcess implements IGeneratingProcess {
             AbstractNode dataNode;
             dataNode = (AbstractNode) buildCheckMap.get(graphicalNode);
             checkMultipleMap.put(graphicalNode, dataNode);
-            if (dataNode.isGeneratedAsVirtualComponent()) {
+            if (dataNode != null && dataNode.isGeneratedAsVirtualComponent()) {
                 List<IMultipleComponentManager> multipleComponentManagers = graphicalNode.getComponent()
                         .getMultipleComponentManagers();
                 try {
@@ -1962,7 +1973,7 @@ public class DataProcess implements IGeneratingProcess {
                             refPara.setValue(connNode.getUniqueName());
                             IGenericDBService dbService = null;
                             if (GlobalServiceRegister.getDefault().isServiceRegistered(IGenericDBService.class)) {
-                                dbService = (IGenericDBService) GlobalServiceRegister.getDefault()
+                                dbService = GlobalServiceRegister.getDefault()
                                         .getService(IGenericDBService.class);
                             }
                             if (dbService != null) {
@@ -2017,7 +2028,7 @@ public class DataProcess implements IGeneratingProcess {
         
         boolean isJoblet = false;
         if(GlobalServiceRegister.getDefault().isServiceRegistered(IJobletProviderService.class)) {
-            IJobletProviderService service = (IJobletProviderService) GlobalServiceRegister.getDefault().getService(
+            IJobletProviderService service = GlobalServiceRegister.getDefault().getService(
                     IJobletProviderService.class);
             if (service != null && service.isJobletProcess(this.process)) {
             	isJoblet = true;
@@ -3397,7 +3408,7 @@ public class DataProcess implements IGeneratingProcess {
                     boolean onSubjobOkbeforeBDNode = inConns.size() > 0;
                     if (onSubjobOkbeforeBDNode) {
                         ((AbstractConnection) inConns.get(0)).setTarget(addedConfDataNode);
-                        IConnection connection = (IConnection) inConns.get(0);
+                        IConnection connection = inConns.get(0);
                         bdDataNode.getIncomingConnections().remove(connection);
                         ((List<IConnection>) addedConfDataNode.getIncomingConnections()).add(connection);
 
@@ -3760,7 +3771,7 @@ public class DataProcess implements IGeneratingProcess {
         List<INode> orginalList = new ArrayList<INode>(graphicalNodeList);
         IJobletProviderService jobletService = null;
         if (GlobalServiceRegister.getDefault().isServiceRegistered(IJobletProviderService.class)) {
-            jobletService = (IJobletProviderService) GlobalServiceRegister.getDefault().getService(IJobletProviderService.class);
+            jobletService = GlobalServiceRegister.getDefault().getService(IJobletProviderService.class);
         }
         boolean needReplaceForJoblet = false;
         for (INode node : orginalList) {

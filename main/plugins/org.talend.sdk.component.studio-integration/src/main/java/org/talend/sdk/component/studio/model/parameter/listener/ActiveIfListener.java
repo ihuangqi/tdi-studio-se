@@ -31,8 +31,9 @@ import java.util.stream.Stream;
 import org.talend.core.model.components.IComponent;
 import org.talend.core.model.process.IElement;
 import org.talend.core.model.process.IElementParameter;
-import org.talend.core.model.process.INode;
-import org.talend.designer.core.model.FakeElement;
+import org.talend.designer.core.model.components.DummyComponent;
+import org.talend.designer.core.model.process.DataNode;
+import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.sdk.component.studio.model.parameter.PropertyDefinitionDecorator;
 import org.talend.sdk.component.studio.model.parameter.TaCoKitElementParameter;
 import org.talend.sdk.component.studio.model.parameter.TableElementParameter;
@@ -189,12 +190,23 @@ public class ActiveIfListener implements PropertyChangeListener {
         List<String> contextList = new ArrayList<String>();
         contextList.add(TaCoKitConst.STUDIO_SCOPE);
         if (targetParam != null) {
+            boolean checkComponent = false;
+            IComponent component = null;
             IElement element = targetParam.getElement();
-            if (element instanceof FakeElement) {
-                contextList.add(TaCoKitConst.STUDIO_METADATA_SCOPE);
-            } else if (element instanceof INode) {
+            if (element instanceof DataNode) {
+                component = ((DataNode) element).getComponent();
+                if (component instanceof DummyComponent) {
+                    // wizard
+                    contextList.add(TaCoKitConst.STUDIO_METADATA_SCOPE);
+                } else {
+                    checkComponent = true;
+                }
+            } else if (element instanceof Node) {
+                component = ((Node) element).getComponent();
+                checkComponent = true;
+            }
+            if (checkComponent) {
                 contextList.add(TaCoKitConst.STUDIO_COMPONENT_SCOPE);
-                IComponent component = ((INode) element).getComponent();
                 if (component != null) {
                     String componentName = component.getName();
                     if (componentName != null && componentName.endsWith("Connection")) { //$NON-NLS-1$

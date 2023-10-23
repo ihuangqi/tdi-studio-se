@@ -68,6 +68,8 @@ import org.talend.core.model.components.IComponent;
 import org.talend.core.model.components.IComponentsFactory;
 import org.talend.core.model.components.IComponentsHandler;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.runtime.services.IGenericService;
+import org.talend.core.service.ITCKUIService;
 import org.talend.core.ui.component.ComponentsFactoryProvider;
 import org.talend.core.ui.component.TalendPaletteGroup;
 import org.talend.core.ui.component.settings.ComponentsSettingsHelper;
@@ -468,6 +470,10 @@ public final class TalendEditorPaletteFactory {
         componentSet.addAll(getStitchPseudoComponents(lowerCasedKeyword));
 
         addDelegateComponents(compFac, componentSet, lowerCasedKeyword);
+        
+        String jdbcTypeName = ITCKUIService.get().getTCKJDBCType().getLabel();
+        componentSet.removeIf(comp -> IGenericService.getService().isTcompv0(comp)
+                && (UnifiedComponentUtil.isAdditionalJDBCComponent(comp.getName()) || comp.getName().contains(jdbcTypeName)));
 
         List<IComponent> relatedComponents = null;
         if (componentSet == null || componentSet.isEmpty()) {
@@ -610,6 +616,10 @@ public final class TalendEditorPaletteFactory {
     private static void addComponents(Collection<IComponent> componentSet, ComponentHit[] hitArray) {
         for (ComponentHit ch : hitArray) {
             IComponent component = ch.getComponent();
+            if (IGenericService.getService().isTcompv0(component)
+                    && UnifiedComponentUtil.isAdditionalJDBCComponent(component.getName())) {
+                continue;
+            }
             componentSet.add(component);
         }
     }

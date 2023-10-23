@@ -40,7 +40,9 @@ import org.talend.core.model.process.INode;
 import org.talend.core.model.process.INodeConnector;
 import org.talend.core.model.utils.IComponentName;
 import org.talend.core.model.utils.NodeUtil;
+import org.talend.core.runtime.services.IGenericService;
 import org.talend.core.runtime.services.IGenericWizardService;
+import org.talend.core.service.ITCKUIService;
 import org.talend.core.ui.component.ComponentsFactoryProvider;
 import org.talend.designer.core.IUnifiedComponentService;
 import org.talend.designer.core.model.components.EParameterName;
@@ -626,6 +628,17 @@ public class UnifiedComponentService implements IUnifiedComponentService {
                                 .getService(IComponentsService.class);
                         IComponent emfComponent = compService.getComponentsFactory().get(obj.getComponentName(),
                                 dcomp.getPaletteType());
+                        if (IGenericService.getService().isTcompv0(emfComponent)
+                                && (UnifiedComponentUtil.isAdditionalJDBCComponent(emfComponent.getName())
+                                        || emfComponent.getName().contains(ITCKUIService.get().getTCKJDBCType().getLabel()))) {
+                            IComponent tckComp = IComponentsService.get().getComponentsFactory().getComponents().stream()
+                                    .filter(c -> emfComponent.getName().equals("t" + c.getName())
+                                            && !IGenericService.getService().isTcompv0(c))
+                                    .findFirst().orElse(emfComponent);
+                            if (tckComp != null) {
+                                return tckComp;
+                            }
+                        }
                         return emfComponent;
                     }
                 }
@@ -646,7 +659,9 @@ public class UnifiedComponentService implements IUnifiedComponentService {
             return null;
         }
         DelegateComponent dComp = (DelegateComponent) delegateComponent;
-        UnifiedObject unifiedObject = dComp.getUnifiedObjectByName(node.getComponent().getName());
+        String compName = node.getComponent().getName();
+        compName = StringUtils.prependIfMissing(compName, "t");
+        UnifiedObject unifiedObject = dComp.getUnifiedObjectByName(compName);
         if (unifiedObject == null) {
             return null;
         }
