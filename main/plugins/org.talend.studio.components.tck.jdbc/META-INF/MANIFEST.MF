@@ -6,7 +6,11 @@ Bundle-SymbolicName: org.talend.studio.components.tck.jdbc;singleton:=true
 Bundle-Version: 8.8.8.qualifier
 Bundle-Localization: plugin
 Eclipse-LazyStart: true
-Require-Bundle: org.talend.sdk.component.studio-integration,
+Require-Bundle: org.eclipse.emf.ecore,
+ org.eclipse.jface,
+ org.eclipse.ui.workbench,
+ org.apache.commons.lang3,
+ org.talend.sdk.component.studio-integration,
  org.talend.core,
  org.talend.commons.ui,
  org.talend.model,
@@ -14,7 +18,10 @@ Require-Bundle: org.talend.sdk.component.studio-integration,
  org.talend.metadata.managment.ui,
  org.talend.sqlbuilder,
  org.talend.repository.metadata,
- org.talend.metadata.managment
+ org.talend.metadata.managment,
+ org.talend.common.ui.runtime,
+ org.talend.commons.runtime,
+ org.talend.core.runtime
 Bundle-Vendor: .Talend SA.
 Import-Package: org.eclipse.core.runtime,
  org.slf4j
