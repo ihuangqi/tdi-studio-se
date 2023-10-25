@@ -46,6 +46,8 @@
     final boolean useStrictDateChecker = "true".equals(ElementParameterParser.getValue(node, "__STRICT_DATE_CHECK__"));
     final boolean emptyIsNull = "true".equals(ElementParameterParser.getValue(node, "__EMPTY_IS_NULL__"));
     final boolean allEmptyAreNull = "true".equals(ElementParameterParser.getValue(node, "__ALL_EMPTY_ARE_NULL__"));
+    final boolean checkStringbyByte = "true".equals(ElementParameterParser.getValue(node, "__CHECK_STRING_BY_BYTE_LENGTH__"));
+    final String charset = ElementParameterParser.getValue(node, "__CHARSET__");
 
     List<Map<String, String>> list = (List<Map<String, String>>)ElementParameterParser.getObjectValue(node, "__EMPTY_NULL_TABLE__");
     final List<String> listEmptyAsNull = new ArrayList<String>();
@@ -224,7 +226,16 @@ globalMap.put("<%=cid%>_ERROR_MESSAGE",e.getMessage());
                 } else{ //CONDITION_00142 ELSE
                     if (bIsStringType) { //CONDITION_001422 START
 %>
+<%if(checkStringbyByte) {
+	if(!"\"\"".equals(charset)) {%>
+        java.nio.charset.Charset charset_<%=cid%> = java.nio.charset.Charset.forName(<%=charset%>);
+        if (<%=_sInConnName%>.<%=colName%>.getBytes(charset_<%=cid%>).length > <%=maxLength%>) {
+    <%}else {%>
+        if (<%=_sInConnName%>.<%=colName%>.getBytes().length > <%=maxLength%>) {
+    <%}
+}else{%>
         if (<%=_sInConnName%>.<%=colName%>.length() > <%=maxLength%>) {
+<%}%>
             ifPassedThrough = false;
             errorCodeThrough += 8;
             errorMessageThrough += "|exceed max length";
@@ -242,8 +253,8 @@ globalMap.put("<%=cid%>_ERROR_MESSAGE",e.getMessage());
 <%
                         } //CONDITION_0014221 STOP
 %>
-
         if (tmpContentThrough.length() > <%=maxLength%>) {
+
             ifPassedThrough = false;
             errorCodeThrough += 8;
             errorMessageThrough += "|exceed max length";

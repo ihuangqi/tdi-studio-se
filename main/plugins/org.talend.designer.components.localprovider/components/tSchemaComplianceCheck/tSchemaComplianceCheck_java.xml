@@ -131,6 +131,18 @@
                 <ITEM NAME="EMPTY_NULL" FIELD="CHECK" VALUE="false" />
             </ITEMS>
         </PARAMETER>
+        <PARAMETER NAME="CHECK_STRING_BY_BYTE_LENGTH" FIELD="CHECK" NUM_ROW="20" REQUIRED="true">
+            <DEFAULT>false</DEFAULT>
+        </PARAMETER>
+        <PARAMETER
+				NAME="CHARSET"
+				FIELD="TEXT"
+				NUM_ROW="20"
+				REQUIRED="false"
+				SHOW_IF="CHECK_STRING_BY_BYTE_LENGTH == 'true')"
+		>
+			<DEFAULT>""</DEFAULT>
+		</PARAMETER>
     </ADVANCED_PARAMETERS>
 
 	<CODEGENERATION>
