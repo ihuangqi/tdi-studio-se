@@ -175,9 +175,9 @@ if (isLog4jEnabled) {
 }
 %>
 
-java.net.URLClassLoader currentLoader<%=cid %> = (java.net.URLClassLoader) Thread.currentThread().getContextClassLoader();
-java.lang.reflect.Method method_<%=cid %> = java.net.URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { java.net.URL.class });
-method_<%=cid %>.setAccessible(true);
-method_<%=cid %>.invoke(currentLoader<%=cid %>, new Object[] { new java.io.File(libPath_<%=cid %>).toURL() });
+final java.net.URL[] urlHadoop_<%=cid %> =new java.net.URL[] { new java.io.File(libPath_<%=cid %>).toURL() };
+final ClassLoader threadClassLoader_<%=cid %> = Thread.currentThread().getContextClassLoader();
+java.net.URLClassLoader newThreadClassLoader_<%=cid%> = new java.net.URLClassLoader(urlHadoop_<%=cid %>, threadClassLoader_<%=cid%>);
+Thread.currentThread().setContextClassLoader(newThreadClassLoader_<%=cid%>);
 
 <%}%>
