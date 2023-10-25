@@ -18,6 +18,7 @@ import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -68,6 +69,8 @@ public class BuildJobHandlerTest {
 
     private ProcessItem jobWithTestcaseItem;
 
+    private ProcessItem jobWithTestcaseUsingResoucesItem;
+
     private ProcessItem childJobItem;
 
     private ProcessItem tRunJobTdqMainItem;
@@ -93,6 +96,8 @@ public class BuildJobHandlerTest {
     private static final String JOB_WITH_JOBLET_ID = "_FKbJID7OEeiNfpYj4K_XrA";
 
     private static final String JOB_WITH_TESTCASE_ID = "_YmcxoHniEeiA8rKAx4YxMw";
+
+    private static final String JOB_WITH_TESTCASE_USING_RESOURCES_ID = "_k0PGwDICEe601Z-PzWwnEw";
 
     private static final String JOB_CHILD_ID = "_JJsbED7OEeiNfpYj4K_XrA";
 
@@ -135,6 +140,7 @@ public class BuildJobHandlerTest {
         jobWithChildrenItem = (ProcessItem) getItemById(JOB_WITH_CHILDREN_ID);
         jobWithJobletItem = (ProcessItem) getItemById(JOB_WITH_JOBLET_ID);
         jobWithTestcaseItem = (ProcessItem) getItemById(JOB_WITH_TESTCASE_ID);
+        jobWithTestcaseUsingResoucesItem = (ProcessItem) getItemById(JOB_WITH_TESTCASE_USING_RESOURCES_ID);
         childJobItem = (ProcessItem) getItemById(JOB_CHILD_ID);
         jobletItem = getItemById(JOBLET_ID);
         tRunJobTdqMainItem = (ProcessItem) getItemById(TRUNJOBTDQMAIN_ID);
@@ -145,6 +151,7 @@ public class BuildJobHandlerTest {
         testItems.add(jobWithChildrenItem);
         testItems.add(jobWithJobletItem);
         testItems.add(jobWithTestcaseItem);
+        testItems.add(jobWithTestcaseUsingResoucesItem);
         testItems.add(childJobItem);
         testItems.add(jobletItem);
         testItems.add(tRunJobTdqMainItem);
@@ -197,6 +204,18 @@ public class BuildJobHandlerTest {
         BuildJobManager.getInstance().buildJob(destinationPath, jobWithTestcaseItem, "0.1", "Default", exportChoiceMap,
                 JobExportType.POJO, new NullProgressMonitor());
         validateBuildResult(jobWithTestcaseItem, destinationPath);
+    }
+
+    @Test
+    public void testBuildJobWithTestcaseUsingResources() throws Exception {
+        String destinationPath = getDestinationPath(jobWithTestcaseUsingResoucesItem);
+        destinationPaths.add(destinationPath);
+        exportChoiceMap.put(ExportChoice.executeTests, true);
+        BuildJobManager.getInstance().buildJob(destinationPath, jobWithTestcaseUsingResoucesItem, "0.1", "Default",
+                exportChoiceMap,
+                JobExportType.POJO, new NullProgressMonitor());
+        validateBuildResult(jobWithTestcaseUsingResoucesItem, destinationPath);
+        exportChoiceMap.remove(ExportChoice.executeTests);
     }
 
     @Test
@@ -388,6 +407,15 @@ public class BuildJobHandlerTest {
                         + "/TDQ_Libraries";
                 ZipEntry dependencyEntry = zip.getEntry(DQItems);
                 assertNotNull("DQ Items should not be null", dependencyEntry);
+            }
+
+            if (jobItem == jobWithTestcaseUsingResoucesItem) {
+                String testcaseName = JavaResourcesHelper.getJobFolderName("TestCaseWithResourceFile", "0.1");
+                ZipEntry entry = zip.getEntry("sunfire-reports/" + technicalLabel.toLowerCase() + "." + jobFolderName + "."
+                        + testcaseName + ".TestCaseWithResourceFileTest.txt");
+                InputStream inputStream = zip.getInputStream(entry);
+                String reportsContent = IOUtils.toString(inputStream, "UTF-8");
+                assertTrue("Can't find Test result", reportsContent.contains("Tests run: 1"));
             }
         } finally {
             if (zip != null) {

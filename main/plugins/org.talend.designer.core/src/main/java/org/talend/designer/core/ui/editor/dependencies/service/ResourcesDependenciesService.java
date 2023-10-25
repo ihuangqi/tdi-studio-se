@@ -41,6 +41,7 @@ import org.talend.core.model.resources.ResourceItem;
 import org.talend.core.model.utils.JavaResourcesHelper;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.service.IResourcesDependenciesService;
+import org.talend.core.ui.ITestContainerProviderService;
 import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
 import org.talend.designer.core.ui.editor.dependencies.dialog.DependenciesResourceSelectionDialog;
 import org.talend.designer.core.ui.editor.dependencies.model.JobResourceDependencyModel;
@@ -97,7 +98,11 @@ public class ResourcesDependenciesService implements IResourcesDependenciesServi
                         JobResourceDependencyModel model = new JobResourceDependencyModel(
                                 (ResourceItem) repoObject.getProperty().getItem());
                         String jobLabel = JavaResourcesHelper.getJobFolderName(property.getLabel(), property.getVersion());
-                        if (ProcessorUtilities.isExportConfig() || forceRelative) {
+                        boolean isTestCase = false;
+                        if (ITestContainerProviderService.get() != null) {
+                            isTestCase = ITestContainerProviderService.get().isTestContainerProcess(process);
+                        }
+                        if (!isTestCase && (ProcessorUtilities.isExportConfig() || forceRelative)) {
                             resPath = ResourceDependenciesUtil.getResourcePath(model, jobLabel, parts[1]);
                         }else {
                             resPath = ResourceDependenciesUtil.getJobExecuteResourceFilePath(model, property, jobLabel, parts[1]);
