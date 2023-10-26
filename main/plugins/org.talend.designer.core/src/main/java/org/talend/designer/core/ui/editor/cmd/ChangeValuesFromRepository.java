@@ -649,7 +649,11 @@ public class ChangeValuesFromRepository extends ChangeMetadataCommand {
 
                             elem.setPropertyValue(param.getName(), objectValue);
                         }
-                        if (!ProcessUpdateManager.isIgnoreJDBCRepositoryParameter((Node)elem, param.getName())) {
+                        if (elem instanceof Node) {
+                            if (!ProcessUpdateManager.isIgnoreJDBCRepositoryParameter((Node)elem, param.getName())) {
+                                param.setRepositoryValueUsed(true);
+                            }
+                        } else {
                             param.setRepositoryValueUsed(true);
                         }
                     } else if (EParameterFieldType.TABLE.equals(param.getFieldType())

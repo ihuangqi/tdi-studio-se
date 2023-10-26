@@ -164,7 +164,6 @@ public abstract class TaCoKitConfigurationWizard extends CheckLastVersionReposit
         wizardPropertiesPage.setDescription(""); //$NON-NLS-1$
         addPage(wizardPropertiesPage);
         final PropertyNode root = new PropertyTreeCreator(new WizardTypeMapper()).createPropertyTree(configTypeNode);
-        TaCoKitPageBuildHelper helper = new TaCoKitPageBuildHelper(this.runtimeData);
         if (root.hasLeaves(Metadatas.ADVANCED_FORM)) {
             helper.infer(Metadatas.ADVANCED_FORM);
         }
