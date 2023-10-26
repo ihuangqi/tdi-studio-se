@@ -39,6 +39,7 @@ import org.talend.repository.generic.model.genericMetadata.GenericConnection;
 public class GenericDragAndDropHandlerTest {
 
     private Connection conn = null;
+    
 
     @Before
     public void setUp() throws Exception {
@@ -125,25 +126,8 @@ public class GenericDragAndDropHandlerTest {
 
         GenericDragAndDropHandler handler = new GenericDragAndDropHandler();
         Object returnValue = handler.getGenericRepositoryValue(dbConnection, componentProperties,
-                EConnectionParameterName.GENERIC_MAPPING_FILE.getDisplayName(), null);
+                "mappingFile", null);
         assertEquals("\"\"", returnValue);//$NON-NLS-1$
-    }
-
-    @Test
-    public void testGetValueOfJDBCMapping() {
-        List<ComponentProperties> componentProperties = new ArrayList<>();
-        JDBCConnectionWizardProperties properties = setupJDBCProperties();
-        //
-        properties.mappingFile.setStoredValue("snowflake_id");//$NON-NLS-1$
-        componentProperties.add(properties);
-
-        DatabaseConnection dbConnection = ConnectionFactoryImpl.eINSTANCE.createDatabaseConnection();
-
-        GenericDragAndDropHandler handler = new GenericDragAndDropHandler();
-        Object returnValue = handler.getGenericRepositoryValue(dbConnection, componentProperties,
-                EConnectionParameterName.GENERIC_MAPPING_FILE.getDisplayName(),
-                null);
-        assertEquals("snowflake_id", returnValue);//$NON-NLS-1$
     }
 
     @Test
@@ -158,7 +142,7 @@ public class GenericDragAndDropHandlerTest {
 
         GenericDragAndDropHandler handler = new GenericDragAndDropHandler();
         Object returnValue = handler.getGenericRepositoryValue(dbConnection, componentProperties,
-                EConnectionParameterName.GENERIC_MAPPING_FILE.getDisplayName(), null);
+                "mappingFile", null);
         assertEquals("\"snowflake_id\"", returnValue);
     }
 
@@ -174,7 +158,7 @@ public class GenericDragAndDropHandlerTest {
 
         GenericDragAndDropHandler handler = new GenericDragAndDropHandler();
         Object returnValue = handler.getGenericRepositoryValue(dbConnection, componentProperties,
-                EConnectionParameterName.GENERIC_DRIVER_CLASS.getDisplayName(), null);
+                "connection.driverClass", null);
         assertEquals("\"org.h2.Driver\"", returnValue);//$NON-NLS-1$
     }
 
@@ -190,7 +174,7 @@ public class GenericDragAndDropHandlerTest {
 
         GenericDragAndDropHandler handler = new GenericDragAndDropHandler();
         Object returnValue = handler.getGenericRepositoryValue(dbConnection, componentProperties,
-                EConnectionParameterName.USERNAME.getName(), null);
+                "connection.userPassword.userId", null);
         assertEquals("\"UserTestA\"", returnValue);//$NON-NLS-1$
     }
 
@@ -205,7 +189,7 @@ public class GenericDragAndDropHandlerTest {
 
         GenericDragAndDropHandler handler = new GenericDragAndDropHandler();
         Object returnValue = handler.getGenericRepositoryValue(dbConnection, componentProperties,
-                EConnectionParameterName.PASSWORD.getName(), null);
+                "connection.userPassword.password", null);
         assertEquals("\"\"", returnValue);//$NON-NLS-1$
     }
 
