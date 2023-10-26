@@ -238,14 +238,12 @@ globalMap.put("<%=cid%>_ERROR_MESSAGE",e.getMessage());
     %>
 			    String filename_<%=cid %> = <%=filenamePattern %>;
 			    java.io.File file_<%=cid %> = new java.io.File(<%=outputDirectory %>, filename_<%=cid %>);
-			    java.io.OutputStream os_<%=cid %> = new java.io.FileOutputStream(file_<%=cid %>);
-	    
+				try (java.io.OutputStream os_<%=cid %> = new java.io.BufferedOutputStream(new java.io.FileOutputStream(file_<%=cid %>))) {
 <%
    				 //for bug TDI-21323
 %> 
 			    message_<%=cid %>.writeTo(os_<%=cid %>);
-			    os_<%=cid %>.close();
-				
+				}
 	<%
     		if (bDeleteFromServer){
     %> 
