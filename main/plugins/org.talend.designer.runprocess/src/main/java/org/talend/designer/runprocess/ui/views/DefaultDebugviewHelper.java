@@ -22,7 +22,9 @@ import org.talend.designer.runprocess.ui.TraceDebugProcessComposite;
  * DOC Administrator class global comment. Detailled comment
  */
 public class DefaultDebugviewHelper implements IDebugViewHelper {
-
+    
+    private DebugProcessTosComposite composite = null;
+    
     /*
      * (non-Javadoc)
      *
@@ -30,8 +32,12 @@ public class DefaultDebugviewHelper implements IDebugViewHelper {
      * org.talend.designer.runprocess.ui.views.IDebugViewHelper#getDebugComposite(org.eclipse.swt.widgets.Composite)
      */
     public TraceDebugProcessComposite getDebugComposite(Composite container) {
-        // TODO Auto-generated method stub
-        return new DebugProcessTosComposite(container, SWT.NONE);
+        if (composite == null || composite.isDisposed()) {
+            // TODO Auto-generated method stub
+            composite = new DebugProcessTosComposite(container, SWT.NONE);
+            return composite;
+        }
+        return composite;
     }
 
     @Override
